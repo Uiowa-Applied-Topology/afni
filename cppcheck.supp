@@ -1,0 +1,13 @@
+missingIncludeSystem
+missingInclude
+constParameter
+unusedFunction
+useStlAlgorithm
+redundantAssignment
+checkersReport
+preprocessorErrorDirective
+normalCheckLevelMaxBranches
+nullPointerRedundantCheck
+duplicateExpression
+unmatchedSuppression
+syntaxError
