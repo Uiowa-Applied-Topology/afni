@@ -68,3 +68,7 @@ AFNI_version.h
 
 #Cscope
 *cscope*
+.envrc
+.direnv
+*unc-backup*
+*uncrustify*

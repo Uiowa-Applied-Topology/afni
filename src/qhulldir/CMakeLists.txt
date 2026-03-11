@@ -17,12 +17,11 @@ add_afni_library(
   stat.c
   user.c
   usermem.c
-  userprintf.c
-)
+  userprintf.c)
 target_link_libraries(qhull m)
 foreach(target unix rbox)
   add_afni_executable(${target} ${target}.c)
-    target_link_libraries(${target} qhull m)
+  target_link_libraries(${target} qhull m)
 endforeach(target)
 
 add_afni_executable(qdelaunay qdelaun.c)
@@ -34,5 +33,4 @@ install(
   RUNTIME DESTINATION ${AFNI_INSTALL_RUNTIME_DIR}
   LIBRARY DESTINATION ${AFNI_INSTALL_LIBRARY_DIR}
   ARCHIVE DESTINATION ${AFNI_INSTALL_LIBRARY_DIR}
-  PUBLIC_HEADER DESTINATION ${AFNI_INSTALL_INCLUDE_DIR}
-)
+  PUBLIC_HEADER DESTINATION ${AFNI_INSTALL_INCLUDE_DIR})

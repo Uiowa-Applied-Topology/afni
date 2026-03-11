@@ -7,15 +7,13 @@ set(XMHTML_ARCHIVE "1.1.7")
 
 # Construct XmHTML  library
 add_afni_library(XmHTML "")
-target_compile_definitions(
-    XmHTML PRIVATE "VERSION=${XMHTML_VERSION}" Motif HAVE_LIBJPEG HAVE_REGEX_H NDEBUG
-)
+target_compile_definitions(XmHTML PRIVATE "VERSION=${XMHTML_VERSION}" Motif
+                                          HAVE_LIBJPEG HAVE_REGEX_H NDEBUG)
 # add headers to XmHTML target_sources
 add_subdirectory(include)
 
 # add the c files to XmHTML target sources
 add_subdirectory(lib)
 
-target_link_libraries(
-  XmHTML PRIVATE Motif::Motif  X11::Xt  X11::Xpm X11::Xext X11::X11  JPEG::JPEG
-)
+target_link_libraries(XmHTML PRIVATE Motif::Motif X11::Xt X11::Xpm X11::Xext
+                                     X11::X11 JPEG::JPEG)

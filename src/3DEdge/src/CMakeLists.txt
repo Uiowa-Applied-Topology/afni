@@ -7,8 +7,7 @@ add_afni_library(
   iopnm.c
   recbuffer.c
   recline.c
-  zcross.c
-)
+  zcross.c)
 set_target_properties(
   3DEdge
   PROPERTIES
@@ -18,6 +17,5 @@ set_target_properties(
 target_include_directories(
   3DEdge
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-  PRIVATE $<TARGET_PROPERTY:libheaders,INTERFACE_INCLUDE_DIRECTORIES>
-)
+  PRIVATE $<TARGET_PROPERTY:libheaders,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(3DEdge PRIVATE NIFTI::nifti2 NIFTI::nifticdf m)

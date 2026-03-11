@@ -8,12 +8,12 @@ bootstrap:
     if test ! -e .venv; then \
       git submodule deinit -f . ;\
       git submodule update --init --recursive ; \
-      prek install -f -c .pre-commit-config.yaml ; \
       uv venv --python 3.13 && uv pip install -r requirements.txt && \
       uv pip install "git+https://github.com/Joecstarr/mkdocs-bibtex"; \
       uv pip install "git+https://github.com/Joecstarr/mkdocs-author-plugin"; \
       uv pip install "git+https://github.com/Joecstarr/markdown-gfm-admonition"; \
     fi
+#prek install -f -c .pre-commit-config.yaml ; \
 
 refresh-sub: 
       git submodule deinit -f . 
@@ -193,9 +193,7 @@ check-doxygen:
 
 # Run cmake-format
 do-cmakeformat:
-    find ./source/ -name 'CMakeLists.txt' -exec cmake-format -i {} \;
-    find ./wrappers/ -name 'CMakeLists.txt' -exec cmake-format -i {} \;
-    cmake-format -i ./libraries/CMakeLists.txt
+    find ./src/ -name 'CMakeLists.txt' -exec cmake-format -i {} \;
     cmake-format -i CMakeLists.txt
 
 
@@ -240,12 +238,9 @@ check-valgrind_rel: build_rel
 
 # Run uncrustify 
 do-uncrustify:
-    find ./source -iname "*.c"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
-    find ./source -iname "*.h"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
-    find ./source -iname "*.cpp" -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
-    find ./wrappers -iname "*.c"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
-    find ./wrappers -iname "*.h"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
-    find ./wrappers -iname "*.cpp" -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
+    find ./src -iname "*.c"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
+    find ./src -iname "*.h"   -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
+    find ./src -iname "*.cpp" -exec  sh -c 'uncrustify -c .uncrustify.cfg --replace "$0" || kill $PPID' \{\} \;
 
 ##################################################################################################
 ####### tombi format ##########################################################################

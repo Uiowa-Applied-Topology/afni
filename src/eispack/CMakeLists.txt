@@ -1,8 +1,7 @@
 set(SVD_SLOW "${CMAKE_CURRENT_BINARY_DIR}/configured_eispack/eis_svd_slow.c")
 configure_file(eis_svd.c ${SVD_SLOW} COPYONLY)
-set_source_files_properties(
-  ${SVD_SLOW} PROPERTIES COMPILE_DEFINITIONS "FUNCNAME=svd_slow_"
-)
+set_source_files_properties(${SVD_SLOW} PROPERTIES COMPILE_DEFINITIONS
+                                                   "FUNCNAME=svd_slow_")
 add_afni_library(
   eispack
   ${SVD_SLOW}
@@ -81,6 +80,5 @@ add_afni_library(
   eis_tred2.c
   eis_tred3.c
   eis_tridib.c
-  eis_tsturm.c
-)
+  eis_tsturm.c)
 target_link_libraries(eispack f2c m)

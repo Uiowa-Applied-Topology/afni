@@ -22,30 +22,23 @@ add_library(
   niml_url.c
   niml_util.c
   niml_uuid.c
-  niml_vector.c
-)
+  niml_vector.c)
 
 if(COMP_MRILIB_MINI)
-    target_compile_definitions(niml
-        PUBLIC
-        "MRILIB_MINI"
-    )
+  target_compile_definitions(niml PUBLIC "MRILIB_MINI")
 endif()
 set_target_properties(niml PROPERTIES PUBLIC_HEADER niml.h)
 target_include_directories(
   niml INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                 $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>
-)
+                 $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>)
 
 # f2c header is the only thing required but should probably use whatever f2c is
-# on the system (or the one in the AFNI repo that is obtained by linking
-# against the f2c build there.
+# on the system (or the one in the AFNI repo that is obtained by linking against
+# the f2c build there.
 target_link_libraries(niml PRIVATE f2c)
 
-# Define replace xt that is not inherited from libheaders in the case of COMP_MRILIB_MINI
-target_compile_definitions(niml
-    PUBLIC
-    "REPLACE_XT"
-    )
+# Define replace xt that is not inherited from libheaders in the case of
+# COMP_MRILIB_MINI
+target_compile_definitions(niml PUBLIC "REPLACE_XT")
 
 add_library(AFNI::niml ALIAS niml)

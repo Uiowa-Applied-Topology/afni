@@ -46,13 +46,10 @@ add_afni_library(
   zzlogy.c
   zzperi.c
   zzphph.c
-  zzphys.c
-)
+  zzphys.c)
 
 set_target_properties(coxplot PROPERTIES PUBLIC_HEADER "coxplot.h")
 target_link_libraries(coxplot PRIVATE AFNI::mri Motif::Motif f2c m)
 target_include_directories(
   coxplot INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                  $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>
-)
-
+                    $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>)

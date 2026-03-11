@@ -27,9 +27,7 @@ add_afni_executable(
   readframe.c
   rgbtoycc.c
   specifics.c
-  subsample.c
-)
+  subsample.c)
 target_include_directories(
-  mpeg_encode PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
-)
+  mpeg_encode PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>)
 target_link_libraries(mpeg_encode m)

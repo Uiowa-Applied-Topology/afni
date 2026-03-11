@@ -30,8 +30,7 @@ set(OBJ
     wsfe.c
     wsle.c
     wsne.c
-    xwsne.c
-)
+    xwsne.c)
 
 set(MISC
     F77_aloc.c
@@ -51,8 +50,7 @@ set(MISC
     erf_.c
     erfc_.c
     sig_die.c
-    exit.c
-)
+    exit.c)
 set(POW
     pow_ci.c
     pow_dd.c
@@ -61,8 +59,7 @@ set(POW
     pow_ii.c
     pow_ri.c
     pow_zi.c
-    pow_zz.c
-)
+    pow_zz.c)
 set(CX
     c_abs.c
     c_cos.c
@@ -70,8 +67,7 @@ set(CX
     c_exp.c
     c_log.c
     c_sin.c
-    c_sqrt.c
-)
+    c_sqrt.c)
 set(DCX
     z_abs.c
     z_cos.c
@@ -79,8 +75,7 @@ set(DCX
     z_exp.c
     z_log.c
     z_sin.c
-    z_sqrt.c
-)
+    z_sqrt.c)
 set(REAL
     r_abs.c
     r_acos.c
@@ -103,8 +98,7 @@ set(REAL
     r_sinh.c
     r_sqrt.c
     r_tan.c
-    r_tanh.c
-)
+    r_tanh.c)
 set(DBL
     d_abs.c
     d_acos.c
@@ -128,8 +122,7 @@ set(DBL
     d_sinh.c
     d_sqrt.c
     d_tan.c
-    d_tanh.c
-)
+    d_tanh.c)
 set(INT
     i_abs.c
     i_dim.c
@@ -138,8 +131,7 @@ set(INT
     i_len.c
     i_mod.c
     i_nint.c
-    i_sign.c
-)
+    i_sign.c)
 set(HALF
     h_abs.c
     h_dim.c
@@ -148,8 +140,7 @@ set(HALF
     h_len.c
     h_mod.c
     h_nint.c
-    h_sign.c
-)
+    h_sign.c)
 set(CMP
     l_ge.c
     l_gt.c
@@ -158,8 +149,7 @@ set(CMP
     hl_ge.c
     hl_gt.c
     hl_le.c
-    hl_lt.c
-)
+    hl_lt.c)
 set(EFL ef1asc_.c ef1cmc_.c)
 set(CHAR s_cat.c s_cmp.c s_copy.c)
 set(F90BIT lbitbits.c lbitshft.c)
@@ -178,14 +168,8 @@ add_afni_library(
   ${CMP}
   ${EFL}
   ${CHAR}
-  ${F90BIT}
-)
+  ${F90BIT})
 
 target_include_directories(f2c PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(f2c PROPERTIES PUBLIC_HEADER f2c.h)
-target_link_libraries(
-  f2c
-  PRIVATE
-          NIFTI::nifticdf
-          m
-)
+target_link_libraries(f2c PRIVATE NIFTI::nifticdf m)

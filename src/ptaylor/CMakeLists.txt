@@ -13,23 +13,14 @@ add_afni_library(
   readglob.c
   roiing.c
   rsfc.c
-  TrackIO.c
-)
-target_link_libraries(track_tools
-  PUBLIC
-    AFNI::mri
-    GSL::gsl
-  PRIVATE
-    $<TARGET_OBJECTS:suma_objs>
-    AFNI::3DEdge
-    NIFTI::nifti2
-    )
-target_include_directories(track_tools
-  INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>
-  )
-
-
+  TrackIO.c)
+target_link_libraries(
+  track_tools
+  PUBLIC AFNI::mri GSL::gsl
+  PRIVATE $<TARGET_OBJECTS:suma_objs> AFNI::3DEdge NIFTI::nifti2)
+target_include_directories(
+  track_tools INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                        $<INSTALL_INTERFACE:${AFNI_INSTALL_INCLUDE_DIR}>)
 
 if(COMP_COREBINARIES)
   foreach(
@@ -53,15 +44,14 @@ if(COMP_COREBINARIES)
     3dZipperZapper
     3dSliceNDice
     3dClusterize
-    3dProbTrackID
-  )
+    3dProbTrackID)
     add_afni_executable(${target} ${target}.c)
     target_link_libraries(${target} track_tools)
   endforeach(target)
 
-
   foreach(target 3dEigsToDT 3dDWUncert)
     add_afni_executable(${target} ${target}.c)
-    target_link_libraries(${target} track_tools $<TARGET_NAME_IF_EXISTS:OpenMP::OpenMP_C>)
+    target_link_libraries(${target} track_tools
+                          $<TARGET_NAME_IF_EXISTS:OpenMP::OpenMP_C>)
   endforeach(target)
 endif()

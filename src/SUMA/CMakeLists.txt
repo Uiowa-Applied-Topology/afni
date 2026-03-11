@@ -43,30 +43,25 @@ add_afni_library(
   SUMA_trackball.c
   SUMA_VolData.c
   SUMA_volume_render.c
-  SUMA_xColBar.c
-)
-target_include_directories(
-  SUMA PUBLIC PLY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+  SUMA_xColBar.c)
+target_include_directories(SUMA PUBLIC PLY ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(SUMA PUBLIC SUMA_COMPILED)
 
 # if system GLw is used it is linked against (may require a patch. See
-# afni/src/other_builds/OS_notes.linux_fedora_25_64.txt). Otherwise
-# the c files are included directly in the library
+# afni/src/other_builds/OS_notes.linux_fedora_25_64.txt). Otherwise the c files
+# are included directly in the library
 if(NOT (USE_SYSTEM_GLW))
   target_sources(SUMA PRIVATE GLw_local/GL/GLwDrawA.c)
-  target_include_directories(
-    SUMA PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/GLw_local
-  )
+  target_include_directories(SUMA PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/GLw_local)
 endif()
 
 target_link_libraries(
   SUMA
   PUBLIC $<TARGET_NAME_IF_EXISTS:GLw::GLw>
-          AFNI::track_tools
-          $<IF:$<NOT:$<BOOL:${APPLE}>>,$<TARGET_NAME_IF_EXISTS:AFNI::GLUT>,>
-          $<TARGET_NAME_IF_EXISTS:GLUT::GLUT>
-          $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLUT>
+         AFNI::track_tools
+         $<IF:$<NOT:$<BOOL:${APPLE}>>,$<TARGET_NAME_IF_EXISTS:AFNI::GLUT>,>
+         $<TARGET_NAME_IF_EXISTS:GLUT::GLUT>
+         $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLUT>
   PRIVATE AFNI::mrix
           $<TARGET_NAME_IF_EXISTS:OpenGL::GLU>
           $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>
@@ -74,29 +69,22 @@ target_link_libraries(
           $<IF:$<BOOL:${APPLE}>,X11::Xmu,>
           AFNI::3DEdge
           NIFTI::nifti2
-          NIFTI::nifticdf
-)
+          NIFTI::nifticdf)
 
 # suma GUI:
 add_afni_executable(suma SUMA_suma.c)
 target_link_libraries(
   suma
-  PRIVATE SUMA
-          AFNI::mrix
-          AFNI::segtools
-          $<TARGET_NAME_IF_EXISTS:OpenGL::GLU>
-          $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>
-)
+  PRIVATE SUMA AFNI::mrix AFNI::segtools $<TARGET_NAME_IF_EXISTS:OpenGL::GLU>
+          $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>)
 
-# Add build time check for correct linking in suma gui.
-# For further information see:
-# https://github.com/afni/afni/issues/131
+# Add build time check for correct linking in suma gui. For further information
+# see: https://github.com/afni/afni/issues/131
 # https://github.com/afni/afni/issues/158
 if(NOT APPLE)
-# check for X linking error that occurs on some linux systems
-check_suma_binary()
+  # check for X linking error that occurs on some linux systems
+  check_suma_binary()
 endif()
-
 
 # Programs (for which the source files have SUMA_ prepended)
 set(PROGRAMS
@@ -156,40 +144,23 @@ foreach(program ${PROGRAMS})
   add_afni_executable(${program} SUMA_${program}.c)
 
   target_link_libraries(
-    ${program}
-    PRIVATE SUMA
-            AFNI::mrix
-            AFNI::track_tools
-            AFNI::segtools
-            NIFTI::nifti2
-            NIFTI::nifticdf
-  )
+    ${program} PRIVATE SUMA AFNI::mrix AFNI::track_tools AFNI::segtools
+                       NIFTI::nifti2 NIFTI::nifticdf)
 endforeach(program)
 
 add_afni_executable(volume_render SUMA_volume_render.c)
 target_link_libraries(
   volume_render
   PRIVATE SUMA AFNI::mrix $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>
-          $<TARGET_NAME_IF_EXISTS:OpenGL::GLU> NIFTI::nifti2
-          NIFTI::nifticdf
-)
-set_target_properties(
-  volume_render PROPERTIES COMPILE_FLAGS -DDO_VOLUME_MAIN
-)
+          $<TARGET_NAME_IF_EXISTS:OpenGL::GLU> NIFTI::nifti2 NIFTI::nifticdf)
+set_target_properties(volume_render PROPERTIES COMPILE_FLAGS -DDO_VOLUME_MAIN)
 
 # Targets where name matches source file name
 foreach(prog_with_name_as_source prompt_popup)
-  add_afni_executable(
-    ${prog_with_name_as_source} ${prog_with_name_as_source}.c
-  )
+  add_afni_executable(${prog_with_name_as_source} ${prog_with_name_as_source}.c)
   target_link_libraries(
-    ${prog_with_name_as_source}
-    PRIVATE SUMA
-            AFNI::mrix
-            Motif::Motif
-            NIFTI::nifti2
-            NIFTI::nifticdf
-  )
+    ${prog_with_name_as_source} PRIVATE SUMA AFNI::mrix Motif::Motif
+                                        NIFTI::nifti2 NIFTI::nifticdf)
 endforeach()
 
 # targets with suma prepended
@@ -208,35 +179,25 @@ foreach(suma_target pixmap2eps;glxdino;paperplane)
             NIFTI::nifti2
             NIFTI::nifticdf
             $<TARGET_NAME_IF_EXISTS:OpenGL::GLU>
-            $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>
-  )
+            $<TARGET_NAME_IF_EXISTS:XQuartzGL::GLU>)
 endforeach()
 
 # Some other programs:
 add_afni_executable(SUMA_Read_SpecFile SUMA_Load_Surface_Object.c)
-target_link_libraries(
-  SUMA_Read_SpecFile PRIVATE SUMA AFNI::mrix NIFTI::nifti2
-                             NIFTI::nifticdf
-)
+target_link_libraries(SUMA_Read_SpecFile PRIVATE SUMA AFNI::mrix NIFTI::nifti2
+                                                 NIFTI::nifticdf)
 
 add_afni_executable(CompareSurfaces SUMA_compare_surfaces.c)
-target_link_libraries(
-  CompareSurfaces PRIVATE SUMA AFNI::mrix NIFTI::nifti2
-                          NIFTI::nifticdf
-)
+target_link_libraries(CompareSurfaces PRIVATE SUMA AFNI::mrix NIFTI::nifti2
+                                              NIFTI::nifticdf)
 
 add_afni_executable(Surf2VolCoord SUMA_Surf2VolCoord_demo.c)
-target_link_libraries(
-  Surf2VolCoord PRIVATE SUMA AFNI::mrix NIFTI::nifti2 NIFTI::nifticdf
-)
+target_link_libraries(Surf2VolCoord PRIVATE SUMA AFNI::mrix NIFTI::nifti2
+                                            NIFTI::nifticdf)
 
-add_afni_executable(
-  path_optimize SUMA_path_optimize.c SUMA_SurfWarp.c
-)
-target_link_libraries(
-  path_optimize PRIVATE SUMA AFNI::mrix NIFTI::nifti2
-                        NIFTI::nifticdf
-)
+add_afni_executable(path_optimize SUMA_path_optimize.c SUMA_SurfWarp.c)
+target_link_libraries(path_optimize PRIVATE SUMA AFNI::mrix NIFTI::nifti2
+                                            NIFTI::nifticdf)
 
 # gts dependent programs
 if(TARGET gts)
@@ -245,20 +206,16 @@ if(TARGET gts)
   target_link_libraries(
     suma_gts
     PUBLIC SUMA gts GLib2::glib
-    PRIVATE AFNI::mrix NIFTI::nifti2 NIFTI::nifticdf
-  )
+    PRIVATE AFNI::mrix NIFTI::nifti2 NIFTI::nifticdf)
 
   add_afni_executable(SurfMesh SUMA_coarsen.c)
-  target_link_libraries(
-    SurfMesh PRIVATE suma_gts AFNI::mrix NIFTI::nifti2 NIFTI::nifticdf
-  )
+  target_link_libraries(SurfMesh PRIVATE suma_gts AFNI::mrix NIFTI::nifti2
+                                         NIFTI::nifticdf)
 
   foreach(program BrainSkin IsoSurface)
     add_afni_executable(${program} SUMA_${program}.c)
-    target_link_libraries(
-      ${program} PRIVATE suma_gts AFNI::mrix NIFTI::nifti2
-                         NIFTI::nifticdf
-    )
+    target_link_libraries(${program} PRIVATE suma_gts AFNI::mrix NIFTI::nifti2
+                                             NIFTI::nifticdf)
   endforeach()
 else()
   message(

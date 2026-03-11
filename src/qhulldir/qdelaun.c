@@ -1,14 +1,12 @@
 /*<html><pre>  -<a                             href="qh-qhull.htm"
-  >-------------------------------</a><a name="TOP">-</a>
-
-   qdelaun.c
-     compute Delaunay triangulations and furthest-point Delaunay
-     triangulations using qhull
-
-   see unix.c for full interface
-
-   copyright (c) 1993-2010, The Geometry Center
-*/
+ * >-------------------------------</a><a name="TOP">-</a>
+ *
+ * qdelaun.c compute Delaunay triangulations and furthest-point Delaunay triangulations using qhull
+ *
+ * see unix.c for full interface
+ *
+ * copyright (c) 1993-2010, The Geometry Center
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,35 +25,37 @@
 
 #elif __cplusplus
 extern "C" {
-  int isatty(int);
+int isatty(int);
 }
 
 #elif _MSC_VER
 #include <io.h>
-#define isatty _isatty
+#define isatty    _isatty
 
 #else
-int isatty(int);  /* returns 1 if stdin is a tty
-                   if "Undefined symbol" this can be deleted along with call in main() */
+int isatty(int);  /* returns 1 if stdin is a tty if "Undefined symbol" this can be deleted along
+                   * with call in main() */
+
 #endif
 
 /*-<a                             href="qh-qhull.htm#TOC"
-  >-------------------------------</a><a name="prompt">-</a>
-
-  qh_prompt
-    long prompt for qhull
-
-  notes:
-    restricted version of libqhull.c
-
-  see:
-    concise prompt below
-*/
+ * >-------------------------------</a><a name="prompt">-</a>
+ *
+ * qh_prompt long prompt for qhull
+ *
+ * notes:
+ *  restricted version of libqhull.c
+ *
+ * see:
+ *  concise prompt below
+ */
 
 /* duplicated in qdelau_f.htm and qdelaun.htm */
-char hidden_options[]=" d n v H U Qb QB Qc Qf Qg Qi Qm Qr QR Qv Qx TR E V FC Fi Fo Ft Fp FV Q0 Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 ";
+char hidden_options[] =
+    " d n v H U Qb QB Qc Qf Qg Qi Qm Qr QR Qv Qx TR E V FC Fi Fo Ft Fp FV Q0 Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 ";
 
-char qh_prompta[]= "\n\
+char qh_prompta[] =
+    "\n\
 qdelaunay- compute the Delaunay triangulation\n\
     http://www.qhull.org  %s\n\
 \n\
@@ -71,15 +71,18 @@ options:\n\
 \n\
 Qhull control options:\n\
     QJn  - randomly joggle input in range [-n,n]\n\
-%s%s%s%s";  /* split up qh_prompt for Visual C++ */
-char qh_promptb[]= "\
+%s%s%s%s";
+/* split up qh_prompt for Visual C++ */
+char qh_promptb[] =
+    "\
     Qs   - search all points for the initial simplex\n\
     Qz   - add point-at-infinity to Delaunay triangulation\n\
     QGn  - print Delaunay region if visible from point n, -n if not\n\
     QVn  - print Delaunay regions that include point n, -n if not\n\
 \n\
 ";
-char qh_promptc[]= "\
+char qh_promptc[] =
+    "\
 Trace options:\n\
     T4   - trace at level n, 4=all, 5=mem/gauss, -1= events\n\
     Tc   - check frequently during execution\n\
@@ -112,7 +115,8 @@ Output formats (may be combined; if none, produces a summary to stdout):\n\
     s    - summary (stderr)\n\
 \n\
 ";
-char qh_promptd[]= "\
+char qh_promptd[] =
+    "\
 More formats:\n\
     Fa   - area for each Delaunay region\n\
     FA   - compute total area for option 's'\n\
@@ -138,7 +142,8 @@ More formats:\n\
     Fx   - extreme points of Delaunay triangulation (on convex hull)\n\
 \n\
 ";
-char qh_prompte[]= "\
+char qh_prompte[] =
+    "\
 Geomview options (2-d and 3-d)\n\
     Ga   - all points as dots\n\
      Gp  -  coplanar points and vertices as radii\n\
@@ -169,12 +174,12 @@ Print options:\n\
 /* for opts, don't assign 'e' or 'E' to a flag (already used for exponent) */
 
 /*-<a                             href="qh-qhull.htm#TOC"
-  >-------------------------------</a><a name="prompt2">-</a>
-
-  qh_prompt2
-    synopsis for qhull
-*/
-char qh_prompt2[]= "\n\
+ * >-------------------------------</a><a name="prompt2">-</a>
+ *
+ * qh_prompt2 synopsis for qhull
+ */
+char qh_prompt2[] =
+    "\n\
 qdelaunay- compute the Delaunay triangulation.  Qhull %s\n\
     input (stdin): dimension, number of points, point coordinates\n\
     comments start with a non-numeric character\n\
@@ -207,12 +212,12 @@ examples:\n\
 /* for opts, don't assign 'e' or 'E' to a flag (already used for exponent) */
 
 /*-<a                             href="qh-qhull.htm#TOC"
-  >-------------------------------</a><a name="prompt3">-</a>
-
-  qh_prompt3
-    concise prompt for qhull
-*/
-char qh_prompt3[]= "\n\
+ * >-------------------------------</a><a name="prompt3">-</a>
+ *
+ * qh_prompt3 concise prompt for qhull
+ */
+char qh_prompt3[] =
+    "\n\
 Qhull %s.\n\
 Except for 'F.' and 'PG', upper-case options take an argument.\n\
 \n\
@@ -242,84 +247,91 @@ Except for 'F.' and 'PG', upper-case options take an argument.\n\
 ";
 
 /*-<a                             href="qh-qhull.htm#TOC"
-  >-------------------------------</a><a name="main">-</a>
-
-  main( argc, argv )
-    processes the command line, calls qhull() to do the work, and exits
-
-  design:
-    initializes data structures
-    reads points
-    finishes initialization
-    computes convex hull and other structures
-    checks the result
-    writes the output
-    frees memory
-*/
-int main(int argc, char *argv[]) {
-  int curlong, totlong; /* used !qh_NOmem */
-  int exitcode, numpoints, dim;
-  coordT *points;
-  boolT ismalloc;
+ * >-------------------------------</a><a name="main">-</a>
+ *
+ * main( argc, argv ) processes the command line, calls qhull() to do the work, and exits
+ *
+ * design:
+ *  initializes data structures reads points finishes initialization computes convex hull and other
+ * structures checks the result writes the output frees memory
+ */
+int main(int argc, char *argv[])
+{
+    int     curlong, totlong; /* used !qh_NOmem */
+    int     exitcode, numpoints, dim;
+    coordT *points;
+    boolT   ismalloc;
 
 #if __MWERKS__ && __POWERPC__
-  char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
-  SIOUXSettings.showstatusline= false;
-  SIOUXSettings.tabspaces= 1;
-  SIOUXSettings.rows= 40;
-  if (setvbuf(stdin, inBuf, _IOFBF, sizeof(inBuf)) < 0   /* w/o, SIOUX I/O is slow*/
-  || setvbuf(stdout, outBuf, _IOFBF, sizeof(outBuf)) < 0
-  || (stdout != stderr && setvbuf(stderr, errBuf, _IOFBF, sizeof(errBuf)) < 0))
-    fprintf(stderr, "qhull internal warning (main): could not change stdio to fully buffered.\n");
-  argc= ccommand(&argv);
-#endif
-
-  if ((argc == 1) && isatty( 0 /*stdin*/)) {
-    fprintf(stdout, qh_prompt2, qh_version);
-    exit(qh_ERRnone);
-  }
-  if (argc > 1 && *argv[1] == '-'
-               && (!*(argv[1]+1) || !strcmp(argv[1],"-help"))) {
-    fprintf(stdout, qh_prompta, qh_version,
-                qh_promptb, qh_promptc, qh_promptd, qh_prompte);
-    exit(qh_ERRnone);
-  }
-  if (argc >1 && *argv[1] == '.' && !*(argv[1]+1)) {
-    fprintf(stdout, qh_prompt3, qh_version);
-    exit(qh_ERRnone);
-  }
-  qh_init_A(stdin, stdout, stderr, argc, argv);  /* sets qh qhull_command */
-  exitcode= setjmp(qh errexit); /* simple statement for CRAY J916 */
-  if (!exitcode) {
-    qh_option("delaunay  Qbbound-last", NULL, NULL);
-    qh DELAUNAY= True;     /* 'd'   */
-    qh SCALElast= True;    /* 'Qbb' */
-    qh KEEPcoplanar= True; /* 'Qc', to keep coplanars in 'p' */
-    qh_checkflags(qh qhull_command, hidden_options);
-    qh_initflags(qh qhull_command);
-    points= qh_readpoints(&numpoints, &dim, &ismalloc);
-    if (dim >= 5) {
-      qh_option("Qxact_merge", NULL, NULL);
-      qh MERGEexact= True; /* 'Qx' always */
+    char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
+    SIOUXSettings.showstatusline = false;
+    SIOUXSettings.tabspaces      = 1;
+    SIOUXSettings.rows           = 40;
+    if (setvbuf(stdin, inBuf, _IOFBF, sizeof(inBuf)) < 0 || /* w/o, SIOUX I/O is slow*/
+        setvbuf(stdout, outBuf, _IOFBF, sizeof(outBuf)) < 0 ||
+        (stdout != stderr && setvbuf(stderr, errBuf, _IOFBF, sizeof(errBuf)) < 0))
+    {
+        fprintf(stderr,
+                "qhull internal warning (main): could not change stdio to fully buffered.\n");
     }
-    qh_init_B(points, numpoints, dim, ismalloc);
-    qh_qhull();
-    qh_check_output();
-    qh_produce_output();
-    if (qh VERIFYoutput && !qh FORCEoutput && !qh STOPpoint && !qh STOPcone)
-      qh_check_points();
-    exitcode= qh_ERRnone;
-  }
-  qh NOerrexit= True;  /* no more setjmp */
-#ifdef qh_NOmem
-  qh_freeqhull( True);
-#else
-  qh_freeqhull( False);
-  qh_memfreeshort(&curlong, &totlong);
-  if (curlong || totlong)
-    fprintf(stderr, "qhull internal warning (main): did not free %d bytes of long memory(%d pieces)\n",
-       totlong, curlong);
+    argc = ccommand(&argv);
 #endif
-  return exitcode;
-} /* main */
 
+    if ((argc == 1) && isatty(0 /*stdin*/))
+    {
+        fprintf(stdout, qh_prompt2, qh_version);
+        exit(qh_ERRnone);
+    }
+    if (argc > 1 && *argv[1] == '-' &&
+        (!*(argv[1] + 1) || !strcmp(argv[1], "-help")))
+    {
+        fprintf(stdout, qh_prompta, qh_version,
+                qh_promptb, qh_promptc, qh_promptd, qh_prompte);
+        exit(qh_ERRnone);
+    }
+    if (argc > 1 && *argv[1] == '.' && !*(argv[1] + 1))
+    {
+        fprintf(stdout, qh_prompt3, qh_version);
+        exit(qh_ERRnone);
+    }
+    qh_init_A(stdin, stdout, stderr, argc, argv); /* sets qh qhull_command */
+    exitcode = setjmp(qh errexit);                /* simple statement for CRAY J916 */
+    if (!exitcode)
+    {
+        qh_option("delaunay  Qbbound-last", NULL, NULL);
+        qh DELAUNAY     = True; /* 'd'   */
+        qh SCALElast    = True; /* 'Qbb' */
+        qh KEEPcoplanar = True; /* 'Qc', to keep coplanars in 'p' */
+        qh_checkflags(qh qhull_command, hidden_options);
+        qh_initflags(qh qhull_command);
+        points = qh_readpoints(&numpoints, &dim, &ismalloc);
+        if (dim >= 5)
+        {
+            qh_option("Qxact_merge", NULL, NULL);
+            qh MERGEexact = True; /* 'Qx' always */
+        }
+        qh_init_B(points, numpoints, dim, ismalloc);
+        qh_qhull();
+        qh_check_output();
+        qh_produce_output();
+        if (qh VERIFYoutput && !qh FORCEoutput && !qh STOPpoint && !qh STOPcone)
+        {
+            qh_check_points();
+        }
+        exitcode = qh_ERRnone;
+    }
+    qh NOerrexit = True; /* no more setjmp */
+#ifdef qh_NOmem
+    qh_freeqhull(True);
+#else
+    qh_freeqhull(False);
+    qh_memfreeshort(&curlong, &totlong);
+    if (curlong || totlong)
+    {
+        fprintf(stderr,
+                "qhull internal warning (main): did not free %d bytes of long memory(%d pieces)\n",
+                totlong, curlong);
+    }
+#endif
+    return exitcode;
+} /* main */

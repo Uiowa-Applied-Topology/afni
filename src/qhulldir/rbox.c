@@ -1,13 +1,12 @@
 /*<html><pre>  -<a                             href="index.htm#TOC"
-  >-------------------------------</a><a name="TOP">-</a>
-
-   rbox.c
-     rbox program for generating input points for qhull.
-
-   notes:
-     50 points generated for 'rbox D4'
-
-*/
+ * >-------------------------------</a><a name="TOP">-</a>
+ *
+ * rbox.c rbox program for generating input points for qhull.
+ *
+ * notes:
+ *   50 points generated for 'rbox D4'
+ *
+ */
 
 #include "random.h"
 #include "libqhull.h"
@@ -24,11 +23,12 @@
 #include <Desk.h>
 #endif
 
-#ifdef _MSC_VER  /* Microsoft Visual C++ -- warning level 4 */
-#pragma warning( disable : 4706)  /* assignment within conditional function */
+#ifdef _MSC_VER                  /* Microsoft Visual C++ -- warning level 4 */
+#pragma warning( disable : 4706) /* assignment within conditional function */
 #endif
 
-char prompt[]= "\n\
+char prompt[] =
+    "\n\
 -rbox- generate various point distributions.  Default is random in cube.\n\
 \n\
 args (any order, space separated):                    Version: 2001/06/24\n\
@@ -60,40 +60,47 @@ args (any order, space separated):                    Version: 2001/06/24\n\
 ";
 
 /*--------------------------------------------
--rbox-  main procedure of rbox application
-*/
-int main(int argc, char **argv) {
-  char *command;
-  int command_size;
-  int return_status;
+ * -rbox-  main procedure of rbox application
+ */
+int main(int argc, char **argv)
+{
+    char *command;
+    int   command_size;
+    int   return_status;
 
 #if __MWERKS__ && __POWERPC__
-  char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
-  SIOUXSettings.showstatusline= False;
-  SIOUXSettings.tabspaces= 1;
-  SIOUXSettings.rows= 40;
-  if (setvbuf(stdin, inBuf, _IOFBF, sizeof(inBuf)) < 0   /* w/o, SIOUX I/O is slow*/
-  || setvbuf(stdout, outBuf, _IOFBF, sizeof(outBuf)) < 0
-  || (stdout != stderr && setvbuf(stderr, errBuf, _IOFBF, sizeof(errBuf)) < 0))
-    fprintf(stderr, "qhull internal warning (main): could not change stdio to fully buffered.\n");
-  argc= ccommand(&argv);
+    char inBuf[BUFSIZ], outBuf[BUFSIZ], errBuf[BUFSIZ];
+    SIOUXSettings.showstatusline = False;
+    SIOUXSettings.tabspaces      = 1;
+    SIOUXSettings.rows           = 40;
+    if (setvbuf(stdin, inBuf, _IOFBF, sizeof(inBuf)) < 0 || /* w/o, SIOUX I/O is slow*/
+        setvbuf(stdout, outBuf, _IOFBF, sizeof(outBuf)) < 0 ||
+        (stdout != stderr && setvbuf(stderr, errBuf, _IOFBF, sizeof(errBuf)) < 0))
+    {
+        fprintf(stderr,
+                "qhull internal warning (main): could not change stdio to fully buffered.\n");
+    }
+    argc = ccommand(&argv);
 #endif
 
-  /* return 0 on -help     18 Sep 2018 [rickr] */
-  if (argc == 1 || (argc == 2 && !strcmp(argv[1], "-help")) ) {
-    printf(prompt, qh_DEFAULTbox, qh_DEFAULTzbox);
-    return 0;
-  }
+    /* return 0 on -help     18 Sep 2018 [rickr] */
+    if (argc == 1 || (argc == 2 && !strcmp(argv[1], "-help")))
+    {
+        printf(prompt, qh_DEFAULTbox, qh_DEFAULTzbox);
+        return 0;
+    }
 
-  command_size= qh_argv_to_command_size(argc, argv);
-  if ((command= (char *)qh_malloc((size_t)command_size))) {
-    qh_argv_to_command(argc, argv, command, command_size);
-    return_status= qh_rboxpoints(stdout, stderr, command);
-    qh_free(command);
-  }else {
-    fprintf(stderr, "rbox error: insufficient memory for %d bytes\n", command_size);
-    return_status= qh_ERRmem;
-  }
-  return return_status;
+    command_size = qh_argv_to_command_size(argc, argv);
+    if ((command = (char *)qh_malloc((size_t)command_size)))
+    {
+        qh_argv_to_command(argc, argv, command, command_size);
+        return_status = qh_rboxpoints(stdout, stderr, command);
+        qh_free(command);
+    }
+    else
+    {
+        fprintf(stderr, "rbox error: insufficient memory for %d bytes\n", command_size);
+        return_status = qh_ERRmem;
+    }
+    return return_status;
 }/*main*/
-
