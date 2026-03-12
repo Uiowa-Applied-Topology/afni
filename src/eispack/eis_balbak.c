@@ -1,21 +1,21 @@
-/* balbak.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* balbak.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int balbak_(integer *nm, integer *n, integer *low, integer *
-	igh, doublereal *scale, integer *m, doublereal *z__)
+                             igh, doublereal *scale, integer *m, doublereal *z__)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
 
     /* Local variables */
-    integer i__, j, k;
+    integer    i__, j, k;
     doublereal s;
-    integer ii;
+    integer    ii;
 
 
 
@@ -51,39 +51,44 @@
 /*          TRANSFORMED EIGENVECTORS IN ITS FIRST M COLUMNS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --scale;
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
-    if (*igh == *low) {
-	goto L120;
+    if (*igh == *low)
+    {
+        goto L120;
     }
 
     i__1 = *igh;
-    for (i__ = *low; i__ <= i__1; ++i__) {
-	s = scale[i__];
+    for (i__ = *low; i__ <= i__1; ++i__)
+    {
+        s = scale[i__];
 /*     .......... LEFT HAND EIGENVECTORS ARE BACK TRANSFORMED */
 /*                IF THE FOREGOING STATEMENT IS REPLACED BY */
 /*                S=1.0D0/SCALE(I). .......... */
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
 /* L100: */
-	    z__[i__ + j * z_dim1] *= s;
-	}
+            z__[i__ + j * z_dim1] *= s;
+        }
 
 /* L110: */
     }
@@ -91,32 +96,36 @@
 /*               IGH+1 STEP 1 UNTIL N DO -- .......... */
 L120:
     i__1 = *n;
-    for (ii = 1; ii <= i__1; ++ii) {
-	i__ = ii;
-	if (i__ >= *low && i__ <= *igh) {
-	    goto L140;
-	}
-	if (i__ < *low) {
-	    i__ = *low - ii;
-	}
-	k = (integer) scale[i__];
-	if (k == i__) {
-	    goto L140;
-	}
+    for (ii = 1; ii <= i__1; ++ii)
+    {
+        i__ = ii;
+        if (i__ >= *low && i__ <= *igh)
+        {
+            goto L140;
+        }
+        if (i__ < *low)
+        {
+            i__ = *low - ii;
+        }
+        k = (integer)scale[i__];
+        if (k == i__)
+        {
+            goto L140;
+        }
 
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    s = z__[i__ + j * z_dim1];
-	    z__[i__ + j * z_dim1] = z__[k + j * z_dim1];
-	    z__[k + j * z_dim1] = s;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            s = z__[i__ + j * z_dim1];
+            z__[i__ + j * z_dim1] = z__[k + j * z_dim1];
+            z__[k + j * z_dim1]   = s;
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* balbak_ */
-

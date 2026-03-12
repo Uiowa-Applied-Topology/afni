@@ -1,24 +1,27 @@
-/* rt.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rt.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int rt_(integer *nm, integer *n, doublereal *a, doublereal *
-	w, integer *matz, doublereal *z__, doublereal *fv1, integer *ierr)
+                         w, integer *matz, doublereal *z__, doublereal *fv1, integer *ierr)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset;
 
     /* Local variables */
-    extern /* Subroutine */ int figi_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, integer *), figi2_(
-	    integer *, integer *, doublereal *, doublereal *, doublereal *, 
-	    doublereal *, integer *), imtql1_(integer *, doublereal *, 
-	    doublereal *, integer *), imtql2_(integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *);
+    extern /* Subroutine */ int figi_(integer *, integer *, doublereal *,
+                                      doublereal *, doublereal *, doublereal *, integer *), figi2_(
+        integer *, integer *, doublereal *, doublereal *, doublereal *,
+        doublereal *, integer *), imtql1_(integer *, doublereal *,
+                                          doublereal *, integer *), imtql2_(integer *, integer *,
+                                                                            doublereal *,
+                                                                            doublereal *,
+                                                                            doublereal *,
+                                                                            integer *);
 
 
 
@@ -59,50 +62,54 @@
 /*        FV1  IS A TEMPORARY STORAGE ARRAY. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    a_dim1 = *nm;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
+    a       -= a_offset;
     --fv1;
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --w;
 
     /* Function Body */
-    if (*n <= *nm) {
-	goto L10;
+    if (*n <= *nm)
+    {
+        goto L10;
     }
     *ierr = *n * 10;
     goto L50;
 
 L10:
-    if (*matz != 0) {
-	goto L20;
+    if (*matz != 0)
+    {
+        goto L20;
     }
 /*     .......... FIND EIGENVALUES ONLY .......... */
     figi_(nm, n, &a[a_offset], &w[1], &fv1[1], &fv1[1], ierr);
-    if (*ierr > 0) {
-	goto L50;
+    if (*ierr > 0)
+    {
+        goto L50;
     }
     imtql1_(n, &w[1], &fv1[1], ierr);
     goto L50;
 /*     .......... FIND BOTH EIGENVALUES AND EIGENVECTORS .......... */
 L20:
     figi2_(nm, n, &a[a_offset], &w[1], &fv1[1], &z__[z_offset], ierr);
-    if (*ierr != 0) {
-	goto L50;
+    if (*ierr != 0)
+    {
+        goto L50;
     }
     imtql2_(nm, n, &w[1], &fv1[1], &z__[z_offset], ierr);
 L50:
     return 0;
 } /* rt_ */
-

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 #include "mrilib.h"
@@ -38,14 +38,14 @@
  * data arrays!
  *
  * This routine uses the <stdarg.h> variable argument interface. The first argument is a pointer to
- * the dataset to edit. All succeeding arguments are pairs indicating which internal item to edit,
- * and the new value for that item.  The first entry of a pair must be one of the ADN_ entries
- * defined in editvol.h.  The type of the second entry of a pair depends on the particular item.
+ *the dataset to edit. All succeeding arguments are pairs indicating which internal item to edit,
+ *and the new value for that item.  The first entry of a pair must be one of the ADN_ entries
+ *defined in editvol.h.  The type of the second entry of a pair depends on the particular item.
  * [*** WARNING: due to C automatic 'type promotion', you cannot use float as the type to extract
- * from the list -- you must use double!]
+ *from the list -- you must use double!]
  *
  * Finally, the end of the argument list is found by the last argument being the special code
- * ADN_none (0).
+ *ADN_none (0).
  *
  * The return value is the number of errors detected (hopefully, 0).
  * -------------------------------------------------------------------------*/
@@ -135,7 +135,7 @@ int EDIT_dset_items(THD_3dim_dataset *dset, ...)
      *             - Check for legal values;
      *             - Flag its presence (the new_ variables);
      *             - Carry out simple processing that doesn't depend on the presence of other
-     * arguments. ---------****/
+     *arguments. ---------****/
 
     va_start(vararg_ptr, dset);                 /** Initialize arg reading **/
     iarg = 1;
@@ -796,8 +796,7 @@ int EDIT_dset_items(THD_3dim_dataset *dset, ...)
             {
                 fname[ll - 14] = '\0';
             }
-            if (dset->dblk->diskptr->header_name)/* and adjust header name
-                                                  * ZSS April 26 2012 */
+            if (dset->dblk->diskptr->header_name)/* and adjust header name ZSS April 26 2012 */
             {
                 strcpy(dset->dblk->diskptr->header_name, fname);
                 strcat(dset->dblk->diskptr->header_name, ".hdr");

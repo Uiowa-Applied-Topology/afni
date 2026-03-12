@@ -1,12 +1,12 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 /*
- * This file contains routines to initialize and implement the
- * square wave (amplitude, phase, and frequency parameters) signal model.
+ * This file contains routines to initialize and implement the square wave (amplitude, phase, and
+ *frequency parameters) signal model.
  *
  * File:     model_squarewave_apf.c Author:   B. Douglas Ward Date:     29 May 1997
  */
@@ -30,8 +30,8 @@ void signal_model
 
 /*
  * Routine to initialize the signal model by defining the number of parameters in the signal model,
- * the name of the signal model, and the default values for the minimum and maximum parameter
- * constraints.
+ *the name of the signal model, and the default values for the minimum and maximum parameter
+ *constraints.
  */
 
 DEFINE_MODEL_PROTOTYPE
@@ -78,12 +78,12 @@ MODEL_interface * initialize_model()
 
 /*
  * Routine to calculate the time series which results from using the square wave model with
- * specified amplitude, phase, and frequency model parameters.
+ *specified amplitude, phase, and frequency model parameters.
  *
  * Definition of model parameters:
  *
  *  gs[0] = amplitude of square wave gs[1] = phase angle of square wave (degrees) gs[2] = frequency
- * of square wave
+ *of square wave
  */
 
 void signal_model

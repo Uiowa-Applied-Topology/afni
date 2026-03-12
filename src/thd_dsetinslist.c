@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 #include "mrilib.h"
@@ -10,7 +10,7 @@
 
 /*-----------------------------------------------------------------
  * find a dataset with a given name in a bunch of sessions, with the indicated session getting first
- * priority
+ *priority
  * -------------------------------------------------------------------*/
 
 THD_slist_find THD_dset_in_sessionlist(int find_type, void *target,

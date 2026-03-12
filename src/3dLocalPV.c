@@ -588,17 +588,17 @@ int main(int argc, char *argv[])
 
 #pragma omp critical (MALLOC)
       { uvec = (float *)malloc(sizeof(float) * nt);
-     ws      = pv_get_workspace(nt, nbhd->num_pt);
-     nbar    = (float *)malloc(sizeof(float) * nt * nbhd->num_pt);
-     ivar    = (int *)malloc(sizeof(int) * nbhd->num_pt);
-     if (do_vproj == 2 || outset2 != NULL)
-     {
-         vvec = (float *)malloc(sizeof(float) * nt);
-     }
-     if (do_vproj)
-     {
-         zar = (float *)malloc(sizeof(float) * nt);
-     }
+        ws   = pv_get_workspace(nt, nbhd->num_pt);
+        nbar = (float *)malloc(sizeof(float) * nt * nbhd->num_pt);
+        ivar = (int *)malloc(sizeof(int) * nbhd->num_pt);
+        if (do_vproj == 2 || outset2 != NULL)
+        {
+            vvec = (float *)malloc(sizeof(float) * nt);
+        }
+        if (do_vproj)
+        {
+            zar = (float *)malloc(sizeof(float) * nt);
+        }
       }
 
       xran[2] = (gseed & 0xffff) + (unsigned short)ithr;
@@ -611,9 +611,9 @@ int main(int argc, char *argv[])
 #if 0
 #pragma omp critical
           { if (vstep && kk % vstep == vstep - 1)
-         {
-             vstep_print();
-         }
+            {
+                vstep_print();
+            }
           }
 #endif
 
@@ -720,14 +720,14 @@ int main(int argc, char *argv[])
 
 #pragma omp critical (MALLOC)
       { free(uvec); free(nbar); free(ws); free(ivar);
-     if (vvec != NULL)
-     {
-         free(vvec);
-     }
-     if (zar != NULL)
-     {
-         free(zar);
-     }
+        if (vvec != NULL)
+        {
+            free(vvec);
+        }
+        if (zar != NULL)
+        {
+            free(zar);
+        }
       } } /* end OpenMP */
     AFNI_OMP_END;
 

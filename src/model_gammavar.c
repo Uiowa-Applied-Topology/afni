@@ -1,12 +1,12 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 /*
- * This file contains routines to initialize and implement the
- * gamma variate drug response signal model.
+ * This file contains routines to initialize and implement the gamma variate drug response signal
+ *model.
  *
  * File:     model_gammavar.c Author:   B. Douglas Ward Date:     29 May 1997
  *
@@ -34,8 +34,8 @@ void signal_model
 
 /*
  * Routine to initialize the signal model by defining the number of parameters in the signal model,
- * the name of the signal model, and the default values for the minimum and maximum parameter
- * constraints.
+ *the name of the signal model, and the default values for the minimum and maximum parameter
+ *constraints.
  */
 
 DEFINE_MODEL_PROTOTYPE
@@ -84,13 +84,12 @@ MODEL_interface * initialize_model()
 
 /*
  * Routine to calculate the time series which results from using the gamma variate drug response
- * signal model with the specified model parameters.
+ *signal model with the specified model parameters.
  *
  * Definition of model parameters:
  *
- *   gs[0] = time delay of response (t0)
- *   gs[1] = multiplicative constant (k) gs[2] = rise rate exponent (r) gs[3] = decay rate constant
- * (b)
+ *   gs[0] = time delay of response (t0) gs[1] = multiplicative constant (k) gs[2] = rise rate
+ *exponent (r) gs[3] = decay rate constant (b)
  *
  */
 

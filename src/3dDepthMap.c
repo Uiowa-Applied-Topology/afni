@@ -1,6 +1,6 @@
 /*
  * Working from P. Lauren's distanceField.c, which was made in connection with PA Taylor's Python
- * library for this.
+ *library for this.
  *
  * ver = 2.0;  date = Nov 29, 2021
  + [PT] this program has been a longtime coming.  This version merges P Taylor's Python version in
@@ -554,7 +554,7 @@ int run_EDT_3D(int comline, PARAMS_euclid_dist opts,
 
     /*
      * [PT: July 22, 2022] this new functionality is for outputting just edges/rims of the input
-     * ROIs [PT: July 23, 2022] tweak, to allow negative RIM values
+     *ROIs [PT: July 23, 2022] tweak, to allow negative RIM values
      */
     if (opts.rimify)
     {

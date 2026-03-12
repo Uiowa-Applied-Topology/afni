@@ -1,16 +1,16 @@
-/* figi.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* figi.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int figi_(integer *nm, integer *n, doublereal *t, doublereal 
-	*d__, doublereal *e, doublereal *e2, integer *ierr)
+/* Subroutine */ int figi_(integer *nm, integer *n, doublereal *t, doublereal
+                           *d__, doublereal *e, doublereal *e2, integer *ierr)
 {
     /* System generated locals */
-    integer t_dim1, t_offset, i__1;
+    integer    t_dim1, t_offset, i__1;
     doublereal d__1;
 
     /* Builtin functions */
@@ -63,18 +63,19 @@
 /*                     TO THOSE OF  T  AND SHOULD NOT BE SOUGHT. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    t_dim1 = *nm;
+    t_dim1   = *nm;
     t_offset = t_dim1 + 1;
-    t -= t_offset;
+    t       -= t_offset;
     --e2;
     --e;
     --d__;
@@ -83,30 +84,39 @@
     *ierr = 0;
 
     i__1 = *n;
-    for (i__ = 1; i__ <= i__1; ++i__) {
-	if (i__ == 1) {
-	    goto L90;
-	}
-	e2[i__] = t[i__ + t_dim1] * t[i__ - 1 + t_dim1 * 3];
-	if ((d__1 = e2[i__]) < 0.) {
-	    goto L1000;
-	} else if (d__1 == 0) {
-	    goto L60;
-	} else {
-	    goto L80;
-	}
+    for (i__ = 1; i__ <= i__1; ++i__)
+    {
+        if (i__ == 1)
+        {
+            goto L90;
+        }
+        e2[i__] = t[i__ + t_dim1] * t[i__ - 1 + t_dim1 * 3];
+        if ((d__1 = e2[i__]) < 0.)
+        {
+            goto L1000;
+        }
+        else if (d__1 == 0)
+        {
+            goto L60;
+        }
+        else
+        {
+            goto L80;
+        }
 L60:
-	if (t[i__ + t_dim1] == 0. && t[i__ - 1 + t_dim1 * 3] == 0.) {
-	    goto L80;
-	}
+        if (t[i__ + t_dim1] == 0. && t[i__ - 1 + t_dim1 * 3] == 0.)
+        {
+            goto L80;
+        }
 /*     .......... SET ERROR -- PRODUCT OF SOME PAIR OF OFF-DIAGONAL */
+
 /*                ELEMENTS IS ZERO WITH ONE MEMBER NON-ZERO ..........
  */
-	*ierr = -(*n * 3 + i__);
+        *ierr = -(*n * 3 + i__);
 L80:
-	e[i__] = sqrt(e2[i__]);
+        e[i__] = sqrt(e2[i__]);
 L90:
-	d__[i__] = t[i__ + (t_dim1 << 1)];
+        d__[i__] = t[i__ + (t_dim1 << 1)];
 /* L100: */
     }
 
@@ -118,4 +128,3 @@ L1000:
 L1001:
     return 0;
 } /* figi_ */
-

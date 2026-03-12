@@ -4,10 +4,9 @@
 #define MAIN
 
 /*----------------------------------------------------------------------
- * 3dresample - create a new dataset by reorienting and resampling
- *              an existing one 
+ * 3dresample - create a new dataset by reorienting and resampling an existing one
  *
- * This program can be used to 
+ * This program can be used to
  *    - change the orientation of a dataset to one that is specified
  *    - change the dx, dy, dz spacing, to one that is specified
  *    - master a dataset, so that its orientation and spacing matches
@@ -21,23 +20,18 @@
  *
  *              -bound_type BTYPE : control how new bounding box is defined
  *
- *                 Use -bound_type to specify how the new SLAB/FOV are computed.
- *                 The orientation and voxel size can be controlled using
- *                 options -orient and -dxyz.
- *                 The -bound_type will affect the origin and number of voxels,
- *                 which is to say the voxel centroids.
+ *                 Use -bound_type to specify how the new SLAB/FOV are computed. The orientation and
+ *voxel size can be controlled using options -orient and -dxyz. The -bound_type will affect the
+ *origin and number of voxels, which is to say the voxel centroids.
  *
  *                   BTYPE: one of {"FOV", "SLAB", "CENT_ORIG", "CENT"}
- *                      FOV         : field of view
- *                      SLAB        : slab (preserve outer centroids)
- *                      CENT_ORIG   : preserve centroids, trunc towards origin
- *                      CENT        : preserve centroids, trunc towards RAI
+ *                      FOV         : field of view SLAB        : slab (preserve outer centroids)
+ *CENT_ORIG   : preserve centroids, trunc towards origin CENT        : preserve centroids, trunc
+ *towards RAI
  *
- *              -dxyz DX DY DZ    : resample to a new grid
- *                                      (DX, DY, DZ are real numbers in mm)
- *              -orient OR_CODE   : reorient to new orientation code
- *                                      (a three character string, each
- *                                       from the set {A,P, I,S, L,R})
+ *              -dxyz DX DY DZ    : resample to a new grid (DX, DY, DZ are real numbers in mm)
+ *              -orient OR_CODE   : reorient to new orientation code (a three character string, each
+ *from the set {A,P, I,S, L,R})
  *
  *              -master MAST_DSET : apply orient/dxyz from MAST_DSET
  *
@@ -45,223 +39,224 @@
  *
  *              -upsample FAC     : upsample the voxels by factor FAC
  *
- *                Upsampling the voxels makes them smaller.  This convenience
- *                option is equivalent to using:
+ *                Upsampling the voxels makes them smaller.  This convenience option is equivalent
+ *to using:
  *
  *                   -dxyz old_dx/FAC old_dy/FAC old_dz/FAC    \\
  *                   -bound_type CENT                          \\
  *
- *                Specifying -bound_type BBB afterwards will override the
- *                default 'CENT' for this option.
+ *                Specifying -bound_type BBB afterwards will override the default 'CENT' for this
+ *option.
  *
  *              -downsample FAC   : downsample the voxels by factor FAC
  *
- *                Downsampling the voxels makes them larger.  This convenience
- *                option is equivalent to using:
+ *                Downsampling the voxels makes them larger.  This convenience option is equivalent
+ *to using:
  *
  *                   -dxyz old_dx*FAC old_dy*FAC old_dz*FAC    \\
  *                   -bound_type CENT                          \\
  *
- *                Specifying -bound_type BBB afterwards will override the
- *                default 'CENT' for this option.
+ *                Specifying -bound_type BBB afterwards will override the default 'CENT' for this
+ *option.
  *
  *              -delta_scale FAC  : rescale voxels sizes by factor FAC
  *
- *                This is a generalized version of -upsample/-downsample,
- *                included since it is actually how -upsample and -downsample
- *                are applied, and they are not allowed factors < 1.0.
- *                The weirdness is just that upsample FAC > 1 means the voxels
- *                get smaller, as 1.0/FAC.
+ *                This is a generalized version of -upsample/-downsample, included since it is
+ *actually how -upsample and -downsample are applied, and they are not allowed factors < 1.0. The
+ *weirdness is just that upsample FAC > 1 means the voxels get smaller, as 1.0/FAC.
  *
- *                Using           :    -upsample FAC
- *                is equivalent to:    -delta_scale 1.0/FAC
+ *                Using           :    -upsample FAC is equivalent to:    -delta_scale 1.0/FAC
  *
- *                Using           :    -downsample FAC
- *                is equivalent to:    -delta_scale FAC
+ *                Using           :    -downsample FAC is equivalent to:    -delta_scale FAC
  *
- *                         FAC <= 0.0    : illegal
- *                   0.0 < FAC <  1.0    : upsample (smaller voxels)
- *                         FAC == 1.0    : no change in voxel size
- *                   1.0 < FAC           : downsample (larger voxels)
+ *                         FAC <= 0.0    : illegal 0.0 < FAC <  1.0    : upsample (smaller voxels)
+ *FAC == 1.0    : no change in voxel size 1.0 < FAC           : downsample (larger voxels)
  *
  *    examples:
- *      3dresample -orient "asl" -rmode NN -prefix asl.dset -input inset+orig
- *      3dresample -dxyz 1.0 1.0 0.9 -prefix 119.dset -input some.input+tlrc
- *      3dresample -master master+orig -prefix new.copy -input old.copy+orig
- *      3dresample -downsample 2 -prefix new.down2 -input inset+orig
+ *      3dresample -orient "asl" -rmode NN -prefix asl.dset -input inset+orig 3dresample -dxyz 1.0
+ *1.0 0.9 -prefix 119.dset -input some.input+tlrc 3dresample -master master+orig -prefix new.copy
+ *-input old.copy+orig 3dresample -downsample 2 -prefix new.down2 -input inset+orig
  *----------------------------------------------------------------------
-*/
+ */
 
 static char g_history[] =
- "----------------------------------------------------------------------\n"
- " history:\n"
- "\n"
- " 1.0  May 23, 2002 - initial release\n"
- " 1.1  Jul 02, 2002 - modified to fully align new data set grid to master\n"
- " 1.2  Jul 29, 2002\n"
- "   - no change here, but updated r_new_resam_dset() for view type\n"
- " 1.3  January 14, 2003\n"
- "   - clear warp information before writing to disk (fix uncommon problem)\n"
- " 1.4  Jul 27, 2003 - wrap unknown printed strings in NULL check\n"
- " 1.5  Jan 07, 2004\n"
- "   - added suggestion of 3dfractionize to -help output\n"
- "   - added '-hist' option\n"
- " 1.6  Mar 04, 2004\n"
- "   - added check for RESAM_shortstr[] (to catch NN and Bk modes)\n"
- "   - reversed order of history: recent at the bottom\n"
- " 1.7  Jul 26, 2004 - passed NULL sublist to r_new_resam_dset()\n"
- " 1.7a Mar 22, 2005 - removed tabs\n"
- " 1.8  Aug 02, 2005 - allow dxyz to override those from master\n"
- " 1.9  Apr 27, 2009 - small help update (also, show help if no args)\n"
- " 1.10 Jun 26, 2014 - added -bound_type FOV/SLAB\n"
- " 1.11 Dec 15, 2025\n"
- "   - added CENT and CENT_ORIG -bound_type parameters\n"
- "   - added options -upsample, -downsample, -delta_scale\n"
- "----------------------------------------------------------------------\n";
+    "----------------------------------------------------------------------\n"
+    " history:\n"
+    "\n"
+    " 1.0  May 23, 2002 - initial release\n"
+    " 1.1  Jul 02, 2002 - modified to fully align new data set grid to master\n"
+    " 1.2  Jul 29, 2002\n"
+    "   - no change here, but updated r_new_resam_dset() for view type\n"
+    " 1.3  January 14, 2003\n"
+    "   - clear warp information before writing to disk (fix uncommon problem)\n"
+    " 1.4  Jul 27, 2003 - wrap unknown printed strings in NULL check\n"
+    " 1.5  Jan 07, 2004\n"
+    "   - added suggestion of 3dfractionize to -help output\n"
+    "   - added '-hist' option\n"
+    " 1.6  Mar 04, 2004\n"
+    "   - added check for RESAM_shortstr[] (to catch NN and Bk modes)\n"
+    "   - reversed order of history: recent at the bottom\n"
+    " 1.7  Jul 26, 2004 - passed NULL sublist to r_new_resam_dset()\n"
+    " 1.7a Mar 22, 2005 - removed tabs\n"
+    " 1.8  Aug 02, 2005 - allow dxyz to override those from master\n"
+    " 1.9  Apr 27, 2009 - small help update (also, show help if no args)\n"
+    " 1.10 Jun 26, 2014 - added -bound_type FOV/SLAB\n"
+    " 1.11 Dec 15, 2025\n"
+    "   - added CENT and CENT_ORIG -bound_type parameters\n"
+    "   - added options -upsample, -downsample, -delta_scale\n"
+    "----------------------------------------------------------------------\n";
 
-#define VERSION "Version 1.11 <December 15, 2025>"
+#define VERSION    "Version 1.11 <December 15, 2025>"
 
 
 /*--- local stuff ------------------------------------------------------*/
 
-#define USE_LONG        1
-#define USE_SHORT       2
-#define USE_VERSION     3
-#define USE_HISTORY     4
+#define USE_LONG         1
+#define USE_SHORT        2
+#define USE_VERSION      3
+#define USE_HISTORY      4
 
 #define DELTA_MIN        0.0000001
-#define DELTA_MAX       9999.9
+#define DELTA_MAX        9999.9
 
-#define RL_DEBUG_OFF    0
-#define RL_DEBUG_LOW    1
-#define RL_DEBUG_HIGH   2
+#define RL_DEBUG_OFF     0
+#define RL_DEBUG_LOW     1
+#define RL_DEBUG_HIGH    2
 
-typedef struct
-{
-    THD_3dim_dataset * dset;
-    THD_3dim_dataset * mset;
-    double             dx, dy, dz;
-    double             dscale;
-    char             * orient;
-    char             * prefix;
-    int                resam;
-    int                bound_type;
-    int                debug;
+typedef struct {
+    THD_3dim_dataset *dset;
+    THD_3dim_dataset *mset;
+    double            dx, dy, dz;
+    double            dscale;
+    char *            orient;
+    char *            prefix;
+    int               resam;
+    int               bound_type;
+    int               debug;
 } options_t;
 
-int disp_opts_data   ( char * info, options_t * opts );
-int init_options     ( options_t * opts, int argc, char * argv [] );
-int sync_master_opts ( options_t * opts );
-int usage            ( char * prog, int level );
-int write_results    ( THD_3dim_dataset * dout, options_t * opts,
-                       int argc, char * argv [] );
+int disp_opts_data(char *info, options_t *opts);
+int init_options(options_t *opts, int argc, char *argv []);
+int sync_master_opts(options_t *opts);
+int usage(char *prog, int level);
+int write_results(THD_3dim_dataset *dout, options_t *opts,
+                  int argc, char *argv []);
 
 /*----------------------------------------------------------------------*/
 
-int main( int argc , char * argv[] )
+int main(int argc, char *argv[])
 {
-    THD_3dim_dataset * dout;
-    options_t          opts;
-    int                ret_val;
+    THD_3dim_dataset *dout;
+    options_t         opts;
+    int ret_val;
 
-    mainENTRY("3dresample"); machdep(); AFNI_logger("3dresample",argc,argv);
+    mainENTRY("3dresample"); machdep(); AFNI_logger("3dresample", argc, argv);
 
     /* validate inputs and init options structure */
-    if ( (ret_val = init_options(&opts, argc, argv)) != 0 ) {
-        if( ret_val < 0 ) return 1;
-        else              return 0;
+    if ((ret_val = init_options(&opts, argc, argv)) != 0)
+    {
+        if (ret_val < 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     /* actually resample and/or reorient the dataset */
-    dout = r_new_resam_dset_eng(opts.dset, opts.mset, opts.dx,opts.dy,opts.dz,
+    dout = r_new_resam_dset_eng(opts.dset, opts.mset, opts.dx, opts.dy, opts.dz,
                                 opts.orient, opts.resam, NULL, 1, 0,
                                 opts.bound_type);
-    if ( dout == NULL )
+    if (dout == NULL)
     {
-        fprintf( stderr, "failure to resample dataset, exiting...\n" );
+        fprintf(stderr, "failure to resample dataset, exiting...\n");
         return FAIL;
     }
 
-    return write_results( dout, &opts, argc, argv );
+    return write_results(dout, &opts, argc, argv);
 }
-
 
 /*----------------------------------------------------------------------
  * init_options - validate inputs, give help, init options struct
  *----------------------------------------------------------------------
-*/
-int init_options ( options_t * opts, int argc, char * argv [] )
+ */
+int init_options(options_t *opts, int argc, char *argv [])
 {
     int ac;
     int opt_btype = -1; /* start with invalid */
 
     /* clear out the options structure, and explicitly set pointers */
-    memset( opts, 0, sizeof(options_t) );
-    opts->orient = opts->prefix  = NULL; /* laziness with proper conversions */
-    opts->dset   = opts->mset    = NULL;
-    opts->dscale = 0.0;
+    memset(opts, 0, sizeof(options_t));
+    opts->orient     = opts->prefix = NULL; /* laziness with proper conversions */
+    opts->dset       = opts->mset = NULL;
+    opts->dscale     = 0.0;
     opts->bound_type = resam_str2bound("FOV"); /* set, but override with opt */
 
     /* show help if there are no arguments */
-    if ( argc < 2 ) { usage( argv[0], USE_LONG ); return 1; }
-
-    for ( ac = 1; ac < argc; ac++ )
+    if (argc < 2)
     {
-        if ( ! strncmp(argv[ac], "-help", 5) )
+        usage(argv[0], USE_LONG); return 1;
+    }
+
+    for (ac = 1; ac < argc; ac++)
+    {
+        if (!strncmp(argv[ac], "-help", 5))
         {
-            usage( argv[0], USE_LONG );
+            usage(argv[0], USE_LONG);
             return 1;
         }
-        else if ( ! strncmp(argv[ac], "-hist", 5) )
+        else if (!strncmp(argv[ac], "-hist", 5))
         {
-            usage( argv[0], USE_HISTORY );
+            usage(argv[0], USE_HISTORY);
             return 1;
         }
-        else if ( ! strncmp(argv[ac], "-version", 2) )
+        else if (!strncmp(argv[ac], "-version", 2))
         {
-            usage( argv[0], USE_VERSION );
+            usage(argv[0], USE_VERSION);
             return 1;
         }
-        else if ( ! strncmp(argv[ac], "-bound_type", 6) ) /* 26 Jun 2014 */
+        else if (!strncmp(argv[ac], "-bound_type", 6))    /* 26 Jun 2014 */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -bound_type FOV/SLAB/CENT/CENT_ORIG\n",
-                       stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -bound_type FOV/SLAB/CENT/CENT_ORIG\n",
+                      stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            if ( (opt_btype = resam_str2bound(argv[++ac])) < 0 )
+            if ((opt_btype = resam_str2bound(argv[++ac])) < 0)
             {
-                fprintf( stderr, "invalid -bound_type <%s>\n", argv[ac] );
+                fprintf(stderr, "invalid -bound_type <%s>\n", argv[ac]);
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-debug", 6) )
+        else if (!strncmp(argv[ac], "-debug", 6))
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -debug LEVEL\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -debug LEVEL\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
             opts->debug = atoi(argv[++ac]);
-            if ( opts->debug < 0 || opts->debug > RL_DEBUG_HIGH )
+            if (opts->debug < 0 || opts->debug > RL_DEBUG_HIGH)
             {
-                fprintf( stderr, "bad debug level <%d>, should be in [%d,%d]\n",
-                        opts->debug, RL_DEBUG_OFF, RL_DEBUG_HIGH );
-                usage( argv[0], USE_SHORT );
+                fprintf(stderr, "bad debug level <%d>, should be in [%d,%d]\n",
+                        opts->debug, RL_DEBUG_OFF, RL_DEBUG_HIGH);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-dxyz", 3) )     /* dxyz */
+        else if (!strncmp(argv[ac], "-dxyz", 3))        /* dxyz */
         {
-            if ( (ac+3) >= argc )
+            if ((ac + 3) >= argc)
             {
-                fputs( "option usage: -dxyz DX DY DZ\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -dxyz DX DY DZ\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
@@ -269,202 +264,214 @@ int init_options ( options_t * opts, int argc, char * argv [] )
             opts->dy = atof(argv[++ac]);
             opts->dz = atof(argv[++ac]);
 
-            if ( (opts->dx < DELTA_MIN || opts->dx > DELTA_MAX) ||
-                 (opts->dy < DELTA_MIN || opts->dy > DELTA_MAX) ||
-                 (opts->dz < DELTA_MIN || opts->dz > DELTA_MAX) )
+            if ((opts->dx < DELTA_MIN || opts->dx > DELTA_MAX) ||
+                (opts->dy < DELTA_MIN || opts->dy > DELTA_MAX) ||
+                (opts->dz < DELTA_MIN || opts->dz > DELTA_MAX))
             {
-                fprintf( stderr, "dxyz must be in [%.1f,%.1f]\n",
-                         DELTA_MIN, DELTA_MAX );
+                fprintf(stderr, "dxyz must be in [%.1f,%.1f]\n",
+                        DELTA_MIN, DELTA_MAX);
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-or", 3) )       /* orientation */
+        else if (!strncmp(argv[ac], "-or", 3))          /* orientation */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -orient OR_STRING\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -orient OR_STRING\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
             opts->orient = argv[++ac];
         }
-        else if ( ! strncmp(argv[ac], "-master", 5) )   /* master */
+        else if (!strncmp(argv[ac], "-master", 5))      /* master */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -master MAST_DSET\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -master MAST_DSET\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            opts->mset = THD_open_dataset( argv[++ac] );
-            if ( ! ISVALID_DSET(opts->mset) )
+            opts->mset = THD_open_dataset(argv[++ac]);
+            if (!ISVALID_DSET(opts->mset))
             {
-                fprintf( stderr, "invalid master dataset <%s>\n", argv[ac] );
+                fprintf(stderr, "invalid master dataset <%s>\n", argv[ac]);
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-upsample", 6) )     /* upsample */
+        else if (!strncmp(argv[ac], "-upsample", 6))        /* upsample */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -upsample FAC\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -upsample FAC\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            opts->dscale = atof(argv[++ac]);
+            opts->dscale     = atof(argv[++ac]);
             opts->bound_type = resam_str2bound("CENT");
 
             /* test before inverting */
-            if ( opts->dscale < 1.0 ) {
-                fprintf( stderr, "upsample factor must be >= 1.0\n" );
+            if (opts->dscale < 1.0)
+            {
+                fprintf(stderr, "upsample factor must be >= 1.0\n");
                 return FAIL;
             }
             /* and take reciprocal, upsampling scales deltas downward */
-            opts->dscale = 1.0/opts->dscale;
+            opts->dscale = 1.0 / opts->dscale;
         }
-        else if ( ! strncmp(argv[ac], "-downsample", 8) )     /* downsample */
+        else if (!strncmp(argv[ac], "-downsample", 8))        /* downsample */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -downsample FAC\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -downsample FAC\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            opts->dscale = atof(argv[++ac]);
+            opts->dscale     = atof(argv[++ac]);
             opts->bound_type = resam_str2bound("CENT");
 
-            if ( opts->dscale < 1.0 ) {
-                fprintf( stderr, "downsample factor must be >= 1.0\n" );
+            if (opts->dscale < 1.0)
+            {
+                fprintf(stderr, "downsample factor must be >= 1.0\n");
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-delta_scale", 6) )     /* upsample */
+        else if (!strncmp(argv[ac], "-delta_scale", 6))        /* upsample */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -delta_scale FAC\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -delta_scale FAC\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            opts->dscale = atof(argv[++ac]);
+            opts->dscale     = atof(argv[++ac]);
             opts->bound_type = resam_str2bound("CENT");
 
-            if ( opts->dscale <= 0.0 ) {
-                fprintf( stderr, "delta_scale factor must be > 0.0\n" );
+            if (opts->dscale <= 0.0)
+            {
+                fprintf(stderr, "delta_scale factor must be > 0.0\n");
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-zeropad", 5) )  /* zeropad */
+        else if (!strncmp(argv[ac], "-zeropad", 5))     /* zeropad */
         {
             fputs("warning: '-zeropad' is no longer a valid option\n", stderr);
             /* but still move on... */
         }
-        else if ( ! strncmp(argv[ac], "-rmode", 6) )    /* resample mode */
+        else if (!strncmp(argv[ac], "-rmode", 6))       /* resample mode */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -rmode RESAMPLE_MODE\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -rmode RESAMPLE_MODE\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            if ( ( (opts->resam = resam_str2mode(argv[++ac]) ) < 0 ) ||
-                 (  opts->resam > LAST_RESAM_TYPE ) )
+            if (((opts->resam = resam_str2mode(argv[++ac])) < 0) ||
+                (opts->resam > LAST_RESAM_TYPE))
             {
-                fprintf( stderr, "invalid resample mode <%s>\n", argv[ac] );
+                fprintf(stderr, "invalid resample mode <%s>\n", argv[ac]);
                 return FAIL;
             }
         }
-        else if ( ! strncmp(argv[ac], "-prefix", 4) )   /* new dset prefix */
+        else if (!strncmp(argv[ac], "-prefix", 4))      /* new dset prefix */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -prefix OUTPUT_PREFIX\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -prefix OUTPUT_PREFIX\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
             opts->prefix = argv[++ac];
-            if ( !THD_filename_ok(opts->prefix) )
+            if (!THD_filename_ok(opts->prefix))
             {
-                fprintf( stderr, "invalid output prefix <%s>\n", opts->prefix );
-                return usage( argv[0], USE_SHORT );
+                fprintf(stderr, "invalid output prefix <%s>\n", opts->prefix);
+                return usage(argv[0], USE_SHORT);
             }
         }
-        else if ( ! strncmp(argv[ac], "-inset", 3) ||
-                  ! strncmp(argv[ac], "-input", 6) )    /* input dset */
+        else if (!strncmp(argv[ac], "-inset", 3) ||
+                 !strncmp(argv[ac], "-input", 6))       /* input dset */
         {
-            if ( (ac+1) >= argc )
+            if ((ac + 1) >= argc)
             {
-                fputs( "option usage: -input INPUT_DSET\n", stderr );
-                usage( argv[0], USE_SHORT );
+                fputs("option usage: -input INPUT_DSET\n", stderr);
+                usage(argv[0], USE_SHORT);
                 return FAIL;
             }
 
-            opts->dset = THD_open_dataset( argv[++ac] );
-            if ( ! ISVALID_DSET(opts->dset) )
+            opts->dset = THD_open_dataset(argv[++ac]);
+            if (!ISVALID_DSET(opts->dset))
             {
-                fprintf( stderr, "invalid input dataset <%s>\n", argv[ac] );
+                fprintf(stderr, "invalid input dataset <%s>\n", argv[ac]);
                 return FAIL;
             }
         }
         else     /* invalid option */
         {
-            fprintf( stderr, "invalid option <%s>\n", argv[ac] );
-            usage( argv[0], USE_SHORT );
+            fprintf(stderr, "invalid option <%s>\n", argv[ac]);
+            usage(argv[0], USE_SHORT);
             return FAIL;
         }
     }
 
-    if ( !ISVALID_DSET(opts->dset) || (opts->prefix == NULL) )
+    if (!ISVALID_DSET(opts->dset) || (opts->prefix == NULL))
     {
-        fprintf( stderr, "missing prefix or input dset, exiting...\n" );
-        usage( argv[0], USE_SHORT );
+        fprintf(stderr, "missing prefix or input dset, exiting...\n");
+        usage(argv[0], USE_SHORT);
         return FAIL;
     }
 
     /* if user specified bound_type, override default */
     /* (since default can change based on options) */
-    if( opt_btype >= 0 )
+    if (opt_btype >= 0)
+    {
         opts->bound_type = opt_btype;
+    }
 
     /* any dscale option is applied as -dxyz, and requires the input dset */
-    if( opts->dscale > 0.0 ) {
-        if( opts->dx != 0.0 ) {
-           fprintf(stderr,"** cannot use -dxyz with -dscale/up/downsample\n");
-           return FAIL;
+    if (opts->dscale > 0.0)
+    {
+        if (opts->dx != 0.0)
+        {
+            fprintf(stderr, "** cannot use -dxyz with -dscale/up/downsample\n");
+            return FAIL;
         }
         opts->dx = opts->dscale * fabs(opts->dset->daxes->xxdel);
         opts->dy = opts->dscale * fabs(opts->dset->daxes->yydel);
         opts->dz = opts->dscale * fabs(opts->dset->daxes->zzdel);
     }
 
-    if ( opts->debug >= RL_DEBUG_LOW )
+    if (opts->debug >= RL_DEBUG_LOW)
     {
-        disp_opts_data( "++ options initialized: ", opts );
+        disp_opts_data("++ options initialized: ", opts);
 
-        if ( opts->debug >= RL_DEBUG_HIGH )     /* dset is valid by now */
+        if (opts->debug >= RL_DEBUG_HIGH)       /* dset is valid by now */
         {
-            r_idisp_thd_3dim_dataset( "inset : ", opts->dset );
-            r_idisp_thd_dataxes     ( "inset : ", opts->dset->daxes );
-            r_idisp_thd_datablock   ( "inset : ", opts->dset->dblk  );
-            if ( opts->dset->dblk )
-                r_idisp_thd_diskptr ( "inset : ", opts->dset->dblk->diskptr );
+            r_idisp_thd_3dim_dataset("inset : ", opts->dset);
+            r_idisp_thd_dataxes("inset : ", opts->dset->daxes);
+            r_idisp_thd_datablock("inset : ", opts->dset->dblk);
+            if (opts->dset->dblk)
+            {
+                r_idisp_thd_diskptr("inset : ", opts->dset->dblk->diskptr);
+            }
         }
     }
 
-    if ( sync_master_opts( opts ) )
+    if (sync_master_opts(opts))
+    {
         return FAIL;
+    }
 
     return 0;
 }
 
 #if 0  /* lose new_zeropad_dset */
+
 /*----------------------------------------------------------------------
  * new_zeropad_dset - create a new zeropadded dataset
  *
@@ -472,24 +479,24 @@ int init_options ( options_t * opts, int argc, char * argv [] )
  *
  * This function copies the master part of 3dZeropad.c.
  *----------------------------------------------------------------------
-*/
-int new_zeropad_dset ( options_t * opts, THD_3dim_dataset ** dout )
+ */
+int new_zeropad_dset(options_t *opts, THD_3dim_dataset **dout)
 {
-    THD_3dim_dataset * tmp_dset;
-    THD_dataxes      * max = opts->mset->daxes, * iax = (*dout)->daxes;
-    int                nerr = 0;
-    float              mxbot,mybot,mzbot, mxtop,mytop,mztop, mdx,mdy,mdz;
-    float              ixbot,iybot,izbot, ixtop,iytop,iztop, idx,idy,idz;
-    int                mnx,mny,mnz, inx,iny,inz;
-    int                add_xb,add_xt, add_yb,add_yt, add_zb,add_zt;
-    int                add_I=0, add_S=0, add_A=0, add_P=0, add_L=0, add_R=0;
+    THD_3dim_dataset *tmp_dset;
+    THD_dataxes *     max = opts->mset->daxes, *iax = (*dout)->daxes;
+    int   nerr = 0;
+    float mxbot, mybot, mzbot, mxtop, mytop, mztop, mdx, mdy, mdz;
+    float ixbot, iybot, izbot, ixtop, iytop, iztop, idx, idy, idz;
+    int   mnx, mny, mnz, inx, iny, inz;
+    int   add_xb, add_xt, add_yb, add_yt, add_zb, add_zt;
+    int   add_I = 0, add_S = 0, add_A = 0, add_P = 0, add_L = 0, add_R = 0;
 
     /* check if datasets are oriented the same */
-    if( max->xxorient != iax->xxorient ||
+    if (max->xxorient != iax->xxorient ||
         max->yyorient != iax->yyorient ||
-        max->zzorient != iax->zzorient )
+        max->zzorient != iax->zzorient)
     {
-        fputs("error: orientation mismatch!\n", stderr );
+        fputs("error: orientation mismatch!\n", stderr);
         nerr++;
     }
 
@@ -499,458 +506,498 @@ int new_zeropad_dset ( options_t * opts, THD_3dim_dataset ** dout )
     mnx = max->nxx;    mny = max->nyy;   mnz = max->nzz;
     inx = iax->nxx;    iny = iax->nyy;   inz = iax->nzz;
 
-    if( fabs(mdx-idx) > 0.01*fabs(mdx) ||
-        fabs(mdy-idy) > 0.01*fabs(mdy) ||
-        fabs(mdz-idz) > 0.01*fabs(mdz) )
+    if (fabs(mdx - idx) > 0.01 * fabs(mdx) ||
+        fabs(mdy - idy) > 0.01 * fabs(mdy) ||
+        fabs(mdz - idz) > 0.01 * fabs(mdz))
     {
-       fputs("error: voxel size mismatch!\n", stderr);
-       nerr++;
+        fputs("error: voxel size mismatch!\n", stderr);
+        nerr++;
     }
 
-    if ( nerr > 0 )
+    if (nerr > 0)
+    {
         return FAIL;    /* we have already printed the failure cause(s) */
-
+    }
     /* the data looks okay */
 
     /* calculate coords at top and bottom of each dataset */
-    mxbot = max->xxorg; mxtop = mxbot + mnx*mdx;
-    mybot = max->yyorg; mytop = mybot + mny*mdy;
-    mzbot = max->zzorg; mztop = mzbot + mnz*mdz;
+    mxbot = max->xxorg; mxtop = mxbot + mnx * mdx;
+    mybot = max->yyorg; mytop = mybot + mny * mdy;
+    mzbot = max->zzorg; mztop = mzbot + mnz * mdz;
 
-    ixbot = iax->xxorg; ixtop = ixbot + inx*idx;
-    iybot = iax->yyorg; iytop = iybot + iny*idy;
-    izbot = iax->zzorg; iztop = izbot + inz*idz;
+    ixbot = iax->xxorg; ixtop = ixbot + inx * idx;
+    iybot = iax->yyorg; iytop = iybot + iny * idy;
+    izbot = iax->zzorg; iztop = izbot + inz * idz;
 
     /* calculate amount to add/trim at each face */
-    add_xb = (int) rint((ixbot-mxbot)/idx);
-    add_xt = (int) rint((mxtop-ixtop)/idx);
-    add_yb = (int) rint((iybot-mybot)/idy);
-    add_yt = (int) rint((mytop-iytop)/idy);
-    add_zb = (int) rint((izbot-mzbot)/idz);
-    add_zt = (int) rint((mztop-iztop)/idz);
+    add_xb = (int)rint((ixbot - mxbot) / idx);
+    add_xt = (int)rint((mxtop - ixtop) / idx);
+    add_yb = (int)rint((iybot - mybot) / idy);
+    add_yt = (int)rint((mytop - iytop) / idy);
+    add_zb = (int)rint((izbot - mzbot) / idz);
+    add_zt = (int)rint((mztop - iztop) / idz);
 
     /* map trims from x,y,z to RL,AP,IS coords */
 
-    switch( iax->xxorient ){
-        case ORI_R2L_TYPE: add_R = add_xb; add_L = add_xt; break;
-        case ORI_L2R_TYPE: add_L = add_xb; add_R = add_xt; break;
-        case ORI_I2S_TYPE: add_I = add_xb; add_S = add_xt; break;
-        case ORI_S2I_TYPE: add_S = add_xb; add_I = add_xt; break;
-        case ORI_A2P_TYPE: add_A = add_xb; add_P = add_xt; break;
-        case ORI_P2A_TYPE: add_P = add_xb; add_A = add_xt; break;
-        default          : fputs("bad xxorient!\n", stderr); return FAIL;
-    }
-
-    switch( iax->yyorient ){
-        case ORI_R2L_TYPE: add_R = add_yb; add_L = add_yt; break;
-        case ORI_L2R_TYPE: add_L = add_yb; add_R = add_yt; break;
-        case ORI_I2S_TYPE: add_I = add_yb; add_S = add_yt; break;
-        case ORI_S2I_TYPE: add_S = add_yb; add_I = add_yt; break;
-        case ORI_A2P_TYPE: add_A = add_yb; add_P = add_yt; break;
-        case ORI_P2A_TYPE: add_P = add_yb; add_A = add_yt; break;
-        default          : fputs("bad yyorient!\n", stderr); return FAIL;
-    }
-
-    switch( iax->zzorient ){
-        case ORI_R2L_TYPE: add_R = add_zb; add_L = add_zt; break;
-        case ORI_L2R_TYPE: add_L = add_zb; add_R = add_zt; break;
-        case ORI_I2S_TYPE: add_I = add_zb; add_S = add_zt; break;
-        case ORI_S2I_TYPE: add_S = add_zb; add_I = add_zt; break;
-        case ORI_A2P_TYPE: add_A = add_zb; add_P = add_zt; break;
-        case ORI_P2A_TYPE: add_P = add_zb; add_A = add_zt; break;
-        default          : fputs("bad zzorient!\n", stderr); return FAIL;
-    }
-
-    if ( opts->debug >= RL_DEBUG_LOW )
+    switch (iax->xxorient)
     {
-        printf( "++ zeropad: (I,S,A,P,L,R) = (%d,%d,%d,%d,%d,%d)\n",
-                add_I, add_S, add_A, add_P, add_L, add_R );
+    case ORI_R2L_TYPE: add_R = add_xb; add_L = add_xt; break;
+
+    case ORI_L2R_TYPE: add_L = add_xb; add_R = add_xt; break;
+
+    case ORI_I2S_TYPE: add_I = add_xb; add_S = add_xt; break;
+
+    case ORI_S2I_TYPE: add_S = add_xb; add_I = add_xt; break;
+
+    case ORI_A2P_TYPE: add_A = add_xb; add_P = add_xt; break;
+
+    case ORI_P2A_TYPE: add_P = add_xb; add_A = add_xt; break;
+
+    default: fputs("bad xxorient!\n", stderr); return FAIL;
+    }
+
+    switch (iax->yyorient)
+    {
+    case ORI_R2L_TYPE: add_R = add_yb; add_L = add_yt; break;
+
+    case ORI_L2R_TYPE: add_L = add_yb; add_R = add_yt; break;
+
+    case ORI_I2S_TYPE: add_I = add_yb; add_S = add_yt; break;
+
+    case ORI_S2I_TYPE: add_S = add_yb; add_I = add_yt; break;
+
+    case ORI_A2P_TYPE: add_A = add_yb; add_P = add_yt; break;
+
+    case ORI_P2A_TYPE: add_P = add_yb; add_A = add_yt; break;
+
+    default: fputs("bad yyorient!\n", stderr); return FAIL;
+    }
+
+    switch (iax->zzorient)
+    {
+    case ORI_R2L_TYPE: add_R = add_zb; add_L = add_zt; break;
+
+    case ORI_L2R_TYPE: add_L = add_zb; add_R = add_zt; break;
+
+    case ORI_I2S_TYPE: add_I = add_zb; add_S = add_zt; break;
+
+    case ORI_S2I_TYPE: add_S = add_zb; add_I = add_zt; break;
+
+    case ORI_A2P_TYPE: add_A = add_zb; add_P = add_zt; break;
+
+    case ORI_P2A_TYPE: add_P = add_zb; add_A = add_zt; break;
+
+    default: fputs("bad zzorient!\n", stderr); return FAIL;
+    }
+
+    if (opts->debug >= RL_DEBUG_LOW)
+    {
+        printf("++ zeropad: (I,S,A,P,L,R) = (%d,%d,%d,%d,%d,%d)\n",
+               add_I, add_S, add_A, add_P, add_L, add_R);
     }
 
     /* pad if we need to */
-    if ( add_I || add_S || add_A || add_P || add_L || add_R )
+    if (add_I || add_S || add_A || add_P || add_L || add_R)
     {
-        tmp_dset = THD_zeropad( *dout,
-                                add_I, add_S, add_A, add_P, add_L, add_R,
-                                opts->prefix, ZPAD_PURGE );
+        tmp_dset = THD_zeropad(*dout,
+                               add_I, add_S, add_A, add_P, add_L, add_R,
+                               opts->prefix, ZPAD_PURGE);
 
-        if ( !ISVALID_DSET( tmp_dset ) )
+        if (!ISVALID_DSET(tmp_dset))
         {
-            fputs( "THD_zeropad failed!\n", stderr );
+            fputs("THD_zeropad failed!\n", stderr);
             return FAIL;
         }
 
-        DSET_delete( *dout );
+        DSET_delete(*dout);
         *dout = tmp_dset;
     }
 
     return 0;
 }
+
 #endif   /* end chop of new_zeropad_dset() */
 
 /*----------------------------------------------------------------------*/
-int usage ( char * progg, int level )
+int usage(char *progg, int level)
 {
-    char *prog = THD_trailname(progg,0) ;  /* 25 Jul 2006 - RWCox */
-    if ( level == USE_SHORT )
+    char *prog = THD_trailname(progg, 0);  /* 25 Jul 2006 - RWCox */
+
+    if (level == USE_SHORT)
     {
-        fprintf( stderr,
-                 "usage: %s [options] -prefix OUT_DSET -input IN_DSET\n"
-                 "usage: %s -help\n",
-                 prog, prog );
+        fprintf(stderr,
+                "usage: %s [options] -prefix OUT_DSET -input IN_DSET\n"
+                "usage: %s -help\n",
+                prog, prog);
         return 0;
     }
-    else if ( level == USE_LONG )
+    else if (level == USE_LONG)
     {
-    printf(
-    "\n"
-    "%s - reorient and/or resample a dataset\n"
-    "\n"
-    "    This program can be used to change the orientation of a dataset (via\n"
-    "    -orient), or the dx,dy,dz grid spacing (via -dxyz or any of\n"
-    "    -upsample, -downsample or -delta_scale), or change them both to\n"
-    "    match that of a master dataset (via the -master option).\n"
-    "\n"
-    "    Note: if both -master and -dxyz are used, the dxyz values will\n"
-    "          override those from the master dataset.\n"
-    "\n"
-    " ** It is important to note that once a dataset of a certain grid is\n"
-    "    created (i.e. orientation, dxyz, field of view), if other datasets\n"
-    "    are going to be resampled to match that first one, then -master\n"
-    "    should be used, rather than repeating -dxyz.  That will guarantee\n"
-    "    that all grids match.\n"
-    "\n"
-    "    Otherwise, even using both -orient and -dxyz, one may not be sure\n"
-    "    that the origin and voxel counts will match, as the are computed.\n"
-    "\n"
-    " ** Warning: this program is not meant to transform datasets between\n"
-    "             view types (such as '+orig' and '+tlrc') or spaces.\n"
-    "\n"
-    "             For that purpose, please see 3dAllineate or 3dNwarpApply.\n"
-    "\n"
-    "------------------------------------------------------------\n"
-    "\n"
-    "  usage: %s [options] -prefix OUT_DSET -input IN_DSET\n"
-    "\n"
-    "  examples:\n"
-    "\n"
-    "    %s -orient asl         -prefix new.asl.dset  -input old+orig\n"
-    "    %s -dxyz 1.0 1.0 0.9   -prefix new.119.dset  -input old+tlrc\n"
-    "    %s -master master+orig -prefix new.dset      -input old+orig\n"
-    "    %s -downsample 3       -prefix new.down2.nii -input old.nii\n"
-    "    %s -upsample   3       -prefix new.up2.nii   -input old.nii\n"
-    "\n"
-    "  note:\n"
-    "\n"
-    "    Information about a dataset's voxel size and orientation can be\n"
-    "    found via program 3dinfo.\n"
-    "\n"
-    "------------------------------------------------------------\n"
-    "\n"
-    "  terminal options: \n"
-    "\n"
-    "    -help            : show this help information\n"
-    "\n"
-    "    -hist            : output the history of program changes\n"
-    "\n"
-    "    -version         : show version information\n"
-    "\n"
-    "  main options\n"
-    "\n"
-    "    -bound_type TYPE : specify which boundary is preserved\n"
-    "          e.g.     -bound_type SLAB\n"
-    "          default: -bound_type CENT  (for delta_scale operations)\n"
-    "          default: -bound_type FOV   (for other operations)\n"
-    "\n"
-    "      TYPE\n"
-    "      ----\n"
-    "      FOV : field of view (see 'to3d -help')\n"
-    "          : half a voxel outside of bounding centers (SLAB)\n"
-    "\n"
-    "          The default and original use preserves the field of view when\n"
-    "          resampling, allowing the extents (SLABs) to grow or shrink by\n"
-    "          half of the difference in the dimension size (big voxels to\n"
-    "          small will cause the extents to expand, for example, while\n"
-    "          small to big will cause them to shrink).\n"
-    "\n"
-    "      SLAB : extents or bounding centers (see 'to3d -help')\n"
-    "           : from outer voxel center to outer voxel center\n"
-    "\n"
-    "          SLAB will have the opposite effect as FOV.  The extents should\n"
-    "          be unchanged (subject to voxel size truncation), while the FOV\n"
-    "          will grow or shrink in the opposite way as above.\n"
-    "\n"
-    "          Note that when using SLAB, edge voxels should be mostly\n"
-    "          unaffected by the interpolation.\n"
-    "\n"
-    "      CENT_ORIG: preserve voxel centroids (not in to3d)\n"
-    "\n"
-    "          Try to preserve voxel centers when resampling.  If scaling the\n"
-    "          voxel sizes (up or down) by an integer, output voxels should\n"
-    "          be on the original grid as much as possible.\n"
-    "\n"
-    "       ** If directly using -dxyz, the user should be sure the new dxyz\n"
-    "          values scale correctly.  Otherwise consider using -upsample,\n"
-    "          -downsample or -delta_scale.\n"
-    "\n"
-    "          When upsampling (by a scale factor of S):\n"
-    "\n"
-    "            The result should have approximately S times the number of\n"
-    "            voxels (in each direction), each being 1/S times as large.\n"
-    "\n"
-    "            method: find maximum SLAB strictly inside original FOV\n"
-    "\n"
-    "        *   For integer S, this result will include all original voxel\n"
-    "            centers, plus (S-1) inner centers per voxel, plus\n"
-    "            floor((S-e)/2) centers per side, for some epsilon, e.\n"
-    "\n"
-    "          downsample (by a scale factor of S):\n"
-    "\n"
-    "            The result should have approximately 1/S times the number of\n"
-    "            voxels (in each direction), each being S times as large.\n"
-    "\n"
-    "            method: find maximum SLAB strictly inside original SLAB\n"
-    "\n"
-    "        *   For integer S, this result will include only original voxel\n"
-    "            centers, and fewer of them.  The origin will be offset by\n"
-    "            half of the missing slab :\n"
-    "               floor(1/2 * (old_slab-new_slab)/dold + e)\n"
-    "\n"
-    "          For either upsample or downsample (by an integer scalar S),\n"
-    "          the origin shift will be a multiple of the smaller voxel size\n"
-    "          (dold or dnew).\n"
-    "\n"
-    "      CENT : preserve voxel centroids (not in to3d)\n"
-    "           : be orientation agnostic\n"
-    "\n"
-    "          This is the same as CENT_ORIG, except that CENT_ORIG truncates\n"
-    "          toward the origin in each direction.  CENT will truncate\n"
-    "          towards R,A,I, making it orientation agnostic (the result\n"
-    "          should be independent of the orientation on disk).\n"
-    "\n"
-    "          This is the default bound_type when rescaling voxels with\n"
-    "          -upsample, -downsample or -delta_scale (unless -bound_type\n"
-    "          is applied).\n"
-    "\n"
-    "    -debug LEVEL     : print debug info along the way\n"
-    "          e.g.  -debug 1\n"
-    "          default level is 0, max is 2\n"
-    "\n"
-    "    -dxyz DX DY DZ   : resample to new dx, dy and dz\n"
-    "          e.g.  -dxyz 1.0 1.0 0.9\n"
-    "          default is to leave unchanged\n"
-    "\n"
-    "          Each of DX,DY,DZ must be a positive real number, and will be\n"
-    "          used for a voxel delta in the new dataset (according to any\n"
-    "          new orientation).\n"
-    "\n"
-    "    -input IN_DSET   : required input dataset to reorient\n"
-    "          e.g.  -input old.dset+orig\n"
-    "\n"
-    "          Specify the input dataset.\n"
-    "\n"
-    "    -inset IN_DSET   : alternative to -input\n"
-    "\n"
-    "    -master MAST_DSET: align dataset grid to that of MAST_DSET\n"
-    "          e.g.  -master master.dset+orig\n"
-    "\n"
-    "          Get dxyz and orient from a master dataset.  The resulting grid\n"
-    "          will match that of the master.  This option can be used with\n"
-    "          -dxyz, but not with -orient.\n"
-    "\n"
-    "    -orient OR_CODE  : reorient to new axis order.\n"
-    "          e.g.  -orient asl\n"
-    "          default is to leave unchanged\n"
-    "\n"
-    "          The orientation code is a 3 character string, where the\n"
-    "          characters come from the respective sets:\n"
-       "          {A,P}, {I,S}, {L,R}\n"
-    "\n"
-    "          For example OR_CODE = LPI is the standard 'neurological'\n"
-    "          orientation, where the x-axis runs Left-to-Right, the y-axis\n"
-    "          runs Posterior-to-Anterior, and the z-axis runs\n"
-    "          Inferior-to-Superior.\n"
-    "\n"
-    "    -prefix OUT_DSET : required prefix for output dataset\n"
-    "          e.g.  -prefix reori.asl.pickle\n"
-    "\n"
-    "          Specify the name of the output data.  To get NIFTI, simply\n"
-    "          include a .nii or .nii.gz suffix, as with most AFNI programs.\n"
-    "\n"
-    "    -rmode RESAM     : use this resampling method\n"
-    "          e.g.  -rmode Linear\n"
-    "          default is NN (nearest neighbor)\n"
-    "\n"
-    "          The resampling method string RESAM should come from the set\n"
-    "          {'NN', 'Li', 'Cu', 'Bk'}.  These are for 'Nearest Neighbor',\n"
-    "          'Linear', 'Cubic' and 'Blocky' interpolation, respectively.\n"
-    "\n"
-    "          For details, go to the 'Define Datamode' panel of the afni\n"
-    "          GUI, click BHelp and then the 'ULay resam mode' menu.\n"
-    "\n"
-    "    -upsample FAC    : upsample the voxels by factor FAC\n"
-    "\n"
-    "          Upsampling the voxels makes them smaller.  This convenience\n"
-    "          option is equivalent to using:\n"
-    "\n"
-    "             -dxyz old_dx/FAC old_dy/FAC old_dz/FAC\n"
-    "             -bound_type CENT\n"
-    "\n"
-    "          Specifying -bound_type BBB afterwards will override the\n"
-    "          default 'CENT' for this option.\n"
-    "\n"
-    "    -downsample FAC   : downsample the voxels by factor FAC\n"
-    "\n"
-    "          Downsampling the voxels makes them larger.  This convenience\n"
-    "          option is equivalent to using:\n"
-    "\n"
-    "             -dxyz old_dx*FAC old_dy*FAC old_dz*FAC\n"
-    "             -bound_type CENT\n"
-    "\n"
-    "          Specifying -bound_type BBB afterwards will override the\n"
-    "          default 'CENT' for this option.\n"
-    "\n"
-    "    -delta_scale FAC  : rescale voxels sizes by factor FAC\n"
-    "\n"
-    "          This is a generalized version of -upsample/-downsample,\n"
-    "          included since it is actually how they are applied (and they\n"
-    "          are not allowed factors < 1.0).  The weirdness is since\n"
-    "          upsample FAC > 1 means the voxels get smaller, as 1.0/FAC.\n"
-    "\n"
-    "          -delta_scale is equivalent to -downsample, and equates to: \n"
-    "\n"
-    "             -dxyz old_dx*FAC old_dy*FAC old_dz*FAC\n"
-    "             -bound_type CENT\n"
-    "\n"
-    "          FAC overview:\n"
-    "\n"
-    "                   FAC <= 0.0    : illegal\n"
-    "             0.0 < FAC <  1.0    : upsample (smaller voxels)\n"
-    "                   FAC == 1.0    : no change in voxel size\n"
-    "             1.0 < FAC           : downsample (larger voxels)\n"
-    "\n"
-    "------------------------------------------------------------\n"
-    "\n"
-    "  Author: R. Reynolds - %s\n"
-    "\n",
-    prog, prog, prog, prog, prog, prog, prog, VERSION );
+        printf(
+            "\n"
+            "%s - reorient and/or resample a dataset\n"
+            "\n"
+            "    This program can be used to change the orientation of a dataset (via\n"
+            "    -orient), or the dx,dy,dz grid spacing (via -dxyz or any of\n"
+            "    -upsample, -downsample or -delta_scale), or change them both to\n"
+            "    match that of a master dataset (via the -master option).\n"
+            "\n"
+            "    Note: if both -master and -dxyz are used, the dxyz values will\n"
+            "          override those from the master dataset.\n"
+            "\n"
+            " ** It is important to note that once a dataset of a certain grid is\n"
+            "    created (i.e. orientation, dxyz, field of view), if other datasets\n"
+            "    are going to be resampled to match that first one, then -master\n"
+            "    should be used, rather than repeating -dxyz.  That will guarantee\n"
+            "    that all grids match.\n"
+            "\n"
+            "    Otherwise, even using both -orient and -dxyz, one may not be sure\n"
+            "    that the origin and voxel counts will match, as the are computed.\n"
+            "\n"
+            " ** Warning: this program is not meant to transform datasets between\n"
+            "             view types (such as '+orig' and '+tlrc') or spaces.\n"
+            "\n"
+            "             For that purpose, please see 3dAllineate or 3dNwarpApply.\n"
+            "\n"
+            "------------------------------------------------------------\n"
+            "\n"
+            "  usage: %s [options] -prefix OUT_DSET -input IN_DSET\n"
+            "\n"
+            "  examples:\n"
+            "\n"
+            "    %s -orient asl         -prefix new.asl.dset  -input old+orig\n"
+            "    %s -dxyz 1.0 1.0 0.9   -prefix new.119.dset  -input old+tlrc\n"
+            "    %s -master master+orig -prefix new.dset      -input old+orig\n"
+            "    %s -downsample 3       -prefix new.down2.nii -input old.nii\n"
+            "    %s -upsample   3       -prefix new.up2.nii   -input old.nii\n"
+            "\n"
+            "  note:\n"
+            "\n"
+            "    Information about a dataset's voxel size and orientation can be\n"
+            "    found via program 3dinfo.\n"
+            "\n"
+            "------------------------------------------------------------\n"
+            "\n"
+            "  terminal options: \n"
+            "\n"
+            "    -help            : show this help information\n"
+            "\n"
+            "    -hist            : output the history of program changes\n"
+            "\n"
+            "    -version         : show version information\n"
+            "\n"
+            "  main options\n"
+            "\n"
+            "    -bound_type TYPE : specify which boundary is preserved\n"
+            "          e.g.     -bound_type SLAB\n"
+            "          default: -bound_type CENT  (for delta_scale operations)\n"
+            "          default: -bound_type FOV   (for other operations)\n"
+            "\n"
+            "      TYPE\n"
+            "      ----\n"
+            "      FOV : field of view (see 'to3d -help')\n"
+            "          : half a voxel outside of bounding centers (SLAB)\n"
+            "\n"
+            "          The default and original use preserves the field of view when\n"
+            "          resampling, allowing the extents (SLABs) to grow or shrink by\n"
+            "          half of the difference in the dimension size (big voxels to\n"
+            "          small will cause the extents to expand, for example, while\n"
+            "          small to big will cause them to shrink).\n"
+            "\n"
+            "      SLAB : extents or bounding centers (see 'to3d -help')\n"
+            "           : from outer voxel center to outer voxel center\n"
+            "\n"
+            "          SLAB will have the opposite effect as FOV.  The extents should\n"
+            "          be unchanged (subject to voxel size truncation), while the FOV\n"
+            "          will grow or shrink in the opposite way as above.\n"
+            "\n"
+            "          Note that when using SLAB, edge voxels should be mostly\n"
+            "          unaffected by the interpolation.\n"
+            "\n"
+            "      CENT_ORIG: preserve voxel centroids (not in to3d)\n"
+            "\n"
+            "          Try to preserve voxel centers when resampling.  If scaling the\n"
+            "          voxel sizes (up or down) by an integer, output voxels should\n"
+            "          be on the original grid as much as possible.\n"
+            "\n"
+            "       ** If directly using -dxyz, the user should be sure the new dxyz\n"
+            "          values scale correctly.  Otherwise consider using -upsample,\n"
+            "          -downsample or -delta_scale.\n"
+            "\n"
+            "          When upsampling (by a scale factor of S):\n"
+            "\n"
+            "            The result should have approximately S times the number of\n"
+            "            voxels (in each direction), each being 1/S times as large.\n"
+            "\n"
+            "            method: find maximum SLAB strictly inside original FOV\n"
+            "\n"
+            "        *   For integer S, this result will include all original voxel\n"
+            "            centers, plus (S-1) inner centers per voxel, plus\n"
+            "            floor((S-e)/2) centers per side, for some epsilon, e.\n"
+            "\n"
+            "          downsample (by a scale factor of S):\n"
+            "\n"
+            "            The result should have approximately 1/S times the number of\n"
+            "            voxels (in each direction), each being S times as large.\n"
+            "\n"
+            "            method: find maximum SLAB strictly inside original SLAB\n"
+            "\n"
+            "        *   For integer S, this result will include only original voxel\n"
+            "            centers, and fewer of them.  The origin will be offset by\n"
+            "            half of the missing slab :\n"
+            "               floor(1/2 * (old_slab-new_slab)/dold + e)\n"
+            "\n"
+            "          For either upsample or downsample (by an integer scalar S),\n"
+            "          the origin shift will be a multiple of the smaller voxel size\n"
+            "          (dold or dnew).\n"
+            "\n"
+            "      CENT : preserve voxel centroids (not in to3d)\n"
+            "           : be orientation agnostic\n"
+            "\n"
+            "          This is the same as CENT_ORIG, except that CENT_ORIG truncates\n"
+            "          toward the origin in each direction.  CENT will truncate\n"
+            "          towards R,A,I, making it orientation agnostic (the result\n"
+            "          should be independent of the orientation on disk).\n"
+            "\n"
+            "          This is the default bound_type when rescaling voxels with\n"
+            "          -upsample, -downsample or -delta_scale (unless -bound_type\n"
+            "          is applied).\n"
+            "\n"
+            "    -debug LEVEL     : print debug info along the way\n"
+            "          e.g.  -debug 1\n"
+            "          default level is 0, max is 2\n"
+            "\n"
+            "    -dxyz DX DY DZ   : resample to new dx, dy and dz\n"
+            "          e.g.  -dxyz 1.0 1.0 0.9\n"
+            "          default is to leave unchanged\n"
+            "\n"
+            "          Each of DX,DY,DZ must be a positive real number, and will be\n"
+            "          used for a voxel delta in the new dataset (according to any\n"
+            "          new orientation).\n"
+            "\n"
+            "    -input IN_DSET   : required input dataset to reorient\n"
+            "          e.g.  -input old.dset+orig\n"
+            "\n"
+            "          Specify the input dataset.\n"
+            "\n"
+            "    -inset IN_DSET   : alternative to -input\n"
+            "\n"
+            "    -master MAST_DSET: align dataset grid to that of MAST_DSET\n"
+            "          e.g.  -master master.dset+orig\n"
+            "\n"
+            "          Get dxyz and orient from a master dataset.  The resulting grid\n"
+            "          will match that of the master.  This option can be used with\n"
+            "          -dxyz, but not with -orient.\n"
+            "\n"
+            "    -orient OR_CODE  : reorient to new axis order.\n"
+            "          e.g.  -orient asl\n"
+            "          default is to leave unchanged\n"
+            "\n"
+            "          The orientation code is a 3 character string, where the\n"
+            "          characters come from the respective sets:\n"
+            "          {A,P}, {I,S}, {L,R}\n"
+            "\n"
+            "          For example OR_CODE = LPI is the standard 'neurological'\n"
+            "          orientation, where the x-axis runs Left-to-Right, the y-axis\n"
+            "          runs Posterior-to-Anterior, and the z-axis runs\n"
+            "          Inferior-to-Superior.\n"
+            "\n"
+            "    -prefix OUT_DSET : required prefix for output dataset\n"
+            "          e.g.  -prefix reori.asl.pickle\n"
+            "\n"
+            "          Specify the name of the output data.  To get NIFTI, simply\n"
+            "          include a .nii or .nii.gz suffix, as with most AFNI programs.\n"
+            "\n"
+            "    -rmode RESAM     : use this resampling method\n"
+            "          e.g.  -rmode Linear\n"
+            "          default is NN (nearest neighbor)\n"
+            "\n"
+            "          The resampling method string RESAM should come from the set\n"
+            "          {'NN', 'Li', 'Cu', 'Bk'}.  These are for 'Nearest Neighbor',\n"
+            "          'Linear', 'Cubic' and 'Blocky' interpolation, respectively.\n"
+            "\n"
+            "          For details, go to the 'Define Datamode' panel of the afni\n"
+            "          GUI, click BHelp and then the 'ULay resam mode' menu.\n"
+            "\n"
+            "    -upsample FAC    : upsample the voxels by factor FAC\n"
+            "\n"
+            "          Upsampling the voxels makes them smaller.  This convenience\n"
+            "          option is equivalent to using:\n"
+            "\n"
+            "             -dxyz old_dx/FAC old_dy/FAC old_dz/FAC\n"
+            "             -bound_type CENT\n"
+            "\n"
+            "          Specifying -bound_type BBB afterwards will override the\n"
+            "          default 'CENT' for this option.\n"
+            "\n"
+            "    -downsample FAC   : downsample the voxels by factor FAC\n"
+            "\n"
+            "          Downsampling the voxels makes them larger.  This convenience\n"
+            "          option is equivalent to using:\n"
+            "\n"
+            "             -dxyz old_dx*FAC old_dy*FAC old_dz*FAC\n"
+            "             -bound_type CENT\n"
+            "\n"
+            "          Specifying -bound_type BBB afterwards will override the\n"
+            "          default 'CENT' for this option.\n"
+            "\n"
+            "    -delta_scale FAC  : rescale voxels sizes by factor FAC\n"
+            "\n"
+            "          This is a generalized version of -upsample/-downsample,\n"
+            "          included since it is actually how they are applied (and they\n"
+            "          are not allowed factors < 1.0).  The weirdness is since\n"
+            "          upsample FAC > 1 means the voxels get smaller, as 1.0/FAC.\n"
+            "\n"
+            "          -delta_scale is equivalent to -downsample, and equates to: \n"
+            "\n"
+            "             -dxyz old_dx*FAC old_dy*FAC old_dz*FAC\n"
+            "             -bound_type CENT\n"
+            "\n"
+            "          FAC overview:\n"
+            "\n"
+            "                   FAC <= 0.0    : illegal\n"
+            "             0.0 < FAC <  1.0    : upsample (smaller voxels)\n"
+            "                   FAC == 1.0    : no change in voxel size\n"
+            "             1.0 < FAC           : downsample (larger voxels)\n"
+            "\n"
+            "------------------------------------------------------------\n"
+            "\n"
+            "  Author: R. Reynolds - %s\n"
+            "\n",
+            prog, prog, prog, prog, prog, prog, prog, VERSION);
 
         return 0;
     }
-    else if ( level == USE_HISTORY )
+    else if (level == USE_HISTORY)
     {
-        fputs( g_history, stdout );
+        fputs(g_history, stdout);
         return 0;
     }
-    else if ( level == USE_VERSION )
+    else if (level == USE_VERSION)
     {
-        printf( "%s %s, compile date: %s\n", prog, VERSION, __DATE__ );
+        printf("%s %s, compile date: %s\n", prog, VERSION, __DATE__);
         return 0;
     }
 
-    fprintf( stderr, "usage called with illegal level <%d>\n", level );
+    fprintf(stderr, "usage called with illegal level <%d>\n", level);
 
     return FAIL;
 }
 
 /*----------------------------------------------------------------------*/
-int write_results ( THD_3dim_dataset * dout, options_t * opts,
-                    int argc, char * argv [] )
+int write_results(THD_3dim_dataset *dout, options_t *opts,
+                  int argc, char *argv [])
 {
     /* set filename */
-    EDIT_dset_items( dout, ADN_prefix, opts->prefix, ADN_none );
+    EDIT_dset_items(dout, ADN_prefix, opts->prefix, ADN_none);
 
     /* don't worry about overwriting, that's AFNI_DECONFLICT's job */
 
     /* set number of time-axis slices to 0 */
-    if( DSET_NUM_TTOFF(dout) > 0 )
-        EDIT_dset_items( dout, ADN_nsl, 0, ADN_none );
+    if (DSET_NUM_TTOFF(dout) > 0)
+    {
+        EDIT_dset_items(dout, ADN_nsl, 0, ADN_none);
+    }
 
     /* since we are writing data to disk, clear warp info */
-    ZERO_IDCODE( dout->warp_parent_idcode );
+    ZERO_IDCODE(dout->warp_parent_idcode);
     dout->warp_parent_name[0] = '\0';
     dout->warp = NULL;
 
     /* add to old history */
-    tross_Copy_History( opts->dset , dout );
-    tross_Make_History( "3dresample", argc, argv, dout );
+    tross_Copy_History(opts->dset, dout);
+    tross_Make_History("3dresample", argc, argv, dout);
 
     /* write the output files */
-    if ( DSET_write( dout ) != True )
+    if (DSET_write(dout) != True)
     {
-        fputs( "failure: cannot write dataset, exiting...\n", stderr );
+        fputs("failure: cannot write dataset, exiting...\n", stderr);
         return 1;
     }
 
-    if ( opts->debug >= RL_DEBUG_LOW )
+    if (opts->debug >= RL_DEBUG_LOW)
     {
-        printf( "dset <%s> has been written to disk\n", opts->prefix );
+        printf("dset <%s> has been written to disk\n", opts->prefix);
 
-        if ( opts->debug >= RL_DEBUG_HIGH )
+        if (opts->debug >= RL_DEBUG_HIGH)
         {
-            r_idisp_thd_3dim_dataset( "final dset  : ", dout );
-            r_idisp_thd_dataxes     ( "final daxes : ", dout->daxes );
-            r_idisp_thd_datablock   ( "final dblk  : ", dout->dblk  );
-            if ( dout->dblk )
-                r_idisp_thd_diskptr ( "final diskp : ", dout->dblk->diskptr );
+            r_idisp_thd_3dim_dataset("final dset  : ", dout);
+            r_idisp_thd_dataxes("final daxes : ", dout->daxes);
+            r_idisp_thd_datablock("final dblk  : ", dout->dblk);
+            if (dout->dblk)
+            {
+                r_idisp_thd_diskptr("final diskp : ", dout->dblk->diskptr);
+            }
         }
     }
 
     return 0;
 }
 
-
 /*----------------------------------------------------------------------*/
-int sync_master_opts ( options_t * opts )
+int sync_master_opts(options_t *opts)
 {
-    THD_dataxes * dax;
+    THD_dataxes *dax;
 
-    if ( !opts->mset )
-        return 0;       /* OK */
-
-    if ( ! ISVALID_DSET(opts->mset) ||
-         ! ISVALID_DATAXES(opts->mset->daxes ) )
+    if (!opts->mset)
     {
-        fputs( "error: master dset or daxes not valid, exiting...\n", stderr );
+        return 0;       /* OK */
+    }
+    if (!ISVALID_DSET(opts->mset) ||
+        !ISVALID_DATAXES(opts->mset->daxes))
+    {
+        fputs("error: master dset or daxes not valid, exiting...\n", stderr);
         return FAIL;                    /* non-NULL but invalid is bad */
     }
 
     /* allow dxyz override of master data           03 Aug 2005 [rickr] */
-    if ( opts->orient != NULL )
+    if (opts->orient != NULL)
     {
-        fputs( "error: -orient is not valid with -master option, exiting...\n",
-                stderr );
+        fputs("error: -orient is not valid with -master option, exiting...\n",
+              stderr);
         return FAIL;
     }
 
     /* all is okay, so fill dxyz and orientation code from master */
     dax = opts->mset->daxes;
 
-    if ( opts->debug >= RL_DEBUG_LOW )
+    if (opts->debug >= RL_DEBUG_LOW)
     {
-        if (opts->dx == 0.0) fprintf(stderr,"-d using dxyz from master\n");
-        else                 fprintf(stderr,"-d overriding dxyz from master\n");
+        if (opts->dx == 0.0)
+        {
+            fprintf(stderr, "-d using dxyz from master\n");
+        }
+        else
+        {
+            fprintf(stderr, "-d overriding dxyz from master\n");
+        }
     }
 
-    if ( opts->dx == 0.0 ) /* then get the values from the master */
+    if (opts->dx == 0.0)   /* then get the values from the master */
     {
         opts->dx = fabs(dax->xxdel);
         opts->dy = fabs(dax->yydel);
         opts->dz = fabs(dax->zzdel);
     }
 
-    if ( opts->debug >= RL_DEBUG_LOW )
+    if (opts->debug >= RL_DEBUG_LOW)
     {
-        if (!opts->orient) fprintf(stderr,"-d using orient from master\n");
-        else               fprintf(stderr,"-d overriding orient from master\n");
+        if (!opts->orient)
+        {
+            fprintf(stderr, "-d using orient from master\n");
+        }
+        else
+        {
+            fprintf(stderr, "-d overriding orient from master\n");
+        }
     }
 
-    if ( opts->orient == NULL ) /* then get values from the master */
+    if (opts->orient == NULL)   /* then get values from the master */
     {
         /* make space for orient string */
-        if ( (opts->orient = (char *)malloc(4 * sizeof(char)) ) == NULL )
+        if ((opts->orient = (char *)malloc(4 * sizeof(char))) == NULL)
         {
-            fputs( "failure: malloc failure for orient, exiting...\n", stderr );
+            fputs("failure: malloc failure for orient, exiting...\n", stderr);
             return FAIL;
         }
 
@@ -960,17 +1007,19 @@ int sync_master_opts ( options_t * opts )
         opts->orient[3] = '\0';
     }
 
-    if ( opts->debug >= RL_DEBUG_LOW )
+    if (opts->debug >= RL_DEBUG_LOW)
     {
-        disp_opts_data( "++ mastered options : ", opts );
+        disp_opts_data("++ mastered options : ", opts);
 
-        if ( opts->debug >= RL_DEBUG_HIGH )
+        if (opts->debug >= RL_DEBUG_HIGH)
         {
-            r_idisp_thd_3dim_dataset("sync mset : ", opts->mset );
-            r_idisp_thd_dataxes     ("sync mset : ", opts->mset->daxes );
-            r_idisp_thd_datablock   ("sync mset : ", opts->mset->dblk  );
-            if ( opts->mset->dblk )
-                r_idisp_thd_diskptr ("sync mset : ", opts->mset->dblk->diskptr);
+            r_idisp_thd_3dim_dataset("sync mset : ", opts->mset);
+            r_idisp_thd_dataxes("sync mset : ", opts->mset->daxes);
+            r_idisp_thd_datablock("sync mset : ", opts->mset->dblk);
+            if (opts->mset->dblk)
+            {
+                r_idisp_thd_diskptr("sync mset : ", opts->mset->dblk->diskptr);
+            }
         }
     }
 
@@ -978,32 +1027,33 @@ int sync_master_opts ( options_t * opts )
 }
 
 /*----------------------------------------------------------------------*/
-int disp_opts_data ( char * info, options_t * opts )
+int disp_opts_data(char *info, options_t *opts)
 {
-    if ( info )
-        fputs( info, stdout );
-
-    if ( opts == NULL )
+    if (info)
     {
-        printf( "disp_opts_data: opts == NULL\n" );
+        fputs(info, stdout);
+    }
+
+    if (opts == NULL)
+    {
+        printf("disp_opts_data: opts == NULL\n");
         return FAIL;
     }
 
-    printf( "options struct at %p :\n"
-            "    dset        = %p (%s)\n"
-            "    mset        = %p (%s)\n"
-            "    (dx,dy,dz)  = (%6.3f, %6.3f, %6.3f)\n"
-            "    orient      = %.6s\n"
-            "    prefix      = %.60s\n"
-            "    resam       = %d\n"
-            "    debug       = %d\n",
-            opts,
-            opts->dset, ISVALID_DSET(opts->dset) ? "valid" : "invalid",
-            opts->mset, ISVALID_DSET(opts->mset) ? "valid" : "invalid",
-            opts->dx, opts->dy, opts->dz,
-            CHECK_NULL_STR(opts->orient), CHECK_NULL_STR(opts->prefix),
-            opts->resam, opts->debug );
+    printf("options struct at %p :\n"
+           "    dset        = %p (%s)\n"
+           "    mset        = %p (%s)\n"
+           "    (dx,dy,dz)  = (%6.3f, %6.3f, %6.3f)\n"
+           "    orient      = %.6s\n"
+           "    prefix      = %.60s\n"
+           "    resam       = %d\n"
+           "    debug       = %d\n",
+           opts,
+           opts->dset, ISVALID_DSET(opts->dset) ? "valid" : "invalid",
+           opts->mset, ISVALID_DSET(opts->mset) ? "valid" : "invalid",
+           opts->dx, opts->dy, opts->dz,
+           CHECK_NULL_STR(opts->orient), CHECK_NULL_STR(opts->prefix),
+           opts->resam, opts->debug);
 
     return 0;
 }
-

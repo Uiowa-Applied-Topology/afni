@@ -4,8 +4,8 @@
 
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 /*--- This program will read in a dataset and write it out in axial order ---*/
@@ -330,8 +330,8 @@ int main(int argc, char *argv[])
 
         if (!AXIAL_frugal)
         {
-            /* copy the sub-brick volume, svol, into an MRI_IMAGE structure  and
-             *  then append that to the image array */
+            /* copy the sub-brick volume, svol, into an MRI_IMAGE structure  and then append that to
+             * the image array */
             svol_im = mri_new_vol(brax->n1, brax->n2, brax->n3, DSET_BRICK_TYPE(new_dset, ival));
             svol    = mri_data_pointer(svol_im);
         }
@@ -380,8 +380,8 @@ int main(int argc, char *argv[])
 
         if (!AXIAL_frugal)
         {
-            /* copy the sub-brick volume, svol, into an MRI_IMAGE structure  and
-             *  then append that to the image array */
+            /* copy the sub-brick volume, svol, into an MRI_IMAGE structure  and then append that to
+             * the image array */
             ADDTO_IMARR(im_array, svol_im);
         }
 

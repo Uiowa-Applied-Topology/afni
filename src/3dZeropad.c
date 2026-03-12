@@ -77,20 +77,20 @@ void usage_3dZeropad(int detail)
 /* Function to take pad2mult int and figure out how many slices need to be added along each axis,
  * and which side to apply it to. The rule for the latter is that it will apply it to slices *away*
  * from the header origin. So, if the DSET is RAI, AIR, RAI, etc, then slices would be added only to
- * L and/or P and/or S sides.
+ *L and/or P and/or S sides.
  *
  * This function is longer than necessary, because it calculates stuff to report in the terminal.
  *
  * Inputs
  * ------
  * inset    : name of dset pad2mult : the integer which must be a factor of the new, padded matrix
- * add_R    : number of slices to add in R direction add_L    : number of slices to add in L
- * direction [etc for other add_?]
+ *add_R    : number of slices to add in R direction add_L    : number of slices to add in L
+ *direction [etc for other add_?]
  *
  * Returns
  * -------
  * simply an integer with successful completion. NB: the main 'output' is editing the values of
- * add_? that were input
+ *add_? that were input
  */
 int get_pad2mult_padding(THD_3dim_dataset *inset, int pad2mult,
                          int *add_R, int *add_L,

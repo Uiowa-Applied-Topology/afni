@@ -1,22 +1,22 @@
-/* trbak3.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* trbak3.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int trbak3_(integer *nm, integer *n, integer *nv, doublereal 
-	*a, integer *m, doublereal *z__)
+/* Subroutine */ int trbak3_(integer *nm, integer *n, integer *nv, doublereal
+                             *a, integer *m, doublereal *z__)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2, i__3;
 
     /* Local variables */
     doublereal h__;
-    integer i__, j, k, l;
+    integer    i__, j, k, l;
     doublereal s;
-    integer ik, iz;
+    integer    ik, iz;
 
 
 
@@ -56,69 +56,77 @@
 /*     NOTE THAT TRBAK3 PRESERVES VECTOR EUCLIDEAN NORMS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --a;
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
-    if (*n == 1) {
-	goto L200;
+    if (*n == 1)
+    {
+        goto L200;
     }
 
     i__1 = *n;
-    for (i__ = 2; i__ <= i__1; ++i__) {
-	l = i__ - 1;
-	iz = i__ * l / 2;
-	ik = iz + i__;
-	h__ = a[ik];
-	if (h__ == 0.) {
-	    goto L140;
-	}
+    for (i__ = 2; i__ <= i__1; ++i__)
+    {
+        l   = i__ - 1;
+        iz  = i__ * l / 2;
+        ik  = iz + i__;
+        h__ = a[ik];
+        if (h__ == 0.)
+        {
+            goto L140;
+        }
 
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    s = 0.;
-	    ik = iz;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            s  = 0.;
+            ik = iz;
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
-		++ik;
-		s += a[ik] * z__[k + j * z_dim1];
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
+                ++ik;
+                s += a[ik] * z__[k + j * z_dim1];
 /* L110: */
-	    }
-/*     .......... DOUBLE DIVISION AVOIDS POSSIBLE UNDERFLOW ......
-.... */
-	    s = s / h__ / h__;
-	    ik = iz;
+            }
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
-		++ik;
-		z__[k + j * z_dim1] -= s * a[ik];
+/*     .......... DOUBLE DIVISION AVOIDS POSSIBLE UNDERFLOW ......
+ * .... */
+            s  = s / h__ / h__;
+            ik = iz;
+
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
+                ++ik;
+                z__[k + j * z_dim1] -= s * a[ik];
 /* L120: */
-	    }
+            }
 
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* trbak3_ */
-

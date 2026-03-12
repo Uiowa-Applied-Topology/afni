@@ -1,7 +1,7 @@
-/* tql1.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* tql1.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
@@ -10,11 +10,11 @@
 
 static doublereal c_b10 = 1.;
 
-/* Subroutine */ int tql1_(integer *n, doublereal *d__, doublereal *e, 
-	integer *ierr)
+/* Subroutine */ int tql1_(integer *n, doublereal *d__, doublereal *e,
+                           integer *ierr)
 {
     /* System generated locals */
-    integer i__1, i__2;
+    integer    i__1, i__2;
     doublereal d__1, d__2;
 
     /* Builtin functions */
@@ -22,14 +22,15 @@ static doublereal c_b10 = 1.;
 
     /* Local variables */
     doublereal c__, f, g, h__;
-    integer i__, j, l, m;
-    doublereal p=0.0, r__=0.0, s=0.0, c2=0.0, c3=0.0;
-    integer l1, l2;
-    doublereal s2=0.0;
-    integer ii;
+    integer    i__, j, l, m;
+    doublereal p = 0.0, r__ = 0.0, s = 0.0, c2 = 0.0, c3 = 0.0;
+    integer    l1, l2;
+    doublereal s2 = 0.0;
+    integer    ii;
     extern doublereal pythag_(doublereal *, doublereal *);
+
     doublereal dl1, el1;
-    integer mml;
+    integer    mml;
     doublereal tst1, tst2;
 
 
@@ -68,13 +69,14 @@ static doublereal c_b10 = 1.;
 /*     CALLS PYTHAG FOR  DSQRT(A*A + B*B) . */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --e;
@@ -82,123 +84,138 @@ static doublereal c_b10 = 1.;
 
     /* Function Body */
     *ierr = 0;
-    if (*n == 1) {
-	goto L1001;
+    if (*n == 1)
+    {
+        goto L1001;
     }
 
     i__1 = *n;
-    for (i__ = 2; i__ <= i__1; ++i__) {
+    for (i__ = 2; i__ <= i__1; ++i__)
+    {
 /* L100: */
-	e[i__ - 1] = e[i__];
+        e[i__ - 1] = e[i__];
     }
 
-    f = 0.;
-    tst1 = 0.;
+    f     = 0.;
+    tst1  = 0.;
     e[*n] = 0.;
 
     i__1 = *n;
-    for (l = 1; l <= i__1; ++l) {
-	j = 0;
-	h__ = (d__1 = d__[l], abs(d__1)) + (d__2 = e[l], abs(d__2));
-	if (tst1 < h__) {
-	    tst1 = h__;
-	}
+    for (l = 1; l <= i__1; ++l)
+    {
+        j   = 0;
+        h__ = (d__1 = d__[l], abs(d__1)) + (d__2 = e[l], abs(d__2));
+        if (tst1 < h__)
+        {
+            tst1 = h__;
+        }
 /*     .......... LOOK FOR SMALL SUB-DIAGONAL ELEMENT .......... */
-	i__2 = *n;
-	for (m = l; m <= i__2; ++m) {
-	    tst2 = tst1 + (d__1 = e[m], abs(d__1));
-	    if (tst2 == tst1) {
-		goto L120;
-	    }
+        i__2 = *n;
+        for (m = l; m <= i__2; ++m)
+        {
+            tst2 = tst1 + (d__1 = e[m], abs(d__1));
+            if (tst2 == tst1)
+            {
+                goto L120;
+            }
 /*     .......... E(N) IS ALWAYS ZERO, SO THERE IS NO EXIT */
 /*                THROUGH THE BOTTOM OF THE LOOP .......... */
 /* L110: */
-	}
+        }
 
 L120:
-	if (m == l) {
-	    goto L210;
-	}
+        if (m == l)
+        {
+            goto L210;
+        }
 L130:
-	if (j == 30) {
-	    goto L1000;
-	}
-	++j;
+        if (j == 30)
+        {
+            goto L1000;
+        }
+        ++j;
 /*     .......... FORM SHIFT .......... */
-	l1 = l + 1;
-	l2 = l1 + 1;
-	g = d__[l];
-	p = (d__[l1] - g) / (e[l] * 2.);
-	r__ = pythag_(&p, &c_b10);
-	d__[l] = e[l] / (p + d_sign(&r__, &p));
-	d__[l1] = e[l] * (p + d_sign(&r__, &p));
-	dl1 = d__[l1];
-	h__ = g - d__[l];
-	if (l2 > *n) {
-	    goto L145;
-	}
+        l1      = l + 1;
+        l2      = l1 + 1;
+        g       = d__[l];
+        p       = (d__[l1] - g) / (e[l] * 2.);
+        r__     = pythag_(&p, &c_b10);
+        d__[l]  = e[l] / (p + d_sign(&r__, &p));
+        d__[l1] = e[l] * (p + d_sign(&r__, &p));
+        dl1     = d__[l1];
+        h__     = g - d__[l];
+        if (l2 > *n)
+        {
+            goto L145;
+        }
 
-	i__2 = *n;
-	for (i__ = l2; i__ <= i__2; ++i__) {
+        i__2 = *n;
+        for (i__ = l2; i__ <= i__2; ++i__)
+        {
 /* L140: */
-	    d__[i__] -= h__;
-	}
+            d__[i__] -= h__;
+        }
 
 L145:
-	f += h__;
+        f += h__;
 /*     .......... QL TRANSFORMATION .......... */
-	p = d__[m];
-	c__ = 1.;
-	c2 = c__;
-	el1 = e[l1];
-	s = 0.;
-	mml = m - l;
+        p   = d__[m];
+        c__ = 1.;
+        c2  = c__;
+        el1 = e[l1];
+        s   = 0.;
+        mml = m - l;
 /*     .......... FOR I=M-1 STEP -1 UNTIL L DO -- .......... */
-	i__2 = mml;
-	for (ii = 1; ii <= i__2; ++ii) {
-	    c3 = c2;
-	    c2 = c__;
-	    s2 = s;
-	    i__ = m - ii;
-	    g = c__ * e[i__];
-	    h__ = c__ * p;
-	    r__ = pythag_(&p, &e[i__]);
-	    e[i__ + 1] = s * r__;
-	    s = e[i__] / r__;
-	    c__ = p / r__;
-	    p = c__ * d__[i__] - s * g;
-	    d__[i__ + 1] = h__ + s * (c__ * g + s * d__[i__]);
+        i__2 = mml;
+        for (ii = 1; ii <= i__2; ++ii)
+        {
+            c3           = c2;
+            c2           = c__;
+            s2           = s;
+            i__          = m - ii;
+            g            = c__ * e[i__];
+            h__          = c__ * p;
+            r__          = pythag_(&p, &e[i__]);
+            e[i__ + 1]   = s * r__;
+            s            = e[i__] / r__;
+            c__          = p / r__;
+            p            = c__ * d__[i__] - s * g;
+            d__[i__ + 1] = h__ + s * (c__ * g + s * d__[i__]);
 /* L200: */
-	}
+        }
 
-	p = -s * s2 * c3 * el1 * e[l] / dl1;
-	e[l] = s * p;
-	d__[l] = c__ * p;
-	tst2 = tst1 + (d__1 = e[l], abs(d__1));
-	if (tst2 > tst1) {
-	    goto L130;
-	}
+        p      = -s * s2 * c3 * el1 * e[l] / dl1;
+        e[l]   = s * p;
+        d__[l] = c__ * p;
+        tst2   = tst1 + (d__1 = e[l], abs(d__1));
+        if (tst2 > tst1)
+        {
+            goto L130;
+        }
 L210:
-	p = d__[l] + f;
+        p = d__[l] + f;
 /*     .......... ORDER EIGENVALUES .......... */
-	if (l == 1) {
-	    goto L250;
-	}
+        if (l == 1)
+        {
+            goto L250;
+        }
 /*     .......... FOR I=L STEP -1 UNTIL 2 DO -- .......... */
-	i__2 = l;
-	for (ii = 2; ii <= i__2; ++ii) {
-	    i__ = l + 2 - ii;
-	    if (p >= d__[i__ - 1]) {
-		goto L270;
-	    }
-	    d__[i__] = d__[i__ - 1];
+        i__2 = l;
+        for (ii = 2; ii <= i__2; ++ii)
+        {
+            i__ = l + 2 - ii;
+            if (p >= d__[i__ - 1])
+            {
+                goto L270;
+            }
+            d__[i__] = d__[i__ - 1];
 /* L230: */
-	}
+        }
 
 L250:
-	i__ = 1;
+        i__ = 1;
 L270:
-	d__[i__] = p;
+        d__[i__] = p;
 /* L290: */
     }
 
@@ -210,4 +227,3 @@ L1000:
 L1001:
     return 0;
 } /* tql1_ */
-

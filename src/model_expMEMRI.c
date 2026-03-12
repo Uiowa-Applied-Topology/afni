@@ -1,15 +1,15 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 /*
- * This file contains routines to initialize and implement the
- * differential exponential signal model for MEMRI applications
+ * This file contains routines to initialize and implement the differential exponential signal model
+ *for MEMRI applications
  *
  * File:     model_expMEMRI.c Author:   D. Glen based on model_exp.c by Z.Saad and model_diffexp.c
- * by B. Douglas Ward
+ *by B. Douglas Ward
  */
 
 
@@ -33,8 +33,8 @@ void signal_model
 
 /*
  * Routine to initialize the signal model by defining the number of parameters in the signal model,
- * the name of the signal model, and the default values for the minimum and maximum parameter
- * constraints.
+ *the name of the signal model, and the default values for the minimum and maximum parameter
+ *constraints.
  */
 
 DEFINE_MODEL_PROTOTYPE
@@ -121,7 +121,7 @@ MODEL_interface * initialize_model()
 
 /*
  * Routine to calculate the time series which results from using the an exponential signal model
- * with the specified model parameters.
+ *with the specified model parameters.
  *
  * Definition of model parameters:
  *

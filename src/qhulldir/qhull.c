@@ -20,16 +20,16 @@
  * >-------------------------------</a><a name="qhull">-</a>
  *
  * qh_qhull() compute DIM3 convex hull of qh.num_points starting at qh.first_point qh contains all
- * global options and variables
+ *global options and variables
  *
  * returns:
  *  returns polyhedron qh.facet_list, qh.num_facets, qh.vertex_list, qh.num_vertices,
  *
  *  returns global variables qh.hulltime, qh.max_outside, qh.interior_point, qh.max_vertex,
- * qh.min_vertex
+ *qh.min_vertex
  *
  *  returns precision constants qh.ANGLEround, centrum_radius, cos_max, DISTround, MAXabs_coord,
- * ONEmerge
+ *ONEmerge
  *
  * notes:
  *  unless needed for output qh.max_vertex and qh.min_vertex are max/min due to merges
@@ -41,8 +41,8 @@
  *
  * design:
  *  record starting time initialize hull and partition points build convex hull unless early
- * termination update facet->maxoutside for vertices, coplanar, and near-inside points error if
- * temporary sets exist record end time
+ *termination update facet->maxoutside for vertices, coplanar, and near-inside points error if
+ *temporary sets exist record end time
  */
 void qh_qhull(void)
 {
@@ -125,31 +125,29 @@ void qh_qhull(void)
  * >-------------------------------</a><a name="addpoint">-</a>
  *
  * qh_addpoint( furthest, facet, checkdist ) add point (usually furthest point) above facet to hull
- *  if checkdist,
- *    check that point is above facet.
+ *if checkdist, check that point is above facet.
  *    if point is not outside of the hull, uses qh_partitioncoplanar() else if facet specified,
- * assumes that point is above facet (major damage if below) for Delaunay triangulations,
- *    Use qh_setdelaunay() to lift point to paraboloid and scale by 'Qbb' if needed Do not use
- * options 'Qbk', 'QBk', or 'QbB' since they scale the coordinates.
+ *assumes that point is above facet (major damage if below) for Delaunay triangulations, Use
+ *qh_setdelaunay() to lift point to paraboloid and scale by 'Qbb' if needed Do not use options
+ *'Qbk', 'QBk', or 'QbB' since they scale the coordinates.
  *
  * returns:
  *  returns False if user requested an early termination qh.visible_list, newfacet_list,
- * delvertex_list, NEWfacets may be defined updates qh.facet_list, qh.num_facets, qh.vertex_list,
- * qh.num_vertices clear qh.maxoutdone (will need to call qh_check_maxout() for facet->maxoutside)
- * if unknown point, adds a pointer to qh.other_points do not deallocate the point's coordinates
+ *delvertex_list, NEWfacets may be defined updates qh.facet_list, qh.num_facets, qh.vertex_list,
+ *qh.num_vertices clear qh.maxoutdone (will need to call qh_check_maxout() for facet->maxoutside) if
+ *unknown point, adds a pointer to qh.other_points do not deallocate the point's coordinates
  *
  * notes:
  *  uses qh.visible_list, qh.newfacet_list, qh.delvertex_list, qh.NEWfacets
  *
  * design:
  *  check point in qh.first_point/.num_points if checkdist if point not above facet partition
- * coplanar point
- *      exit exit if pre STOPpoint requested find horizon and visible facets for point make new
- * facets for point to horizon make hyperplanes for point compute balance statistics match
- * neighboring new facets update vertex neighbors and delete interior vertices exit if STOPcone
- * requested merge non-convex new facets check for using qh_findbestnew() instead of qh_findbest()
- * partition outside points from visible facets delete visible facets check polyhedron if requested
- * exit if post STOPpoint requested reset working lists of facets and vertices
+ *coplanar point exit exit if pre STOPpoint requested find horizon and visible facets for point make
+ *new facets for point to horizon make hyperplanes for point compute balance statistics match
+ *neighboring new facets update vertex neighbors and delete interior vertices exit if STOPcone
+ *requested merge non-convex new facets check for using qh_findbestnew() instead of qh_findbest()
+ *partition outside points from visible facets delete visible facets check polyhedron if requested
+ *exit if post STOPpoint requested reset working lists of facets and vertices
  */
 boolT qh_addpoint(pointT *furthest, facetT *facet, boolT checkdist)
 {
@@ -300,7 +298,7 @@ boolT qh_addpoint(pointT *furthest, facetT *facet, boolT checkdist)
  * >-------------------------------</a><a name="build_withrestart">-</a>
  *
  * qh_build_withrestart() allow restarts due to qh.JOGGLEmax while calling qh_buildhull()
- * qh.FIRSTpoint/qh.NUMpoints is point array it may be moved by qh_joggleinput()
+ *qh.FIRSTpoint/qh.NUMpoints is point array it may be moved by qh_joggleinput()
  */
 void qh_build_withrestart(void)
 {
@@ -385,13 +383,12 @@ qhull precision error: %d attempts to construct a convex hull\n\
  *
  * notes:
  *  may be called multiple times checks facet and vertex lists for incorrect flags to recover from
- * STOPcone, call qh_deletevisible and qh_resetlists
+ *STOPcone, call qh_deletevisible and qh_resetlists
  *
  * design:
  *  check visible facet and newfacet flags check newlist vertex flags and qh.STOPcone/STOPpoint for
- * each facet with a furthest outside point add point to facet exit if qh.STOPcone or qh.STOPpoint
- * requested if qh.NARROWhull for initial simplex partition remaining outside points to coplanar
- * sets
+ *each facet with a furthest outside point add point to facet exit if qh.STOPcone or qh.STOPpoint
+ *requested if qh.NARROWhull for initial simplex partition remaining outside points to coplanar sets
  */
 void qh_buildhull(void)
 {
@@ -454,19 +451,19 @@ void qh_buildhull(void)
  * >-------------------------------</a><a name="buildtracing">-</a>
  *
  * qh_buildtracing( furthest, facet ) trace an iteration of qh_buildhull() for furthest point and
- * facet if !furthest, prints progress message
+ *facet if !furthest, prints progress message
  *
  * returns:
  *  tracks progress with qh.lastreport updates qh.furthest_id (-3 if furthest is NULL) also resets
- * visit_id, vertext_visit on wrap around
+ *visit_id, vertext_visit on wrap around
  *
  * see:
  *  qh_tracemerging()
  *
  * design:
  *  if !furthest print progress message exit if 'TFn' iteration print progress message else if
- * tracing trace furthest point and facet reset qh.visit_id and qh.vertex_visit if overflow may
- * occur set qh.furthest_id for tracing
+ *tracing trace furthest point and facet reset qh.visit_id and qh.vertex_visit if overflow may occur
+ *set qh.furthest_id for tracing
  */
 void qh_buildtracing(pointT *furthest, facetT *facet)
 {
@@ -550,7 +547,7 @@ At %02d:%02d:%02d & %2.5g CPU secs, qhull has created %d facets and merged %d.\n
  * >-------------------------------</a><a name="errexit2">-</a>
  *
  * qh_errexit2( exitcode, facet, otherfacet ) return exitcode to system after an error report two
- * facets
+ *facets
  *
  * returns:
  *  assumes exitcode non-zero
@@ -568,23 +565,22 @@ void qh_errexit2(int exitcode, facetT *facet, facetT *otherfacet)
  * >-------------------------------</a><a name="findhorizon">-</a>
  *
  * qh_findhorizon( point, facet, goodvisible, goodhorizon ) given a visible facet, find the point's
- * horizon and visible facets
+ *horizon and visible facets
  *
  * returns:
- *  returns qh.visible_list/num_visible with all visible facets
- *    marks visible facets with ->visible
- *  updates count of good visible and good horizon facets updates qh.max_outside, qh.max_vertex,
- * facet->maxoutside
+ *  returns qh.visible_list/num_visible with all visible facets marks visible facets with ->visible
+ *updates count of good visible and good horizon facets updates qh.max_outside, qh.max_vertex,
+ *facet->maxoutside
  *
  * see:
  *  similar to qh_delpoint()
  *
  * design:
  *  move facet to qh.visible_list at end of qh.facet_list for all visible facets for each unvisited
- * neighbor of a visible facet compute distance of point to neighbor if point above neighbor move
- * neighbor to end of qh.visible_list else if point is coplanar with neighbor update qh.max_outside,
- * qh.max_vertex, neighbor->maxoutside mark neighbor coplanar (will create a samecycle later) update
- * horizon statistics
+ *neighbor of a visible facet compute distance of point to neighbor if point above neighbor move
+ *neighbor to end of qh.visible_list else if point is coplanar with neighbor update qh.max_outside,
+ *qh.max_vertex, neighbor->maxoutside mark neighbor coplanar (will create a samecycle later) update
+ *horizon statistics
  */
 void qh_findhorizon(pointT *point, facetT *facet, int *goodvisible, int *goodhorizon)
 {
@@ -706,16 +702,16 @@ Point p%d was above all facets.\n",
  * >-------------------------------</a><a name="nextfurthest">-</a>
  *
  * qh_nextfurthest( visible ) returns next furthest point and visible facet for qh_addpoint() starts
- * search at qh.facet_next
+ *search at qh.facet_next
  *
  * returns:
  *  removes furthest point from outside set NULL if none available advances qh.facet_next over
- * facets with empty outside sets
+ *facets with empty outside sets
  *
  * design:
  *  for each facet from qh.facet_next if empty outside set advance qh.facet_next else if
- * qh.NARROWhull determine furthest outside point if furthest point is not outside advance
- * qh.facet_next (point will be coplanar) remove furthest point from outside set
+ *qh.NARROWhull determine furthest outside point if furthest point is not outside advance
+ *qh.facet_next (point will be coplanar) remove furthest point from outside set
  */
 pointT *qh_nextfurthest(facetT **visible)
 {
@@ -835,23 +831,22 @@ pointT *qh_nextfurthest(facetT **visible)
  * >-------------------------------</a><a name="partitionall">-</a>
  *
  * qh_partitionall( vertices, points, numpoints ) partitions all points in points/numpoints to the
- * outsidesets of facets vertices= vertices in qh.facet_list (not partitioned)
+ *outsidesets of facets vertices= vertices in qh.facet_list (not partitioned)
  *
  * returns:
- *  builds facet->outsideset does not partition qh.GOODpoint if qh.ONLYgood && !qh.MERGING,
- *    does not partition qh.GOODvertex sets facet->newfacet for qh_findbestnew() in
- * qh_partitionpoint()
+ *  builds facet->outsideset does not partition qh.GOODpoint if qh.ONLYgood && !qh.MERGING, does not
+ *partition qh.GOODvertex sets facet->newfacet for qh_findbestnew() in qh_partitionpoint()
  *
  * notes:
  *  faster if qh.facet_list sorted by anticipated size of outside set
  *
  * design:
  *  initialize pointset with all points remove vertices from pointset remove qh.GOODpointp from
- * pointset (unless it's qh.STOPcone or qh.STOPpoint) for all facets for all remaining points in
- * pointset compute distance from point to facet if point is outside facet remove point from
- * pointset (by not reappending) update bestpoint append point or old bestpoint to facet's outside
- * set append bestpoint to facet's outside set (furthest) for all points remaining in pointset
- * partition point into facets' outside sets and coplanar sets
+ *pointset (unless it's qh.STOPcone or qh.STOPpoint) for all facets for all remaining points in
+ *pointset compute distance from point to facet if point is outside facet remove point from pointset
+ *(by not reappending) update bestpoint append point or old bestpoint to facet's outside set append
+ *bestpoint to facet's outside set (furthest) for all points remaining in pointset partition point
+ *into facets' outside sets and coplanar sets
  */
 void qh_partitionall(setT *vertices, pointT *points, int numpoints)
 {
@@ -978,9 +973,8 @@ void qh_partitionall(setT *vertices, pointT *points, int numpoints)
  * >-------------------------------</a><a name="partitioncoplanar">-</a>
  *
  * qh_partitioncoplanar( point, facet, dist ) partition coplanar point to a facet dist is distance
- * from point to facet if dist NULL,
- *    searches for bestfacet and does nothing if inside if qh.findbestnew set,
- *    searches new facets instead of using qh_findbest()
+ *from point to facet if dist NULL, searches for bestfacet and does nothing if inside if
+ *qh.findbestnew set, searches new facets instead of using qh_findbest()
  *
  * returns:
  *  qh.max_ouside updated if qh.KEEPcoplanar or qh.KEEPinside point assigned to best coplanarset
@@ -990,9 +984,9 @@ void qh_partitionall(setT *vertices, pointT *points, int numpoints)
  *
  * design:
  *  if dist undefined find best facet for point if point sufficiently below facet (depends on
- * qh.NEARinside and qh.KEEPinside) exit if keeping coplanar/nearinside/inside points if point is
- * above furthest coplanar point append point to coplanar set (it is the new furthest) update
- * qh.max_outside else append point one before end of coplanar set else update qh.max_outside
+ *qh.NEARinside and qh.KEEPinside) exit if keeping coplanar/nearinside/inside points if point is
+ *above furthest coplanar point append point to coplanar set (it is the new furthest) update
+ *qh.max_outside else append point one before end of coplanar set else update qh.max_outside
  */
 void qh_partitioncoplanar(pointT *point, facetT *facet, realT *dist)
 {
@@ -1092,23 +1086,22 @@ void qh_partitioncoplanar(pointT *point, facetT *facet, realT *dist)
  * >-------------------------------</a><a name="partitionpoint">-</a>
  *
  * qh_partitionpoint( point, facet ) assigns point to an outside set, coplanar set, or inside set
- * (i.e., dropt) if qh.findbestnew uses qh_findbestnew() to search all new facets else uses
- * qh_findbest()
+ *(i.e., dropt) if qh.findbestnew uses qh_findbestnew() to search all new facets else uses
+ *qh_findbest()
  *
  * notes:
  *  after qh_distplane(), this and qh_findbest() are most expensive in 3-d
  *
  * design:
- *  find best facet for point
- *    (either exhaustive search of new facets or directed search from facet) if qh.NARROWhull retain
- * coplanar and nearinside points as outside points if point is outside bestfacet if point above
- * furthest point for bestfacet append point to outside set (it becomes the new furthest) if outside
- * set was empty move bestfacet to end of qh.facet_list (i.e., after qh.facet_next) update
- * bestfacet->furthestdist else append point one before end of outside set else if point is coplanar
- * to bestfacet if keeping coplanar points or need to update qh.max_outside partition coplanar point
- * into bestfacet else if near-inside point
- *    partition as coplanar point into bestfacet else is an inside point if keeping inside points
- *      partition as coplanar point into bestfacet
+ *  find best facet for point (either exhaustive search of new facets or directed search from facet)
+ *if qh.NARROWhull retain coplanar and nearinside points as outside points if point is outside
+ *bestfacet if point above furthest point for bestfacet append point to outside set (it becomes the
+ *new furthest) if outside set was empty move bestfacet to end of qh.facet_list (i.e., after
+ *qh.facet_next) update bestfacet->furthestdist else append point one before end of outside set else
+ *if point is coplanar to bestfacet if keeping coplanar points or need to update qh.max_outside
+ *partition coplanar point into bestfacet else if near-inside point partition as coplanar point into
+ *bestfacet else is an inside point if keeping inside points partition as coplanar point into
+ *bestfacet
  */
 void qh_partitionpoint(pointT *point, facetT *facet)
 {
@@ -1230,23 +1223,23 @@ void qh_partitionpoint(pointT *point, facetT *facet)
  * >-------------------------------</a><a name="partitionvisible">-</a>
  *
  * qh_partitionvisible( allpoints, numoutside ) partitions points in visible facets to
- * qh.newfacet_list qh.visible_list= visible facets for visible facets 1st neighbor (if any) points
- * to a horizon facet or a new facet if allpoints (not used), repartitions coplanar points
+ *qh.newfacet_list qh.visible_list= visible facets for visible facets 1st neighbor (if any) points
+ *to a horizon facet or a new facet if allpoints (not used), repartitions coplanar points
  *
  * returns:
  *  updates outside sets and coplanar sets of qh.newfacet_list updates qh.num_outside (count of
- * outside points)
+ *outside points)
  *
  * notes:
  *  qh.findbest_notsharp should be clear (extra work if set)
  *
  * design:
  *  for all visible facets with outside set or coplanar set select a newfacet for visible facet if
- * outside set partition outside set into new facets if coplanar set and keeping
- * coplanar/near-inside/inside points if allpoints partition coplanar set into new facets, may be
- * assigned outside else partition coplanar set into coplanar sets of new facets for each deleted
- * vertex if allpoints partition vertex into new facets, may be assigned outside else partition
- * vertex into coplanar sets of new facets
+ *outside set partition outside set into new facets if coplanar set and keeping
+ *coplanar/near-inside/inside points if allpoints partition coplanar set into new facets, may be
+ *assigned outside else partition coplanar set into coplanar sets of new facets for each deleted
+ *vertex if allpoints partition vertex into new facets, may be assigned outside else partition
+ *vertex into coplanar sets of new facets
  */
 void qh_partitionvisible(/*visible_list*/ boolT allpoints, int *numoutside)
 {

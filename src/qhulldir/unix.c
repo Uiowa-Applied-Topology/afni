@@ -318,7 +318,7 @@ Except for 'F.' and 'PG', upper-case options take an argument.\n\
  *
  * design:
  *  initializes data structures reads points finishes initialization computes convex hull and other
- * structures checks the result writes the output frees memory
+ *structures checks the result writes the output frees memory
  */
 int main(int argc, char *argv[])
 {

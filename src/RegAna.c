@@ -12,20 +12,20 @@
  * Mod:     Additional statistical output (partial R^2 statistics). Date:    07 September 1999
  *
  * Mod:     Modifications for compatibility with 3dDeconvolve options for writing the fitted full
- * model time series (-fitts) and the
- *         residual error time series (-errts) to 3d+time datasets. Date:    22 November 1999
+ *model time series (-fitts) and the residual error time series (-errts) to 3d+time datasets. Date:
+ *   22 November 1999
  *
  * Mod:     Added function calc_sse_fit. Date:    21 April 2000
  *
  * Mod:     Additional output with -nodata option (norm.std.dev.'s for GLT linear constraints).
- * Date:    11 August 2000
+ *Date:    11 August 2000
  *
  * Mod:     Modified use of vector_multiply() followed by vector_subtract() to use new function
- * vector_multiply_subtract(), and to use new function vector_dotself() when possible -- RWCox.
- * Date:    28 Dec 2001
+ *vector_multiply_subtract(), and to use new function vector_dotself() when possible -- RWCox. Date:
+ *   28 Dec 2001
  *
  * Mod:     Modification to calc_tcoef to calculate t-statistics for individual GLT linear
- * constraints. Date:    29 January 2002
+ *constraints. Date:    29 January 2002
  *
  * Mod:     If FLOATIZE is defined, uses floats instead of doubles -- RWCox. Date:    03 Mar 2003
  *
@@ -33,7 +33,7 @@
  * RWCox
  *
  * Mod:     Changed EPSILON values from 10e-5 to 10e-12, to prevent setting valid output to zero
- * when beta weights are small Date     08 Aug 2007 -- rickr
+ *when beta weights are small Date     08 Aug 2007 -- rickr
  */
 
 static int use_psinv = 1;   /* 19 Jul 2004 */
@@ -271,8 +271,8 @@ float  calc_resids
 /*---------------------------------------------------------------------------*/
 
 /*
- * Calculate the error sum of squares.  Also, return the fitted time series,
- * and residual errors time series.
+ * Calculate the error sum of squares.  Also, return the fitted time series, and residual errors
+ *time series.
  */
 
 float  calc_sse_fit
@@ -478,8 +478,7 @@ void calc_lcoef
 /*---------------------------------------------------------------------------*/
 
 /*
- * Calculate standard deviations and t-statistics for the regression
- * coefficients.
+ * Calculate standard deviations and t-statistics for the regression coefficients.
  */
 
 void calc_tcoef

@@ -420,9 +420,9 @@ MRI_IMAGE * make_spheroid_mask_float(float_quint ab, float_triple de)
 
     /* loop over (xc,yc,zc) points in the grid;
      * compute aqq = length squared of (xc,yc,zc) projected along (ax,ay,az) compute bqq = length
-     * squared of (xc,yc,zc) projected perp to (ax,ay,az)
+     *squared of (xc,yc,zc) projected perp to (ax,ay,az)
      *             = length squared of (xc,yc,zc) minus aqq (cf. Pythagoras) then, a point is inside
-     * the spheroid if aqq/arad^2 + bqq/brad^2 <= 1  */
+     *the spheroid if aqq/arad^2 + bqq/brad^2 <= 1  */
 
     for (ijk = kk = 0 ; kk < kdim ; kk++)
     {
@@ -451,7 +451,7 @@ MRI_IMAGE * make_spheroid_mask_float(float_quint ab, float_triple de)
     /* at this point, could use MRI_autobbox and mri_cut_3D to trim image down to exclude any planes
      * of all zeros around the edges;
      * HOWEVER, I want all boxes for a given spheroid size (arad,brad) to be the same, for ease of
-     * combining results from them */
+     *combining results from them */
 
     return bim;
 }
@@ -575,7 +575,7 @@ int3float1 MRI_spheroid_overlapation1(MRI_IMAGE *aim, float_quint abin)
 
 /*
  * ININFO_message("xc=%g yc=%g zc=%g  irad=%d jrad=%d krad=%d", xc/fc , yc/fc , zc/fc ,
- * irad,jrad,krad ) ;
+ *irad,jrad,krad ) ;
  */
 
     return ijkout;
@@ -736,13 +736,13 @@ int_triple THD_spheroid_overlapation(THD_3dim_dataset *dset,
 
 /*
  *   INFO_message("spheroid overlapation: theta=%g axis=%g %g %g bxis=%g %g %g", irot*dth , cx,cy,cz
- * , bx,by,bz) ;
+ *, bx,by,bz) ;
  *   ININFO_message(" ijka = %d %d %d %g",ijka.i,ijka.j,ijka.k,ijka.a) ;
  *   ININFO_message(" rotation matrix:\n"
  *                  " %13.6f %13.6f %13.6f\n"
  *                  " %13.6f %13.6f %13.6f\n"
  *                  " %13.6f %13.6f %13.6f" , mrot.m[0][0] , mrot.m[0][1] , mrot.m[0][2] ,
- * mrot.m[1][0] , mrot.m[1][1] , mrot.m[1][2] , mrot.m[2][0] , mrot.m[2][1] , mrot.m[2][2]   ) ;
+ *mrot.m[1][0] , mrot.m[1][1] , mrot.m[1][2] , mrot.m[2][0] , mrot.m[2][1] , mrot.m[2][2]   ) ;
  */
 
         /* make running sum */
@@ -977,7 +977,7 @@ static MRI_IMAGE * mri_fft_3Dconvolve_OMP(MRI_IMAGE *aim, MRI_IMAGE *bim)
     Lzz = (nza > 1 && nzb > 1) ? NEXTUP(nza + nzb) : 0;
 
     /* at this time, we don't allow for convolving a 3D image with a 1D or 2D image, for example,
-    * which is possible but more complicated */
+     * which is possible but more complicated */
 
     if (Lxx == 0 || Lyy == 0 || Lzz == 0)
     {

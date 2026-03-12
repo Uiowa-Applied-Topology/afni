@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 #include "afni.h"
@@ -32,8 +32,8 @@
 /*-------------------------------------------------------------------------*/
 
 
-/*	Definitions of prototypes and declaration of support functions
- *  this is taken from the list of include files that I use in the original code*/
+/*	Definitions of prototypes and declaration of support functions this is taken from the list of
+ * include files that I use in the original code*/
 
 
 /*-------------------------------------------------------------------*/
@@ -45,8 +45,7 @@ typedef struct {
 
 
 /***********************************************************************
- * Plugin to extract 3D+time time courses whos index or xyz coordinates
- * match a certain criterion
+ * Plugin to extract 3D+time time courses whos index or xyz coordinates match a certain criterion
  ************************************************************************/
 typedef struct {
     int    nxx;           /* number of voxels in the x direction */
@@ -339,7 +338,7 @@ PLUGIN_interface * PLUGIN_init(int ncall)
 
 /***************************************************************************
  * Main routine for this plugin (will be called from AFNI). If the return string is not NULL, some
- * error transpired, and AFNI will popup the return string in a message box.
+ *error transpired, and AFNI will popup the return string in a message box.
  ****************************************************************************/
 
 static char * EXTRACT_main(PLUGIN_interface *plint)

@@ -328,7 +328,7 @@ int compute_meandiff(options_t *opts, int method)
 
     /* convert dsum to dmean and then a scalar:
      * method = 1 : enorm  sqrt(ss) 2 : rms    sqrt(ss/nmask) = stdev (biased) of first diffs 3 :
-     *srms   sqrt(ss/nmask) / abs(grand mean)
+     * srms   sqrt(ss/nmask) / abs(grand mean)
      */
     gmean  = fabs(gmean / nmask / nt); /* global masked mean */
     mdiff /= nmask * nt;               /* global masked mean first diff */
@@ -553,7 +553,7 @@ int compute_4095(options_t *opts, int method)
  *
  * convert dsum to dmean and then a scalar:
  * method = 1 : enorm  sqrt(ss) 2 : rms    sqrt(ss/nvox) = stdev (biased) 3 : srms   sqrt(ss/nvox) /
- *grand mean
+ * grand mean
  */
 int compute_enorm(options_t *opts, int method)
 {
@@ -619,7 +619,7 @@ int compute_enorm(options_t *opts, int method)
 
     /* convert dsum to dmean and then a scalar:
      * method = 1 : enorm  sqrt(ss) 2 : rms    sqrt(ss/nmask) = stdev (biased) of first diffs 3 :
-     *srms   sqrt(ss/nmask) / abs(grand mean)
+     * srms   sqrt(ss/nmask) / abs(grand mean)
      */
     gmean  = fabs(gmean / nmask / nt); /* global masked mean */
     mdiff /= nmask * nt;               /* global masked mean first diff */

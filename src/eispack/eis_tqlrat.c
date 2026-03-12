@@ -1,7 +1,7 @@
-/* tqlrat.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* tqlrat.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
@@ -10,23 +10,24 @@
 
 static doublereal c_b11 = 1.;
 
-/* Subroutine */ int tqlrat_(integer *n, doublereal *d__, doublereal *e2, 
-	integer *ierr)
+/* Subroutine */ int tqlrat_(integer *n, doublereal *d__, doublereal *e2,
+                             integer *ierr)
 {
     /* System generated locals */
-    integer i__1, i__2;
+    integer    i__1, i__2;
     doublereal d__1, d__2;
 
     /* Builtin functions */
     double d_sign(doublereal *, doublereal *);
 
     /* Local variables */
-    doublereal b=0.0, c__=0.0, f, g, h__;
-    integer i__, j, l, m;
+    doublereal b = 0.0, c__ = 0.0, f, g, h__;
+    integer    i__, j, l, m;
     doublereal p, r__, s, t;
-    integer l1, ii;
-    extern doublereal pythag_(doublereal *, doublereal *), epslon_(doublereal 
-	    *);
+    integer    l1, ii;
+    extern doublereal pythag_(doublereal *, doublereal *), epslon_(doublereal
+                                                                   *);
+
     integer mml;
 
 
@@ -44,8 +45,9 @@ static doublereal c_b11 = 1.;
 /*        D CONTAINS THE DIAGONAL ELEMENTS OF THE INPUT MATRIX. */
 
 /*        E2 CONTAINS THE SQUARES OF THE SUBDIAGONAL ELEMENTS OF THE */
-/*          INPUT MATRIX IN ITS LAST N-1 POSITIONS.  E2(1) IS ARBITRARY. 
-*/
+
+/*          INPUT MATRIX IN ITS LAST N-1 POSITIONS.  E2(1) IS ARBITRARY.
+ */
 
 /*      ON OUTPUT */
 
@@ -64,13 +66,14 @@ static doublereal c_b11 = 1.;
 /*     CALLS PYTHAG FOR  DSQRT(A*A + B*B) . */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --e2;
@@ -78,128 +81,148 @@ static doublereal c_b11 = 1.;
 
     /* Function Body */
     *ierr = 0;
-    if (*n == 1) {
-	goto L1001;
+    if (*n == 1)
+    {
+        goto L1001;
     }
 
     i__1 = *n;
-    for (i__ = 2; i__ <= i__1; ++i__) {
+    for (i__ = 2; i__ <= i__1; ++i__)
+    {
 /* L100: */
-	e2[i__ - 1] = e2[i__];
+        e2[i__ - 1] = e2[i__];
     }
 
-    f = 0.;
-    t = 0.;
+    f      = 0.;
+    t      = 0.;
     e2[*n] = 0.;
 
     i__1 = *n;
-    for (l = 1; l <= i__1; ++l) {
-	j = 0;
-	h__ = (d__1 = d__[l], abs(d__1)) + sqrt(e2[l]);
-	if (t > h__) {
-	    goto L105;
-	}
-	t = h__;
-	b = epslon_(&t);
-	c__ = b * b;
+    for (l = 1; l <= i__1; ++l)
+    {
+        j   = 0;
+        h__ = (d__1 = d__[l], abs(d__1)) + sqrt(e2[l]);
+        if (t > h__)
+        {
+            goto L105;
+        }
+        t   = h__;
+        b   = epslon_(&t);
+        c__ = b * b;
+
 /*     .......... LOOK FOR SMALL SQUARED SUB-DIAGONAL ELEMENT ........
-.. */
+ * .. */
 L105:
-	i__2 = *n;
-	for (m = l; m <= i__2; ++m) {
-	    if (e2[m] <= c__) {
-		goto L120;
-	    }
+        i__2 = *n;
+        for (m = l; m <= i__2; ++m)
+        {
+            if (e2[m] <= c__)
+            {
+                goto L120;
+            }
 /*     .......... E2(N) IS ALWAYS ZERO, SO THERE IS NO EXIT */
 /*                THROUGH THE BOTTOM OF THE LOOP .......... */
 /* L110: */
-	}
+        }
 
 L120:
-	if (m == l) {
-	    goto L210;
-	}
+        if (m == l)
+        {
+            goto L210;
+        }
 L130:
-	if (j == 30) {
-	    goto L1000;
-	}
-	++j;
+        if (j == 30)
+        {
+            goto L1000;
+        }
+        ++j;
 /*     .......... FORM SHIFT .......... */
-	l1 = l + 1;
-	s = sqrt(e2[l]);
-	g = d__[l];
-	p = (d__[l1] - g) / (s * 2.);
-	r__ = pythag_(&p, &c_b11);
-	d__[l] = s / (p + d_sign(&r__, &p));
-	h__ = g - d__[l];
+        l1     = l + 1;
+        s      = sqrt(e2[l]);
+        g      = d__[l];
+        p      = (d__[l1] - g) / (s * 2.);
+        r__    = pythag_(&p, &c_b11);
+        d__[l] = s / (p + d_sign(&r__, &p));
+        h__    = g - d__[l];
 
-	i__2 = *n;
-	for (i__ = l1; i__ <= i__2; ++i__) {
+        i__2 = *n;
+        for (i__ = l1; i__ <= i__2; ++i__)
+        {
 /* L140: */
-	    d__[i__] -= h__;
-	}
+            d__[i__] -= h__;
+        }
 
-	f += h__;
+        f += h__;
 /*     .......... RATIONAL QL TRANSFORMATION .......... */
-	g = d__[m];
-	if (g == 0.) {
-	    g = b;
-	}
-	h__ = g;
-	s = 0.;
-	mml = m - l;
+        g = d__[m];
+        if (g == 0.)
+        {
+            g = b;
+        }
+        h__ = g;
+        s   = 0.;
+        mml = m - l;
 /*     .......... FOR I=M-1 STEP -1 UNTIL L DO -- .......... */
-	i__2 = mml;
-	for (ii = 1; ii <= i__2; ++ii) {
-	    i__ = m - ii;
-	    p = g * h__;
-	    r__ = p + e2[i__];
-	    e2[i__ + 1] = s * r__;
-	    s = e2[i__] / r__;
-	    d__[i__ + 1] = h__ + s * (h__ + d__[i__]);
-	    g = d__[i__] - e2[i__] / g;
-	    if (g == 0.) {
-		g = b;
-	    }
-	    h__ = g * p / r__;
+        i__2 = mml;
+        for (ii = 1; ii <= i__2; ++ii)
+        {
+            i__          = m - ii;
+            p            = g * h__;
+            r__          = p + e2[i__];
+            e2[i__ + 1]  = s * r__;
+            s            = e2[i__] / r__;
+            d__[i__ + 1] = h__ + s * (h__ + d__[i__]);
+            g            = d__[i__] - e2[i__] / g;
+            if (g == 0.)
+            {
+                g = b;
+            }
+            h__ = g * p / r__;
 /* L200: */
-	}
+        }
 
-	e2[l] = s * g;
-	d__[l] = h__;
+        e2[l]  = s * g;
+        d__[l] = h__;
+
 /*     .......... GUARD AGAINST UNDERFLOW IN CONVERGENCE TEST ........
-.. */
-	if (h__ == 0.) {
-	    goto L210;
-	}
-	if ((d__1 = e2[l], abs(d__1)) <= (d__2 = c__ / h__, abs(d__2))) {
-	    goto L210;
-	}
-	e2[l] = h__ * e2[l];
-	if (e2[l] != 0.) {
-	    goto L130;
-	}
+ * .. */
+        if (h__ == 0.)
+        {
+            goto L210;
+        }
+        if ((d__1 = e2[l], abs(d__1)) <= (d__2 = c__ / h__, abs(d__2)))
+        {
+            goto L210;
+        }
+        e2[l] = h__ * e2[l];
+        if (e2[l] != 0.)
+        {
+            goto L130;
+        }
 L210:
-	p = d__[l] + f;
+        p = d__[l] + f;
 /*     .......... ORDER EIGENVALUES .......... */
-	if (l == 1) {
-	    goto L250;
-	}
+        if (l == 1)
+        {
+            goto L250;
+        }
 /*     .......... FOR I=L STEP -1 UNTIL 2 DO -- .......... */
-	i__2 = l;
-	for (ii = 2; ii <= i__2; ++ii) {
-	    i__ = l + 2 - ii;
-	    if (p >= d__[i__ - 1]) {
-		goto L270;
-	    }
-	    d__[i__] = d__[i__ - 1];
+        i__2 = l;
+        for (ii = 2; ii <= i__2; ++ii)
+        {
+            i__ = l + 2 - ii;
+            if (p >= d__[i__ - 1])
+            {
+                goto L270;
+            }
+            d__[i__] = d__[i__ - 1];
 /* L230: */
-	}
+        }
 
 L250:
-	i__ = 1;
+        i__ = 1;
 L270:
-	d__[i__] = p;
+        d__[i__] = p;
 /* L290: */
     }
 
@@ -211,4 +234,3 @@ L1000:
 L1001:
     return 0;
 } /* tqlrat_ */
-

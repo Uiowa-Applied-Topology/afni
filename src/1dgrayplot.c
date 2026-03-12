@@ -7,9 +7,9 @@
 
 /*-----------------------------------------------------------------
  * Plot some timeseries in grayscale npt     = number of points in each series nts     = number of
- * series ymask   = operation modifier:
+ *series ymask   = operation modifier:
  *               TSGRAY_SEPARATE_YSCALE TSGRAY_FLIP_XY y[j][i] = i-th point in j-th timeseries, for
- * i=0..npt-1, j=0..nts-1
+ *i=0..npt-1, j=0..nts-1
  * -------------------------------------------------------------------*/
 
 MEM_plotdata * PLOT_tsgray(int npt, int nts, int ymask, float **y)

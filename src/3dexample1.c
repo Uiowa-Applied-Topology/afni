@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------
  * Just a very basic example program for reading and writing AFNI datasets. Output dataset is input
- ** 2.
+ *2.
  *
  * usage: 3dexample -input INSET+orig -prefix OUTPUT
  *

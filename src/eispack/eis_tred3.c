@@ -1,16 +1,16 @@
-/* tred3.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* tred3.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int tred3_(integer *n, integer *nv, doublereal *a, 
-	doublereal *d__, doublereal *e, doublereal *e2)
+/* Subroutine */ int tred3_(integer *n, integer *nv, doublereal *a,
+                            doublereal *d__, doublereal *e, doublereal *e2)
 {
     /* System generated locals */
-    integer i__1, i__2, i__3;
+    integer    i__1, i__2, i__3;
     doublereal d__1;
 
     /* Builtin functions */
@@ -18,9 +18,9 @@
 
     /* Local variables */
     doublereal f, g, h__;
-    integer i__, j, k, l;
+    integer    i__, j, k, l;
     doublereal scale, hh;
-    integer ii, jk, iz, jm1;
+    integer    ii, jk, iz, jm1;
 
 
 
@@ -57,13 +57,14 @@
 /*          E2 MAY COINCIDE WITH E IF THE SQUARES ARE NOT NEEDED. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
 /*     .......... FOR I=N STEP -1 UNTIL 1 DO -- .......... */
     /* Parameter adjustments */
@@ -74,116 +75,128 @@
 
     /* Function Body */
     i__1 = *n;
-    for (ii = 1; ii <= i__1; ++ii) {
-	i__ = *n + 1 - ii;
-	l = i__ - 1;
-	iz = i__ * l / 2;
-	h__ = 0.;
-	scale = 0.;
-	if (l < 1) {
-	    goto L130;
-	}
+    for (ii = 1; ii <= i__1; ++ii)
+    {
+        i__   = *n + 1 - ii;
+        l     = i__ - 1;
+        iz    = i__ * l / 2;
+        h__   = 0.;
+        scale = 0.;
+        if (l < 1)
+        {
+            goto L130;
+        }
 /*     .......... SCALE ROW (ALGOL TOL THEN NOT NEEDED) .......... */
-	i__2 = l;
-	for (k = 1; k <= i__2; ++k) {
-	    ++iz;
-	    d__[k] = a[iz];
-	    scale += (d__1 = d__[k], abs(d__1));
+        i__2 = l;
+        for (k = 1; k <= i__2; ++k)
+        {
+            ++iz;
+            d__[k] = a[iz];
+            scale += (d__1 = d__[k], abs(d__1));
 /* L120: */
-	}
+        }
 
-	if (scale != 0.) {
-	    goto L140;
-	}
+        if (scale != 0.)
+        {
+            goto L140;
+        }
 L130:
-	e[i__] = 0.;
-	e2[i__] = 0.;
-	goto L290;
+        e[i__]  = 0.;
+        e2[i__] = 0.;
+        goto L290;
 
 L140:
-	i__2 = l;
-	for (k = 1; k <= i__2; ++k) {
-	    d__[k] /= scale;
-	    h__ += d__[k] * d__[k];
+        i__2 = l;
+        for (k = 1; k <= i__2; ++k)
+        {
+            d__[k] /= scale;
+            h__    += d__[k] * d__[k];
 /* L150: */
-	}
+        }
 
-	e2[i__] = scale * scale * h__;
-	f = d__[l];
-	d__1 = sqrt(h__);
-	g = -d_sign(&d__1, &f);
-	e[i__] = scale * g;
-	h__ -= f * g;
-	d__[l] = f - g;
-	a[iz] = scale * d__[l];
-	if (l == 1) {
-	    goto L290;
-	}
-	jk = 1;
+        e2[i__] = scale * scale * h__;
+        f       = d__[l];
+        d__1    = sqrt(h__);
+        g       = -d_sign(&d__1, &f);
+        e[i__]  = scale * g;
+        h__    -= f * g;
+        d__[l]  = f - g;
+        a[iz]   = scale * d__[l];
+        if (l == 1)
+        {
+            goto L290;
+        }
+        jk = 1;
 
-	i__2 = l;
-	for (j = 1; j <= i__2; ++j) {
-	    f = d__[j];
-	    g = 0.;
-	    jm1 = j - 1;
-	    if (jm1 < 1) {
-		goto L220;
-	    }
+        i__2 = l;
+        for (j = 1; j <= i__2; ++j)
+        {
+            f   = d__[j];
+            g   = 0.;
+            jm1 = j - 1;
+            if (jm1 < 1)
+            {
+                goto L220;
+            }
 
-	    i__3 = jm1;
-	    for (k = 1; k <= i__3; ++k) {
-		g += a[jk] * d__[k];
-		e[k] += a[jk] * f;
-		++jk;
+            i__3 = jm1;
+            for (k = 1; k <= i__3; ++k)
+            {
+                g    += a[jk] * d__[k];
+                e[k] += a[jk] * f;
+                ++jk;
 /* L200: */
-	    }
+            }
 
 L220:
-	    e[j] = g + a[jk] * f;
-	    ++jk;
+            e[j] = g + a[jk] * f;
+            ++jk;
 /* L240: */
-	}
+        }
 /*     .......... FORM P .......... */
-	f = 0.;
+        f = 0.;
 
-	i__2 = l;
-	for (j = 1; j <= i__2; ++j) {
-	    e[j] /= h__;
-	    f += e[j] * d__[j];
+        i__2 = l;
+        for (j = 1; j <= i__2; ++j)
+        {
+            e[j] /= h__;
+            f    += e[j] * d__[j];
 /* L245: */
-	}
+        }
 
-	hh = f / (h__ + h__);
+        hh = f / (h__ + h__);
 /*     .......... FORM Q .......... */
-	i__2 = l;
-	for (j = 1; j <= i__2; ++j) {
+        i__2 = l;
+        for (j = 1; j <= i__2; ++j)
+        {
 /* L250: */
-	    e[j] -= hh * d__[j];
-	}
+            e[j] -= hh * d__[j];
+        }
 
-	jk = 1;
+        jk = 1;
 /*     .......... FORM REDUCED A .......... */
-	i__2 = l;
-	for (j = 1; j <= i__2; ++j) {
-	    f = d__[j];
-	    g = e[j];
+        i__2 = l;
+        for (j = 1; j <= i__2; ++j)
+        {
+            f = d__[j];
+            g = e[j];
 
-	    i__3 = j;
-	    for (k = 1; k <= i__3; ++k) {
-		a[jk] = a[jk] - f * e[k] - g * d__[k];
-		++jk;
+            i__3 = j;
+            for (k = 1; k <= i__3; ++k)
+            {
+                a[jk] = a[jk] - f * e[k] - g * d__[k];
+                ++jk;
 /* L260: */
-	    }
+            }
 
 /* L280: */
-	}
+        }
 
 L290:
-	d__[i__] = a[iz + 1];
-	a[iz + 1] = scale * sqrt(h__);
+        d__[i__]  = a[iz + 1];
+        a[iz + 1] = scale * sqrt(h__);
 /* L300: */
     }
 
     return 0;
 } /* tred3_ */
-

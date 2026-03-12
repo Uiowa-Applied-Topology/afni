@@ -98,23 +98,23 @@ void qh_appendvertex(vertexT *vertex)
  * >-------------------------------</a><a name="attachnewfacets">-</a>
  *
  * qh_attachnewfacets( ) attach horizon facets to new facets in qh.newfacet_list newfacets have
- * neighbor and ridge links to horizon but not vice versa only needed for qh.ONLYgood
+ *neighbor and ridge links to horizon but not vice versa only needed for qh.ONLYgood
  *
  * returns:
  *  set qh.NEWfacets horizon facets linked to new facets ridges changed from visible facets to new
- * facets simplicial ridges deleted qh.visible_list, no ridges valid facet->f.replace is a newfacet
- * (if any)
+ *facets simplicial ridges deleted qh.visible_list, no ridges valid facet->f.replace is a newfacet
+ *(if any)
  *
  * design:
  *  delete interior ridges and neighbor sets by for each visible, non-simplicial facet for each
- * ridge if last visit or if neighbor is simplicial if horizon neighbor delete ridge for horizon's
- * ridge set delete ridge erase neighbor set attach horizon facets and new facets by for all new
- * facets if corresponding horizon facet is simplicial locate corresponding visible facet {may be
- * more than one}
+ *ridge if last visit or if neighbor is simplicial if horizon neighbor delete ridge for horizon's
+ *ridge set delete ridge erase neighbor set attach horizon facets and new facets by for all new
+ *facets if corresponding horizon facet is simplicial locate corresponding visible facet {may be
+ *more than one}
  *        link visible facet to new facet replace visible facet with new facet in horizon else it's
- * non-simplicial for all visible neighbors of the horizon facet link visible neighbor to new facet
- * delete visible neighbor from horizon facet append new facet to horizon's neighbors the first
- * ridge of the new facet is the horizon ridge link the new facet into the horizon ridge
+ *non-simplicial for all visible neighbors of the horizon facet link visible neighbor to new facet
+ *delete visible neighbor from horizon facet append new facet to horizon's neighbors the first ridge
+ *of the new facet is the horizon ridge link the new facet into the horizon ridge
  */
 void qh_attachnewfacets(void)
 {
@@ -226,7 +226,7 @@ void qh_attachnewfacets(void)
  * qh_checkflipped( facet, dist, allerror ) checks facet orientation to interior point
  *
  *  if allerror set, tests against qh.DISTround else tests against 0 since tested against DISTround
- * before
+ *before
  *
  * returns:
  *  False if it flipped orientation (sets facet->flipped) distance if non-NULL
@@ -319,7 +319,7 @@ void qh_delfacet(facetT *facet)
  *
  * notes:
  *  ridges already deleted horizon facets do not reference facets on qh.visible_list new facets in
- * qh.newfacet_list uses   qh.visit_id;
+ *qh.newfacet_list uses   qh.visit_id;
  */
 void qh_deletevisible(void /*qh visible_list*/)
 {
@@ -357,22 +357,22 @@ void qh_deletevisible(void /*qh visible_list*/)
  * >-------------------------------</a><a name="facetintersect">-</a>
  *
  * qh_facetintersect( facetA, facetB, skipa, skipB, prepend ) return vertices for intersection of
- * two simplicial facets may include 1 prepended entry (if more, need to settemppush)
+ *two simplicial facets may include 1 prepended entry (if more, need to settemppush)
  *
  * returns:
  *  returns set of qh.hull_dim-1 + prepend vertices returns skipped index for each test and checks
- * for exactly one
+ *for exactly one
  *
  * notes:
  *  does not need settemp since set in quick memory
  *
  * see also:
  *  qh_vertexintersect and qh_vertexintersect_new use qh_setnew_delnthsorted to get nth ridge (no
- * skip information)
+ *skip information)
  *
  * design:
  *  locate skipped vertex by scanning facet A's neighbors locate skipped vertex by scanning facet
- * B's neighbors intersect the vertex sets
+ *B's neighbors intersect the vertex sets
  */
 setT *qh_facetintersect(facetT *facetA, facetT *facetB,
                         int *skipA, int *skipB, int prepend)
@@ -447,14 +447,14 @@ setT *qh_facetintersect(facetT *facetA, facetT *facetB,
  * >-------------------------------</a><a name="gethash">-</a>
  *
  * qh_gethash( hashsize, set, size, firstindex, skipelem ) return hashvalue for a set with
- * firstindex and skipelem
+ *firstindex and skipelem
  *
  * notes:
  *  returned hash is in [0,hashsize) assumes at least firstindex+1 elements assumes skipelem is
- * NULL, in set, or part of hash
+ *NULL, in set, or part of hash
  *
  *  hashes memory addresses which may change over different runs of the same data using sum for hash
- * does badly in high d
+ *does badly in high d
  */
 int qh_gethash(int hashsize, setT *set, int size, int firstindex, void *skipelem)
 {
@@ -538,7 +538,7 @@ int qh_gethash(int hashsize, setT *set, int size, int firstindex, void *skipelem
  *
  * returns:
  *  returns newfacet adds newfacet to qh.facet_list newfacet->vertices= vertices if horizon
- * newfacet->neighbor= horizon, but not vice versa newvertex_list updated with vertices
+ *newfacet->neighbor= horizon, but not vice versa newvertex_list updated with vertices
  */
 facetT *qh_makenewfacet(setT *vertices, boolT toporient, facetT *horizon)
 {
@@ -571,7 +571,7 @@ facetT *qh_makenewfacet(setT *vertices, boolT toporient, facetT *horizon)
  *
  * returns:
  *  all facets have hyperplanes or are marked for   merging doesn't create hyperplane if horizon is
- * coplanar (will merge) updates qh.min_vertex if qh.JOGGLEmax
+ *coplanar (will merge) updates qh.min_vertex if qh.JOGGLEmax
  *
  * notes:
  *  facet->f.samecycle is defined for facet->mergehorizon facets
@@ -599,20 +599,20 @@ void qh_makenewplanes(void /* newfacet_list */)
  *
  * returns:
  *  first newfacet, bumps numnew as needed attaches new facets if !qh.ONLYgood marks ridge neighbors
- * for simplicial visible if (qh.ONLYgood) ridges on newfacet, horizon, and visible else ridge and
- * neighbors between newfacet and   horizon visible facet's ridges are deleted
+ *for simplicial visible if (qh.ONLYgood) ridges on newfacet, horizon, and visible else ridge and
+ *neighbors between newfacet and   horizon visible facet's ridges are deleted
  *
  * notes:
  *  qh.visit_id if visible has already been processed sets neighbor->seen for building f.samecycle
- * assumes all 'seen' flags initially false
+ *assumes all 'seen' flags initially false
  *
  * design:
  *  for each ridge of visible facet get neighbor of visible facet if neighbor was already processed
- * delete the ridge (will delete all visible facets later) if neighbor is a horizon facet create a
- * new facet if neighbor coplanar adds newfacet to f.samecycle for later merging else updates
- * neighbor's neighbor set (checks for non-simplicial facet with multiple ridges to visible facet)
- * updates neighbor's ridge set (checks for simplicial neighbor to non-simplicial visible facet)
- * (deletes ridge if neighbor is simplicial)
+ *delete the ridge (will delete all visible facets later) if neighbor is a horizon facet create a
+ *new facet if neighbor coplanar adds newfacet to f.samecycle for later merging else updates
+ *neighbor's neighbor set (checks for non-simplicial facet with multiple ridges to visible facet)
+ *updates neighbor's ridge set (checks for simplicial neighbor to non-simplicial visible facet)
+ *(deletes ridge if neighbor is simplicial)
  *
  */
 #ifndef qh_NOmerge
@@ -731,7 +731,7 @@ facetT *qh_makenew_nonsimplicial(facetT *visible, vertexT *apex, int *numnew)
  * >-------------------------------</a><a name="makenew_simplicial">-</a>
  *
  * qh_makenew_simplicial( visible, apex, numnew ) make new facets for simplicial visible facet and
- * apex
+ *apex
  *
  * returns:
  *  attaches new facets if (!qh.ONLYgood) neighbors between newfacet and horizon
@@ -741,7 +741,7 @@ facetT *qh_makenew_nonsimplicial(facetT *visible, vertexT *apex, int *numnew)
  *
  * design:
  *  locate neighboring horizon facet for visible facet determine vertices and orientation create new
- * facet if coplanar, add new facet to f.samecycle update horizon facet's neighbor list
+ *facet if coplanar, add new facet to f.samecycle update horizon facet's neighbor list
  */
 facetT *qh_makenew_simplicial(facetT *visible, vertexT *apex, int *numnew)
 {
@@ -792,24 +792,24 @@ facetT *qh_makenew_simplicial(facetT *visible, vertexT *apex, int *numnew)
  * >-------------------------------</a><a name="matchneighbor">-</a>
  *
  * qh_matchneighbor( newfacet, newskip, hashsize, hashcount ) either match subridge of newfacet with
- * neighbor or add to hash_table
+ *neighbor or add to hash_table
  *
  * returns:
  *  duplicate ridges are unmatched and marked by qh_DUPLICATEridge
  *
  * notes:
  *  ridge is newfacet->vertices w/o newskip vertex do not allocate memory (need to free hash_table
- * cleanly) uses linear hash chains
+ *cleanly) uses linear hash chains
  *
  * see also:
  *  qh_matchduplicates
  *
  * design:
  *  for each possible matching facet in qh.hash_table if vertices match set ismatch, if facets have
- * opposite orientation if ismatch and matching facet doesn't have a match match the facets by
- * updating their neighbor sets else indicate a duplicate ridge set facet hyperplane for later
- * testing add facet to hashtable unless the other facet was already a duplicate ridge mark both
- * facets with a duplicate ridge add other facet (if defined) to hash table
+ *opposite orientation if ismatch and matching facet doesn't have a match match the facets by
+ *updating their neighbor sets else indicate a duplicate ridge set facet hyperplane for later
+ *testing add facet to hashtable unless the other facet was already a duplicate ridge mark both
+ *facets with a duplicate ridge add other facet (if defined) to hash table
  */
 void qh_matchneighbor(facetT *newfacet, int newskip, int hashsize, int *hashcount)
 {
@@ -921,19 +921,19 @@ void qh_matchneighbor(facetT *newfacet, int newskip, int hashsize, int *hashcoun
  *
  * returns:
  *  qh.newfacet_list with full neighbor sets get vertices with nth neighbor by deleting nth vertex
- * if qh.PREmerge/MERGEexact or qh.FORCEoutput sets facet->flippped if flipped normal (also prevents
- * point partitioning) if duplicate ridges and qh.PREmerge/MERGEexact sets facet->dupridge missing
- * neighbor links identifies extra ridges to be merging (qh_MERGEridge)
+ *if qh.PREmerge/MERGEexact or qh.FORCEoutput sets facet->flippped if flipped normal (also prevents
+ *point partitioning) if duplicate ridges and qh.PREmerge/MERGEexact sets facet->dupridge missing
+ *neighbor links identifies extra ridges to be merging (qh_MERGEridge)
  *
  * notes:
  *  newfacets already have neighbor[0] (horizon facet) assumes qh.hash_table is NULL
- * vertex->neighbors has not been updated yet do not allocate memory after qh.hash_table (need to
- * free it cleanly)
+ *vertex->neighbors has not been updated yet do not allocate memory after qh.hash_table (need to
+ *free it cleanly)
  *
  * design:
  *  delete neighbor sets for all new facets initialize a hash table for all new facets match facet
- * with neighbors if unmatched facets (due to duplicate ridges) for each new facet with a duplicate
- * ridge match it with a facet check for flipped facets
+ *with neighbors if unmatched facets (due to duplicate ridges) for each new facet with a duplicate
+ *ridge match it with a facet check for flipped facets
  */
 void qh_matchnewfacets(void /* qh newfacet_list */)
 {
@@ -1059,11 +1059,11 @@ void qh_matchnewfacets(void /* qh newfacet_list */)
  * >-------------------------------</a><a name="matchvertices">-</a>
  *
  * qh_matchvertices( firstindex, verticesA, skipA, verticesB, skipB, same ) tests whether vertices
- * match with a single skip starts match at firstindex since all new facets have a common vertex
+ *match with a single skip starts match at firstindex since all new facets have a common vertex
  *
  * returns:
  *  true if matched vertices skip index for each set sets same iff vertices have the same
- * orientation
+ *orientation
  *
  * notes:
  *  assumes skipA is in A and both sets are the same size
@@ -1181,7 +1181,7 @@ may have the same identifier.  Otherwise output ok.\n",
  *
  * notes:
  *  WARN64 -- id truncated to 32-bits, at most 2G points NOerrors returned (QhullPoint::id) if point
- * not in point array the code does a comparison of unrelated pointers.
+ *not in point array the code does a comparison of unrelated pointers.
  */
 int qh_pointid(pointT *point)
 {
@@ -1290,13 +1290,13 @@ void qh_removevertex(vertexT *vertex)
  *
  * returns:
  *  if qh.VERTEXneighbors, updates neighbors for each vertex if qh.newvertex_list, removes visible
- * neighbors  from vertex neighbors if qh.newfacet_list adds new facets to vertex neighbors if
- * qh.visible_list interior vertices added to qh.del_vertices for later partitioning
+ *neighbors  from vertex neighbors if qh.newfacet_list adds new facets to vertex neighbors if
+ *qh.visible_list interior vertices added to qh.del_vertices for later partitioning
  *
  * design:
  *  if qh.VERTEXneighbors deletes references to visible facets from vertex neighbors appends new
- * facets to the neighbor list for each vertex checks all vertices of visible facets removes visible
- * facets from neighbor lists marks unused vertices for deletion
+ *facets to the neighbor list for each vertex checks all vertices of visible facets removes visible
+ *facets from neighbor lists marks unused vertices for deletion
  */
 void qh_updatevertices(void /*qh newvertex_list, newfacet_list, visible_list*/)
 {

@@ -33,66 +33,66 @@
 
 #define faces_neighborhood_num    6
 int faces_neighborhood[18] = {
-    0,     0,  1,
-    0,     0, -1,
-    0,     1,  0,
-    0,    -1,  0,
-    1,     0,  0,
-    -1,    0, 0
+    0,   0,  1,
+    0,   0, -1,
+    0,   1,  0,
+    0,  -1,  0,
+    1,   0,  0,
+    -1,  0, 0
 };
 
 /*   x  y  z */
 #define faces_edges_neighborhood_num    18
 const int faces_edges_neighborhood[54] = {
-    0,    -1, -1,
-    -1,    0, -1,
-    0,     0, -1,
-    1,     0, -1,
-    0,     1, -1,
-    -1,   -1,  0,
-    -1,    0,  0,
-    -1,    1,  0,
-    0,    -1,  0,
-    0,     1,  0,
-    1,    -1,  0,
-    1,     0,  0,
-    1,     1,  0,
-    0,    -1,  1,
-    -1,    0,  1,
-    0,     0,  1,
-    1,     0,  1,
-    0,     1, 1
+    0,  -1, -1,
+    -1,  0, -1,
+    0,   0, -1,
+    1,   0, -1,
+    0,   1, -1,
+    -1, -1,  0,
+    -1,  0,  0,
+    -1,  1,  0,
+    0,  -1,  0,
+    0,   1,  0,
+    1,  -1,  0,
+    1,   0,  0,
+    1,   1,  0,
+    0,  -1,  1,
+    -1,  0,  1,
+    0,   0,  1,
+    1,   0,  1,
+    0,   1, 1
 };
 
 /*   x  y  z */
 #define faces_edges_corners_neighborhood_num    26
 const int faces_edges_corners_neighborhood[78] = {
-    -1,   -1, -1,
-    -1,    0, -1,
-    -1,    1, -1,
-    0,    -1, -1,
-    0,     0, -1,
-    0,     1, -1,
-    1,    -1, -1,
-    1,     0, -1,
-    1,     1, -1,
-    -1,   -1,  0,
-    -1,    0,  0,
-    -1,    1,  0,
-    0,    -1,  0,
-    0,     1,  0,
-    1,    -1,  0,
-    1,     0,  0,
-    1,     1,  0,
-    -1,   -1,  1,
-    -1,    0,  1,
-    -1,    1,  1,
-    0,    -1,  1,
-    0,     0,  1,
-    0,     1,  1,
-    1,    -1,  1,
-    1,     0,  1,
-    1,     1,  1,
+    -1, -1, -1,
+    -1,  0, -1,
+    -1,  1, -1,
+    0,  -1, -1,
+    0,   0, -1,
+    0,   1, -1,
+    1,  -1, -1,
+    1,   0, -1,
+    1,   1, -1,
+    -1, -1,  0,
+    -1,  0,  0,
+    -1,  1,  0,
+    0,  -1,  0,
+    0,   1,  0,
+    1,  -1,  0,
+    1,   0,  0,
+    1,   1,  0,
+    -1, -1,  1,
+    -1,  0,  1,
+    -1,  1,  1,
+    0,  -1,  1,
+    0,   0,  1,
+    0,   1,  1,
+    1,  -1,  1,
+    1,   0,  1,
+    1,   1,  1,
 };
 
 /* CC macro for updating mem stats */
@@ -223,9 +223,9 @@ struct _list_node {
         }
 
 /* freeing all of the allocated mem on an error can get a little messy. instead we can use this
- * macro to check what has been allocated and kill it. this of
- * course requires strict discipline for initializing all pointers to NULL and
- * resetting them to NULL when free'd. i should be able to handle that */
+ * macro to check what has been allocated and kill it. this of course requires strict discipline for
+ * initializing all pointers to NULL and resetting them to NULL when free'd. i should be able to
+ * handle that */
 #define CHECK_AND_FREE_ALL_ALLOCATED_MEM     \
         {                                    \
             /* eliminate DSETS */            \
@@ -347,14 +347,14 @@ float my_THD_pearson_corr(int n, float *x, float *y)
 /*----------------------------------------------------------------*/
 
 /*! eta^2 (Cohen, NeuroImage 2008)              25 Jun 2010 [rickr]
-*
-*  eta^2 = 1 -  SUM[ (a_i - m_i)^2 + (b_i - m_i)^2 ]
-*               ------------------------------------
-*               SUM[ (a_i - M  )^2 + (b_i - M  )^2 ]
-*
-*  where  o  a_i and b_i are the vector elements o  m_i = (a_i + b_i)/2 o  M = mean across both
-*vectors
-*  -----------------------------------------------------------------*/
+ *
+ *  eta^2 = 1 -  SUM[ (a_i - m_i)^2 + (b_i - m_i)^2 ]
+ *               ------------------------------------
+ *               SUM[ (a_i - M  )^2 + (b_i - M  )^2 ]
+ *
+ *  where  o  a_i and b_i are the vector elements o  m_i = (a_i + b_i)/2 o  M = mean across both
+ *vectors
+ *  -----------------------------------------------------------------*/
 
 float my_THD_eta_squared(int n, float *x, float *y)
 {
@@ -818,9 +818,8 @@ int main(int argc, char *argv[])
     }
 
 
-    /*--- CC the vectim contains a mapping between voxel index and mask index,
-     *    tap into that here to avoid duplicating memory usage, also create a mapping that goes the
-     * other way ---*/
+    /*--- CC the vectim contains a mapping between voxel index and mask index, tap into that here to
+     * avoid duplicating memory usage, also create a mapping that goes the other way ---*/
 
     if (mask != NULL)
     {
@@ -866,8 +865,7 @@ int main(int argc, char *argv[])
     }
 
 
-    /* -- this procedure does not change time series that
-     *    have zero variance -- */
+    /* -- this procedure does not change time series that have zero variance -- */
     if (method == PEARSON)
     {
         THD_vectim_normalize(xvectim);                       /* L2 norm = 1 */
@@ -1012,9 +1010,8 @@ int main(int argc, char *argv[])
             /* initialize the boundary with the target voxel */
             if (recycled_nodes == NULL)
             {
-                /* this looks like it is redundant, but I want the first if
-                 * statement to run in the critical section and the second if statement to run after
-                 * it */
+                /* this looks like it is redundant, but I want the first if statement to run in the
+                 * critical section and the second if statement to run after it */
 #pragma omp critical(mem_alloc)
                 if ((new_node = (list_node *)malloc(sizeof(list_node))) != NULL)
                 {
@@ -1111,7 +1108,7 @@ int main(int argc, char *argv[])
                             if (recycled_nodes == NULL)
                             {
                                 /* this looks like it is redundant, but I want the first if
-                                 *  statement to run in the critical section and the second if
+                                 * statement to run in the critical section and the second if
                                  * statement to run after it */
 #pragma omp critical(mem_alloc)
                                 if ((new_node = (list_node *)malloc(sizeof(list_node))) != NULL)

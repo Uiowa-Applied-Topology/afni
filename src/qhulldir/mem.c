@@ -21,7 +21,7 @@
  *
  * notes:
  *  uses Quickfit algorithm (freelists for commonly allocated sizes) assumes small sizes for
- * freelists (it discards the tail of memory buffers)
+ *freelists (it discards the tail of memory buffers)
  *
  * see:
  *  qh-mem.htm and mem.h global.c (qh_initbuffers) for an example of using mem.c
@@ -87,13 +87,13 @@ static int qh_intcompare(const void *i, const void *j)
  *
  * notes:
  *  use explicit type conversion to avoid type warnings on some compilers actual object may be
- * larger than insize use qh_memalloc_() for inline code for quick allocations logs allocations if
+ *larger than insize use qh_memalloc_() for inline code for quick allocations logs allocations if
  * 'T5'
  *
  * design:
  *  if size < qhmem.LASTsize if qhmem.freelists[size] non-empty return first object on freelist else
- * round up request to size of qhmem.freelists[size] allocate new allocation buffer if necessary
- * allocate object from allocation buffer else allocate object with qh_malloc() in user.c
+ *round up request to size of qhmem.freelists[size] allocate new allocation buffer if necessary
+ *allocate object from allocation buffer else allocate object with qh_malloc() in user.c
  */
 void *qh_memalloc(int insize)
 {
@@ -218,7 +218,7 @@ void *qh_memalloc(int insize)
  *
  * notes:
  *  object may be NULL type checking warns if using (void **)object use qh_memfree_() for quick
- * free's of small objects
+ *free's of small objects
  *
  * design:
  *  if size <= qhmem.LASTsize append object to corresponding freelist else call qh_free(object)
@@ -330,9 +330,9 @@ void qh_meminit(FILE *ferr)
  * >-------------------------------</a><a name="meminitbuffers">-</a>
  *
  * qh_meminitbuffers( tracelevel, alignment, numsizes, bufsize, bufinit ) initialize qhmem if
- * tracelevel >= 5, trace memory allocations alignment= desired address alignment for memory
- * allocations numsizes= number of freelists bufsize=  size of additional memory buffers for short
- * allocations bufinit=  size of initial memory buffer for short allocations
+ *tracelevel >= 5, trace memory allocations alignment= desired address alignment for memory
+ *allocations numsizes= number of freelists bufsize=  size of additional memory buffers for short
+ *allocations bufinit=  size of initial memory buffer for short allocations
  */
 void qh_meminitbuffers(int tracelevel, int alignment, int numsizes, int bufsize, int bufinit)
 {
@@ -607,12 +607,12 @@ void qh_memstatistics(FILE *fp)
  * >-------------------------------</a><a name="memtotlong">-</a>
  *
  * qh_memtotal( totlong, curlong, totshort, curshort, maxlong, totbuffer ) Return the total,
- * allocated long and short memory
+ *allocated long and short memory
  *
  * returns:
  *  Returns the total current bytes of long and short allocations Returns the current count of long
- * and short allocations Returns the maximum long memory and total short buffer (minus one link per
- * buffer) Does not error (UsingLibQhull.cpp)
+ *and short allocations Returns the maximum long memory and total short buffer (minus one link per
+ *buffer) Does not error (UsingLibQhull.cpp)
  */
 void qh_memtotal(int *totlong, int *curlong, int *totshort, int *curshort, int *maxlong,
                  int *totbuffer)

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 #include "afni.h"
@@ -116,7 +116,7 @@ PLUGIN_interface * PLUGIN_init(int ncall)
 
 /***************************************************************************
  * Main routine for this plugin (will be called from AFNI). If the return string is not NULL, some
- * error transpired, and AFNI will popup the return string in a message box.
+ *error transpired, and AFNI will popup the return string in a message box.
  ****************************************************************************/
 
 static char * COMP_main(PLUGIN_interface *plint)

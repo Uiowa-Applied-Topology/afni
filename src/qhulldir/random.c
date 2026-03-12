@@ -2,7 +2,7 @@
  * >-------------------------------</a><a name="TOP">-</a>
  *
  * random.c -- utilities Park & Miller's minimimal standard random number generator argc/argv
- * conversion
+ *conversion
  */
 
 #include "libqhull.h"
@@ -152,7 +152,7 @@ int qh_argv_to_command_size(int argc, char *argv[])
  *  For qhull and rbox, called from qh_RANDOMint(),etc. [user.h]
  *
  *  From Park & Miller's minimal standard random number generator Communications of the ACM,
- * 31:1192-1201, 1988. Does not use 0 or 2^31 -1 this is silently enforced by qh_srand() Can make
+ *31:1192-1201, 1988. Does not use 0 or 2^31 -1 this is silently enforced by qh_srand() Can make
  * 'Rn' much faster by moving qh_rand to qh_distplane
  */
 
@@ -223,7 +223,7 @@ realT qh_randomfactor(realT scale, realT offset)
  * >-------------------------------</a><a name="randommatrix">-</a>
  *
  * qh_randommatrix( buffer, dim, rows ) generate a random dim X dim matrix in range [-1,1] assumes
- * buffer is [dim+1, dim]
+ *buffer is [dim+1, dim]
  *
  * returns:
  * sets buffer to random numbers sets rows to rows of buffer sets row[dim] as scratch row
@@ -251,7 +251,7 @@ void qh_randommatrix(realT *buffer, int dim, realT **rows)
  * >-------------------------------</a><a name="strtol">-</a>
  *
  * qh_strtol( s, endp) qh_strtod( s, endp) internal versions of strtol() and strtod() does not skip
- * trailing spaces notes:
+ *trailing spaces notes:
  *  some implementations of strtol()/strtod() skip trailing spaces
  */
 double qh_strtod(const char *s, char **endp)

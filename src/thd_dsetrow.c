@@ -2,7 +2,7 @@
 
 /****************************************************************************
  * Functions for dealing with data extracted/inserted from rows of a 3D dataset - parallel to x, y,
- * or z axes.
+ *or z axes.
  * -- 08 Mar 2001 - RWCox
  *****************************************************************************/
 
@@ -14,7 +14,7 @@
  *  -  +3 = z direction  -3 = reversed z direction
  *
  * This routine is mostly for the pitiful programmer who can't be bothered to do this calculation
- * himself.
+ *himself.
  * -----------------------------------------------------------------------------*/
 
 int THD_get_dset_rowcount(THD_3dim_dataset *dset, int dcode)

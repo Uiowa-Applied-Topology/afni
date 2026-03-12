@@ -1,21 +1,21 @@
-/* cbabk2.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* cbabk2.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int cbabk2_(integer *nm, integer *n, integer *low, integer *
-	igh, doublereal *scale, integer *m, doublereal *zr, doublereal *zi)
+                             igh, doublereal *scale, integer *m, doublereal *zr, doublereal *zi)
 {
     /* System generated locals */
     integer zr_dim1, zr_offset, zi_dim1, zi_offset, i__1, i__2;
 
     /* Local variables */
-    integer i__, j, k;
+    integer    i__, j, k;
     doublereal s;
-    integer ii;
+    integer    ii;
 
 
 
@@ -54,43 +54,48 @@
 /*          IN THEIR FIRST M COLUMNS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --scale;
-    zi_dim1 = *nm;
+    zi_dim1   = *nm;
     zi_offset = zi_dim1 + 1;
-    zi -= zi_offset;
-    zr_dim1 = *nm;
+    zi       -= zi_offset;
+    zr_dim1   = *nm;
     zr_offset = zr_dim1 + 1;
-    zr -= zr_offset;
+    zr       -= zr_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
-    if (*igh == *low) {
-	goto L120;
+    if (*igh == *low)
+    {
+        goto L120;
     }
 
     i__1 = *igh;
-    for (i__ = *low; i__ <= i__1; ++i__) {
-	s = scale[i__];
+    for (i__ = *low; i__ <= i__1; ++i__)
+    {
+        s = scale[i__];
 /*     .......... LEFT HAND EIGENVECTORS ARE BACK TRANSFORMED */
 /*                IF THE FOREGOING STATEMENT IS REPLACED BY */
 /*                S=1.0D0/SCALE(I). .......... */
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    zr[i__ + j * zr_dim1] *= s;
-	    zi[i__ + j * zi_dim1] *= s;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            zr[i__ + j * zr_dim1] *= s;
+            zi[i__ + j * zi_dim1] *= s;
 /* L100: */
-	}
+        }
 
 /* L110: */
     }
@@ -98,35 +103,39 @@
 /*                IGH+1 STEP 1 UNTIL N DO -- .......... */
 L120:
     i__1 = *n;
-    for (ii = 1; ii <= i__1; ++ii) {
-	i__ = ii;
-	if (i__ >= *low && i__ <= *igh) {
-	    goto L140;
-	}
-	if (i__ < *low) {
-	    i__ = *low - ii;
-	}
-	k = (integer) scale[i__];
-	if (k == i__) {
-	    goto L140;
-	}
+    for (ii = 1; ii <= i__1; ++ii)
+    {
+        i__ = ii;
+        if (i__ >= *low && i__ <= *igh)
+        {
+            goto L140;
+        }
+        if (i__ < *low)
+        {
+            i__ = *low - ii;
+        }
+        k = (integer)scale[i__];
+        if (k == i__)
+        {
+            goto L140;
+        }
 
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    s = zr[i__ + j * zr_dim1];
-	    zr[i__ + j * zr_dim1] = zr[k + j * zr_dim1];
-	    zr[k + j * zr_dim1] = s;
-	    s = zi[i__ + j * zi_dim1];
-	    zi[i__ + j * zi_dim1] = zi[k + j * zi_dim1];
-	    zi[k + j * zi_dim1] = s;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            s = zr[i__ + j * zr_dim1];
+            zr[i__ + j * zr_dim1] = zr[k + j * zr_dim1];
+            zr[k + j * zr_dim1]   = s;
+            s = zi[i__ + j * zi_dim1];
+            zi[i__ + j * zi_dim1] = zi[k + j * zi_dim1];
+            zi[k + j * zi_dim1]   = s;
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* cbabk2_ */
-

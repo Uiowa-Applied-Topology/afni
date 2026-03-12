@@ -63,12 +63,12 @@ void qh_crossproduct(int dim, realT vecA[3], realT vecB[3], realT vecC[3])
  * >-------------------------------</a><a name="determinant">-</a>
  *
  * qh_determinant( rows, dim, nearzero ) compute signed determinant of a square matrix uses
- * qh.NEARzero to test for degenerate matrices
+ *qh.NEARzero to test for degenerate matrices
  *
  * returns:
  *  determinant overwrites rows and the matrix if dim == 2 or 3 nearzero iff determinant < qh
- * NEARzero[dim-1] (!quite correct, not critical) if dim >= 4 nearzero iff diagonal[k] < qh
- * NEARzero[k]
+ *NEARzero[dim-1] (!quite correct, not critical) if dim >= 4 nearzero iff diagonal[k] < qh
+ *NEARzero[k]
  */
 realT qh_determinant(realT **rows, int dim, boolT *nearzero)
 {
@@ -122,14 +122,14 @@ realT qh_determinant(realT **rows, int dim, boolT *nearzero)
  * >-------------------------------</a><a name="detjoggle">-</a>
  *
  * qh_detjoggle( points, numpoints, dimension ) determine default max joggle for point array as
- * qh_distround * qh_JOGGLEdefault
+ *qh_distround * qh_JOGGLEdefault
  *
  * returns:
  *  initial value for JOGGLEmax from points and REALepsilon
  *
  * notes:
  *  computes DISTround since qh_maxmin not called yet if qh SCALElast, last dimension will be scaled
- * later to MAXwidth
+ *later to MAXwidth
  *
  *  loop duplicated from qh_maxmin
  */
@@ -178,11 +178,11 @@ realT qh_detjoggle(pointT *points, int numpoints, int dimension)
  * >-------------------------------</a><a name="detroundoff">-</a>
  *
  * qh_detroundoff() determine maximum roundoff errors from REALepsilon, REALmax, REALmin,
- * qh.hull_dim, qh.MAXabs_coord, qh.MAXsumcoord, qh.MAXwidth, qh.MINdenom_1
+ *qh.hull_dim, qh.MAXabs_coord, qh.MAXsumcoord, qh.MAXwidth, qh.MINdenom_1
  *
  *  accounts for qh.SETroundoff, qh.RANDOMdist, qh MERGEexact qh.premerge_cos, qh.postmerge_cos,
- * qh.premerge_centrum, qh.postmerge_centrum, qh.MINoutside, qh_RATIOnearinside, qh_COPLANARratio,
- * qh_WIDEcoplanar
+ *qh.premerge_centrum, qh.postmerge_centrum, qh.MINoutside, qh_RATIOnearinside, qh_COPLANARratio,
+ *qh_WIDEcoplanar
  *
  * returns:
  *  sets qh.DISTround, etc. (see below) appends precision constants to qh.qhull_options
@@ -192,10 +192,10 @@ realT qh_detjoggle(pointT *points, int numpoints, int dimension)
  *
  * design:
  *  determine qh.DISTround for distance computations determine minimum denominators for qh_divzero
- * determine qh.ANGLEround for angle computations adjust qh.premerge_cos,... for roundoff error
- * determine qh.ONEmerge for maximum error due to a single merge determine qh.NEARinside,
- * qh.MAXcoplanar, qh.MINvisible, qh.MINoutside, qh.WIDEfacet initialize qh.max_vertex and
- * qh.minvertex
+ *determine qh.ANGLEround for angle computations adjust qh.premerge_cos,... for roundoff error
+ *determine qh.ONEmerge for maximum error due to a single merge determine qh.NEARinside,
+ *qh.MAXcoplanar, qh.MINvisible, qh.MINoutside, qh.WIDEfacet initialize qh.max_vertex and
+ *qh.minvertex
  */
 void qh_detroundoff(void)
 {
@@ -336,7 +336,7 @@ void qh_detroundoff(void)
  * >-------------------------------</a><a name="detsimplex">-</a>
  *
  * qh_detsimplex( apex, points, dim, nearzero ) compute determinant of a simplex with point apex and
- * base points
+ *base points
  *
  * returns:
  *   signed determinant and nearzero from qh_determinant
@@ -388,7 +388,7 @@ realT qh_detsimplex(pointT *apex, setT *points, int dim, boolT *nearzero)
  * >-------------------------------</a><a name="distnorm">-</a>
  *
  * qh_distnorm( dim, point, normal, offset ) return distance from point to hyperplane at
- * normal/offset
+ *normal/offset
  *
  * returns:
  *  dist
@@ -417,8 +417,8 @@ realT qh_distnorm(int dim, pointT *point, pointT *normal, realT *offsetp)
  * >-------------------------------</a><a name="distround">-</a>
  *
  * qh_distround(dimension, maxabs, maxsumabs ) compute maximum round-off error for a distance
- * computation to a normalized hyperplane maxabs is the maximum absolute value of a coordinate
- * maxsumabs is the maximum possible sum of absolute coordinate values
+ *computation to a normalized hyperplane maxabs is the maximum absolute value of a coordinate
+ *maxsumabs is the maximum possible sum of absolute coordinate values
  *
  * returns:
  *  max dist round for REALepsilon
@@ -451,8 +451,8 @@ realT qh_distround(int dimension, realT maxabs, realT maxsumabs)
  *
  * design:
  *  if numer is nearly zero and abs(numer) < abs(denom) return numer/denom else if numer is nearly
- * zero return 0 and zerodiv else if denom/numer non-zero return numer/denom else return 0 and
- * zerodiv
+ *zero return 0 and zerodiv else if denom/numer non-zero return numer/denom else return 0 and
+ *zerodiv
  */
 realT qh_divzero(realT numer, realT denom, realT mindenom1, boolT *zerodiv)
 {
@@ -495,11 +495,11 @@ realT qh_divzero(realT numer, realT denom, realT mindenom1, boolT *zerodiv)
  * notes:
  *  if non-simplicial, uses centrum to triangulate facet and sums the projected areas.
  *  if (qh DELAUNAY), computes projected area instead for last coordinate assumes facet->normal
- * exists projecting tricoplanar facets to the hyperplane does not appear to make a difference
+ *exists projecting tricoplanar facets to the hyperplane does not appear to make a difference
  *
  * design:
  *  if simplicial compute area else for each ridge compute area from centrum to ridge negate area if
- * upper Delaunay facet
+ *upper Delaunay facet
  */
 realT qh_facetarea(facetT *facet)
 {
@@ -545,21 +545,21 @@ realT qh_facetarea(facetT *facet)
  * >-------------------------------</a><a name="facetarea_simplex">-</a>
  *
  * qh_facetarea_simplex( dim, apex, vertices, notvertex, toporient, normal, offset ) return area for
- * a simplex defined by an apex, a base of vertices, an orientation, and a unit normal if simplicial
- * or tricoplanar facet, notvertex is defined and it is skipped in vertices
+ *a simplex defined by an apex, a base of vertices, an orientation, and a unit normal if simplicial
+ *or tricoplanar facet, notvertex is defined and it is skipped in vertices
  *
  * returns:
  *  computes area of simplex projected to plane [normal,offset] returns 0 if vertex too far below
- * plane (qh WIDEfacet) vertex can't be apex of tricoplanar facet
+ *plane (qh WIDEfacet) vertex can't be apex of tricoplanar facet
  *
  * notes:
  *  if (qh DELAUNAY), computes projected area instead for last coordinate uses qh gm_matrix/gm_row
- * and qh hull_dim helper function for qh_facetarea
+ *and qh hull_dim helper function for qh_facetarea
  *
  * design:
  *  if Notvertex translate simplex to apex else project simplex to normal/offset translate simplex
- * to apex if Delaunay set last row/column to 0 with -1 on diagonal else set last row to Normal
- * compute determinate scale and flip sign for area
+ *to apex if Delaunay set last row/column to 0 with -1 on diagonal else set last row to Normal
+ *compute determinate scale and flip sign for area
  */
 realT qh_facetarea_simplex(int dim, coordT *apex, setT *vertices,
                            vertexT *notvertex, boolT toporient, coordT *normal, realT *offset)
@@ -679,7 +679,7 @@ pointT *qh_facetcenter(setT *vertices)
  * >-------------------------------</a><a name="findgooddist">-</a>
  *
  * qh_findgooddist( point, facetA, dist, facetlist ) find best good facet visible for point from
- * facetA assumes facetA is visible from point
+ *facetA assumes facetA is visible from point
  *
  * returns:
  *  best facet, i.e., good facet that is furthest from point distance to best facet NULL if none
@@ -691,8 +691,8 @@ pointT *qh_facetcenter(setT *vertices)
  *
  * design:
  *  initialize bestfacet if facetA is good move facetA to end of facetlist for each facet on
- * facetlist for each unvisited neighbor of facet move visible neighbors to end of facetlist update
- * best good neighbor if no good neighbors, update best facet
+ *facetlist for each unvisited neighbor of facet move visible neighbors to end of facetlist update
+ *best good neighbor if no good neighbors, update best facet
  */
 facetT *qh_findgooddist(pointT *point, facetT *facetA, realT *distp,
                         facetT **facetlist)
@@ -759,15 +759,15 @@ facetT *qh_findgooddist(pointT *point, facetT *facetA, realT *distp,
  * >-------------------------------</a><a name="getarea">-</a>
  *
  * qh_getarea( facetlist ) set area of all facets in facetlist collect statistics nop if
- * hasAreaVolume
+ *hasAreaVolume
  *
  * returns:
  *  sets qh totarea/totvol to total area and volume of convex hull for Delaunay triangulation,
- * computes projected area of the lower or upper hull ignores upper hull if qh ATinfinity
+ *computes projected area of the lower or upper hull ignores upper hull if qh ATinfinity
  *
  * notes:
  *  could compute outer volume by expanding facet area by rays from interior the following attempt
- * at perpendicular projection underestimated badly:
+ *at perpendicular projection underestimated badly:
  *    qh.totoutvol += (-dist + facet->maxoutside + qh DISTround) area/ qh hull_dim;
  * design:
  *  for each facet on facetlist compute facet->area update qh.totarea and qh.totvol
@@ -843,7 +843,7 @@ void qh_getarea(facetT *facetlist)
  *
  * design:
  *  for each row compute norm for row if non-zero, normalize row for each remaining rowA compute
- * inner product of row and rowA reduce rowA by row * inner product
+ *inner product of row and rowA reduce rowA by row * inner product
  */
 boolT qh_gram_schmidt(int dim, realT **row)
 {
@@ -946,22 +946,22 @@ boolT qh_inthresholds(coordT *normal, realT *angle)
  * >-------------------------------</a><a name="joggleinput">-</a>
  *
  * qh_joggleinput() randomly joggle input to Qhull by qh.JOGGLEmax initial input is
- * qh.first_point/qh.num_points of qh.hull_dim repeated calls use qh.input_points/qh.num_points
+ *qh.first_point/qh.num_points of qh.hull_dim repeated calls use qh.input_points/qh.num_points
  *
  * returns:
  *  joggles points at qh.first_point/qh.num_points copies data to qh.input_points/qh.input_malloc if
- * first time determines qh.JOGGLEmax if it was zero if qh.DELAUNAY computes the Delaunay projection
- * of the joggled points
+ *first time determines qh.JOGGLEmax if it was zero if qh.DELAUNAY computes the Delaunay projection
+ *of the joggled points
  *
  * notes:
  *  if qh.DELAUNAY, unnecessarily joggles the last coordinate the initial 'QJn' may be set larger
- * than qh_JOGGLEmaxincrease
+ *than qh_JOGGLEmaxincrease
  *
  * design:
  *  if qh.DELAUNAY set qh.SCALElast for reduced precision errors if first call initialize
- * qh.input_points to the original input points if qh.JOGGLEmax == 0 determine default qh.JOGGLEmax
- * else increase qh.JOGGLEmax according to qh.build_cnt joggle the input by adding a random number
- * in [-qh.JOGGLEmax,qh.JOGGLEmax] if qh.DELAUNAY sets the Delaunay projection
+ *qh.input_points to the original input points if qh.JOGGLEmax == 0 determine default qh.JOGGLEmax
+ *else increase qh.JOGGLEmax according to qh.build_cnt joggle the input by adding a random number in
+ *[-qh.JOGGLEmax,qh.JOGGLEmax] if qh.DELAUNAY sets the Delaunay projection
  */
 void qh_joggleinput(void)
 {
@@ -1010,6 +1010,7 @@ void qh_joggleinput(void)
                    qh JOGGLEmax);
         qh_errexit(qh_ERRqhull, NULL, NULL);
     }
+
     /* for some reason, using qh ROTATErandom and qh_RANDOMseed does not repeat the run. Use 'TRn'
      * instead */
     seed = qh_RANDOMint;
@@ -1037,7 +1038,7 @@ void qh_joggleinput(void)
  * >-------------------------------</a><a name="maxabsval">-</a>
  *
  * qh_maxabsval( normal, dim ) return pointer to maximum absolute value of a dim vector returns NULL
- * if dim=0
+ *if dim=0
  */
 realT *qh_maxabsval(realT *normal, int dim)
 {
@@ -1061,12 +1062,12 @@ realT *qh_maxabsval(realT *normal, int dim)
  * >-------------------------------</a><a name="maxmin">-</a>
  *
  * qh_maxmin( points, numpoints, dimension ) return max/min points for each dimension determine max
- * and min coordinates
+ *and min coordinates
  *
  * returns:
  *  returns a temporary set of max and min points may include duplicate points. Does not include
- * qh.GOODpoint sets qh.NEARzero, qh.MAXabs_coord, qh.MAXsumcoord, qh.MAXwidth qh.MAXlastcoord,
- * qh.MINlastcoord initializes qh.max_outside, qh.min_vertex, qh.WAScoplanar, qh.ZEROall_ok
+ *qh.GOODpoint sets qh.NEARzero, qh.MAXabs_coord, qh.MAXsumcoord, qh.MAXwidth qh.MAXlastcoord,
+ *qh.MINlastcoord initializes qh.max_outside, qh.min_vertex, qh.WAScoplanar, qh.ZEROall_ok
  *
  * notes:
  *  loop duplicated in qh_detjoggle()
@@ -1074,7 +1075,7 @@ realT *qh_maxabsval(realT *normal, int dim)
  * design:
  *  initialize global precision variables checks definition of REAL...
  *  for each dimension for each point collect maximum and minimum point collect maximum of maximums
- * and minimum of minimums determine qh.NEARzero for Gaussian Elimination
+ *and minimum of minimums determine qh.NEARzero for Gaussian Elimination
  */
 setT *qh_maxmin(pointT *points, int numpoints, int dimension)
 {
@@ -1173,7 +1174,7 @@ REALepsilon %g REALmin %g REALmax %g -REALmax %g\n",
  * >-------------------------------</a><a name="maxouter">-</a>
  *
  * qh_maxouter() return maximum distance from facet to outer plane normally this is
- * qh.max_outside+qh.DISTround does not include qh.JOGGLEmax
+ *qh.max_outside+qh.DISTround does not include qh.JOGGLEmax
  *
  * see:
  *  qh_outerinner()
@@ -1183,8 +1184,8 @@ REALepsilon %g REALmin %g REALmax %g -REALmax %g\n",
  *
  * for joggle:
  *  qh_setfacetplane() updated qh.max_outer for Wnewvertexmax (max distance to vertex) need to use
- * Wnewvertexmax since could have a coplanar point for a high facet that is replaced by a low facet
- * need to add qh.JOGGLEmax if testing input points
+ *Wnewvertexmax since could have a coplanar point for a high facet that is replaced by a low facet
+ *need to add qh.JOGGLEmax if testing input points
  */
 realT qh_maxouter(void)
 {
@@ -1202,8 +1203,8 @@ realT qh_maxouter(void)
  * >-------------------------------</a><a name="maxsimplex">-</a>
  *
  * qh_maxsimplex( dim, maxpoints, points, numpoints, simplex ) determines maximum simplex for a set
- * of points starts from points already in simplex skips qh.GOODpointp (assumes that it isn't in
- * maxpoints)
+ *of points starts from points already in simplex skips qh.GOODpointp (assumes that it isn't in
+ *maxpoints)
  *
  * returns:
  *  simplex with dim+1 points
@@ -1214,7 +1215,7 @@ realT qh_maxouter(void)
  *
  * design:
  *  initialize simplex with at least two points (find points with max or min x coordinate) for each
- * remaining dimension add point that maximizes the determinate (use points from maxpoints first)
+ *remaining dimension add point that maximizes the determinate (use points from maxpoints first)
  */
 void qh_maxsimplex(int dim, setT *maxpoints, pointT *points, int numpoints, setT **simplex)
 {
@@ -1423,8 +1424,8 @@ boolT qh_orientoutside(facetT *facet)
  * >-------------------------------</a><a name="outerinner">-</a>
  *
  * qh_outerinner( facet, outerplane, innerplane  ) if facet and qh.maxoutdone (i.e.,
- * qh_check_maxout) returns outer and inner plane for facet else returns maximum outer and inner
- * plane accounts for qh.JOGGLEmax
+ *qh_check_maxout) returns outer and inner plane for facet else returns maximum outer and inner
+ *plane accounts for qh.JOGGLEmax
  *
  * see:
  *  qh_maxouter(), qh_check_bestdist(), qh_check_points()
@@ -1433,7 +1434,7 @@ boolT qh_orientoutside(facetT *facet)
  *  outerplaner or innerplane may be NULL facet is const Does not error (QhullFacet)
  *
  *  includes qh.DISTround for actual points adds another qh.DISTround if testing with floating point
- * arithmetic
+ *arithmetic
  */
 void qh_outerinner(facetT *facet, realT *outerplane, realT *innerplane)
 {
@@ -1511,7 +1512,7 @@ coordT qh_pointdist(pointT *point1, pointT *point2, int dim)
  * >-------------------------------</a><a name="printmatrix">-</a>
  *
  * qh_printmatrix( fp, string, rows, numrow, numcol ) print matrix to fp given by row vectors print
- * string as header
+ *string as header
  *
  * notes:
  *  print a vector by qh_printmatrix(fp, "", &vect, 1, len)
@@ -1539,7 +1540,7 @@ void qh_printmatrix(FILE *fp, const char *string, realT **rows, int numrow, int 
  * >-------------------------------</a><a name="printpoints">-</a>
  *
  * qh_printpoints( fp, string, points ) print pointids to fp for a set of points if string, prints
- * string and 'p' point ids
+ *string and 'p' point ids
  */
 void qh_printpoints(FILE *fp, const char *string, setT *points)
 {
@@ -1564,12 +1565,12 @@ void qh_printpoints(FILE *fp, const char *string, setT *points)
  * >-------------------------------</a><a name="projectinput">-</a>
  *
  * qh_projectinput() project input points using qh.lower_bound/upper_bound and qh DELAUNAY if
- * qh.lower_bound[k]=qh.upper_bound[k]= 0, removes dimension k if halfspace intersection removes
- * dimension k from qh.feasible_point input points in qh first_point, num_points, input_dim
+ *qh.lower_bound[k]=qh.upper_bound[k]= 0, removes dimension k if halfspace intersection removes
+ *dimension k from qh.feasible_point input points in qh first_point, num_points, input_dim
  *
  * returns:
  *  new point array in qh first_point of qh hull_dim coordinates sets qh POINTSmalloc if qh DELAUNAY
- * projects points to paraboloid lowbound/highbound is also projected if qh ATinfinity adds point
+ *projects points to paraboloid lowbound/highbound is also projected if qh ATinfinity adds point
  * "at-infinity"
  *  if qh POINTSmalloc frees old point array
  *
@@ -1579,10 +1580,10 @@ void qh_printpoints(FILE *fp, const char *string, setT *points)
  *
  * design:
  *  sets project[k] to -1 (delete), 0 (keep), 1 (add for Delaunay) determines newdim and newnum for
- * qh hull_dim and qh num_points projects points to newpoints projects qh.lower_bound to itself
- * projects qh.upper_bound to itself if qh DELAUNAY if qh ATINFINITY projects points to paraboloid
- * computes "infinity" point as vertex average and 10% above all points else uses qh_setdelaunay to
- * project points to paraboloid
+ *qh hull_dim and qh num_points projects points to newpoints projects qh.lower_bound to itself
+ *projects qh.upper_bound to itself if qh DELAUNAY if qh ATINFINITY projects points to paraboloid
+ *computes "infinity" point as vertex average and 10% above all points else uses qh_setdelaunay to
+ *project points to paraboloid
  */
 void qh_projectinput(void)
 {
@@ -1689,7 +1690,7 @@ void qh_projectinput(void)
  * >-------------------------------</a><a name="projectpoints">-</a>
  *
  * qh_projectpoints( project, n, points, numpoints, dim, newpoints, newdim ) project
- * points/numpoints/dim to newpoints/newdim if project[k] == -1 delete dimension k if project[k] ==
+ *points/numpoints/dim to newpoints/newdim if project[k] == -1 delete dimension k if project[k] ==
  * 1 add dimension k by duplicating previous column n is size of project
  *
  * notes:
@@ -1697,8 +1698,8 @@ void qh_projectinput(void)
  *
  * design:
  *  check that 'project' and 'newdim' agree for each dimension if project == -1 skip dimension else
- * determine start of column in newpoints determine start of column in points if project == +1,
- * duplicate previous column copy dimension (column) from points to newpoints
+ *determine start of column in newpoints determine start of column in points if project == +1,
+ *duplicate previous column copy dimension (column) from points to newpoints
  */
 void qh_projectpoints(signed char *project, int n, realT *points,
                       int numpoints, int dim, realT *newpoints, int newdim)
@@ -1758,8 +1759,8 @@ void qh_projectpoints(signed char *project, int n, realT *points,
  * >-------------------------------</a><a name="rotateinput">-</a>
  *
  * qh_rotateinput( rows ) rotate input using row matrix input points given by qh first_point,
- * num_points, hull_dim assumes rows[dim] is a scratch buffer if qh POINTSmalloc, overwrites input
- * points, else mallocs a new array
+ *num_points, hull_dim assumes rows[dim] is a scratch buffer if qh POINTSmalloc, overwrites input
+ *points, else mallocs a new array
  *
  * returns:
  *  rotated input sets qh POINTSmalloc
@@ -1781,14 +1782,14 @@ void qh_rotateinput(realT **rows)
  * >-------------------------------</a><a name="rotatepoints">-</a>
  *
  * qh_rotatepoints( points, numpoints, dim, row ) rotate numpoints points by a d-dim row matrix
- * assumes rows[dim] is a scratch buffer
+ *assumes rows[dim] is a scratch buffer
  *
  * returns:
  *  rotated points in place
  *
  * design:
  *  for each point for each coordinate use row[dim] to compute partial inner product for each
- * coordinate rotate by partial inner product
+ *coordinate rotate by partial inner product
  */
 void qh_rotatepoints(realT *points, int numpoints, int dim, realT **row)
 {
@@ -1823,8 +1824,8 @@ void qh_rotatepoints(realT *points, int numpoints, int dim, realT **row)
  * >-------------------------------</a><a name="scaleinput">-</a>
  *
  * qh_scaleinput() scale input points using qh low_bound/high_bound input points given by qh
- * first_point, num_points, hull_dim if qh POINTSmalloc, overwrites input points, else mallocs a new
- * array
+ *first_point, num_points, hull_dim if qh POINTSmalloc, overwrites input points, else mallocs a new
+ *array
  *
  * returns:
  *  scales coordinates of points to low_bound[k], high_bound[k] sets qh POINTSmalloc
@@ -1847,11 +1848,11 @@ void qh_scaleinput(void)
  * >-------------------------------</a><a name="scalelast">-</a>
  *
  * qh_scalelast( points, numpoints, dim, low, high, newhigh ) scale last coordinate to [0,m] for
- * Delaunay triangulations input points given by points, numpoints, dim
+ *Delaunay triangulations input points given by points, numpoints, dim
  *
  * returns:
  *  changes scale of last coordinate from [low, high] to [0, newhigh] overwrites last coordinate of
- * each point saves low/high/newhigh in qh.last_low, etc. for qh_setdelaunay()
+ *each point saves low/high/newhigh in qh.last_low, etc. for qh_setdelaunay()
  *
  * notes:
  *  when called by qh_setdelaunay, low/high may not match actual data
@@ -1901,14 +1902,14 @@ void qh_scalelast(coordT *points, int numpoints, int dim, coordT low,
  * >-------------------------------</a><a name="scalepoints">-</a>
  *
  * qh_scalepoints( points, numpoints, dim, newlows, newhighs ) scale points to new lowbound and
- * highbound retains old bound when newlow= -REALmax or newhigh= +REALmax
+ *highbound retains old bound when newlow= -REALmax or newhigh= +REALmax
  *
  * returns:
  *  scaled points overwrites old points
  *
  * design:
  *  for each coordinate compute current low and high bound compute scale and shift factors scale all
- * points enforce new low and high bound for all points
+ *points enforce new low and high bound for all points
  */
 void qh_scalepoints(pointT *points, int numpoints, int dim,
                     realT *newlows, realT *newhighs)
@@ -1988,27 +1989,27 @@ void qh_scalepoints(pointT *points, int numpoints, int dim,
  * >-------------------------------</a><a name="setdelaunay">-</a>
  *
  * qh_setdelaunay( dim, count, points ) project count points to dim-d paraboloid for Delaunay
- * triangulation
+ *triangulation
  *
  *  dim is one more than the dimension of the input set assumes dim is at least 3 (i.e., at least a
- * 2-d Delaunay triangulation)
+ *2-d Delaunay triangulation)
  *
  *  points is a dim*count realT array.  The first dim-1 coordinates are the coordinates of the first
- * input point.  array[dim] is the first coordinate of the second input point.  array[2*dim] is the
- * first coordinate of the third input point.
+ *input point.  array[dim] is the first coordinate of the second input point.  array[2*dim] is the
+ *first coordinate of the third input point.
  *
  *  if qh.last_low defined (i.e., 'Qbb' called qh_scalelast) calls qh_scalelast to scale the last
- * coordinate the same as the other points
+ *coordinate the same as the other points
  *
  * returns:
  *  for each point sets point[dim-1] to sum of squares of coordinates scale points to 'Qbb' if
- * needed
+ *needed
  *
  * notes:
  *  to project one point, use qh_setdelaunay(qh hull_dim, 1, point)
  *
  *  Do not use options 'Qbk', 'QBk', or 'QbB' since they scale the coordinates after the original
- * projection.
+ *projection.
  *
  */
 void qh_setdelaunay(int dim, int count, pointT *points)
@@ -2041,11 +2042,11 @@ void qh_setdelaunay(int dim, int count, pointT *points)
  * >-------------------------------</a><a name="sethalfspace">-</a>
  *
  * qh_sethalfspace( dim, coords, nextp, normal, offset, feasible ) set point to dual of halfspace
- * relative to feasible point halfspace is normal coefficients and offset.
+ *relative to feasible point halfspace is normal coefficients and offset.
  *
  * returns:
  *  false if feasible point is outside of hull (error message already reported) overwrites
- * coordinates for point at dim coords nextp= next point (coords)
+ *coordinates for point at dim coords nextp= next point (coords)
  *
  * design:
  *  compute distance from feasible point to halfspace divide each normal coefficient by -dist
@@ -2125,16 +2126,16 @@ LABELerroroutside:
  * >-------------------------------</a><a name="sethalfspace_all">-</a>
  *
  * qh_sethalfspace_all( dim, count, halfspaces, feasible ) generate dual for halfspace intersection
- * with feasible point array of count halfspaces each halfspace is normal coefficients followed by
- * offset the origin is inside the halfspace if the offset is negative
+ *with feasible point array of count halfspaces each halfspace is normal coefficients followed by
+ *offset the origin is inside the halfspace if the offset is negative
  *
  * returns:
  *  malloc'd array of count X dim-1 points
  *
  * notes:
  *  call before qh_init_B or qh_initqhull_globals unused/untested code: please email bradb@shore.net
- * if this works ok for you If using option 'Fp', also set qh feasible_point. It is a malloc'd array
- * that is freed by qh_freebuffers.
+ *if this works ok for you If using option 'Fp', also set qh feasible_point. It is a malloc'd array
+ *that is freed by qh_freebuffers.
  *
  * design:
  *  see qh_sethalfspace
@@ -2224,7 +2225,7 @@ boolT qh_sharpnewfacets()
  * >-------------------------------</a><a name="voronoi_center">-</a>
  *
  * qh_voronoi_center( dim, points ) return Voronoi center for a set of points dim is the original
- * dimension of the points gh.gm_matrix/qh.gm_row are scratch buffers
+ *dimension of the points gh.gm_matrix/qh.gm_row are scratch buffers
  *
  * returns:
  *  center as a temporary point if non-simplicial, returns center for max simplex of points
@@ -2234,7 +2235,7 @@ boolT qh_sharpnewfacets()
  *
  * design:
  *  if non-simplicial determine max simplex for points translate point0 of simplex to origin compute
- * sum of squares of diagonal compute determinate compute Voronoi center (see Bowyer & Woodwark)
+ *sum of squares of diagonal compute determinate compute Voronoi center (see Bowyer & Woodwark)
  */
 pointT *qh_voronoi_center(int dim, setT *points)
 {

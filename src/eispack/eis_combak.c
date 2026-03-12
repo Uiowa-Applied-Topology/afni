@@ -1,23 +1,23 @@
-/* combak.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* combak.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int combak_(integer *nm, integer *low, integer *igh, 
-	doublereal *ar, doublereal *ai, integer *int__, integer *m, 
-	doublereal *zr, doublereal *zi)
+/* Subroutine */ int combak_(integer *nm, integer *low, integer *igh,
+                             doublereal *ar, doublereal *ai, integer *int__, integer *m,
+                             doublereal *zr, doublereal *zi)
 {
     /* System generated locals */
-    integer ar_dim1, ar_offset, ai_dim1, ai_offset, zr_dim1, zr_offset, 
-	    zi_dim1, zi_offset, i__1, i__2, i__3;
+    integer ar_dim1, ar_offset, ai_dim1, ai_offset, zr_dim1, zr_offset,
+            zi_dim1, zi_offset, i__1, i__2, i__3;
 
     /* Local variables */
-    integer i__, j, la, mm, mp;
+    integer    i__, j, la, mm, mp;
     doublereal xi, xr;
-    integer kp1, mp1;
+    integer    kp1, mp1;
 
 
 
@@ -60,86 +60,96 @@
 /*          IN THEIR FIRST M COLUMNS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --int__;
-    ai_dim1 = *nm;
+    ai_dim1   = *nm;
     ai_offset = ai_dim1 + 1;
-    ai -= ai_offset;
-    ar_dim1 = *nm;
+    ai       -= ai_offset;
+    ar_dim1   = *nm;
     ar_offset = ar_dim1 + 1;
-    ar -= ar_offset;
-    zi_dim1 = *nm;
+    ar       -= ar_offset;
+    zi_dim1   = *nm;
     zi_offset = zi_dim1 + 1;
-    zi -= zi_offset;
-    zr_dim1 = *nm;
+    zi       -= zi_offset;
+    zr_dim1   = *nm;
     zr_offset = zr_dim1 + 1;
-    zr -= zr_offset;
+    zr       -= zr_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
-    la = *igh - 1;
+    la  = *igh - 1;
     kp1 = *low + 1;
-    if (la < kp1) {
-	goto L200;
+    if (la < kp1)
+    {
+        goto L200;
     }
 /*     .......... FOR MP=IGH-1 STEP -1 UNTIL LOW+1 DO -- .......... */
     i__1 = la;
-    for (mm = kp1; mm <= i__1; ++mm) {
-	mp = *low + *igh - mm;
-	mp1 = mp + 1;
+    for (mm = kp1; mm <= i__1; ++mm)
+    {
+        mp  = *low + *igh - mm;
+        mp1 = mp + 1;
 
-	i__2 = *igh;
-	for (i__ = mp1; i__ <= i__2; ++i__) {
-	    xr = ar[i__ + (mp - 1) * ar_dim1];
-	    xi = ai[i__ + (mp - 1) * ai_dim1];
-	    if (xr == 0. && xi == 0.) {
-		goto L110;
-	    }
+        i__2 = *igh;
+        for (i__ = mp1; i__ <= i__2; ++i__)
+        {
+            xr = ar[i__ + (mp - 1) * ar_dim1];
+            xi = ai[i__ + (mp - 1) * ai_dim1];
+            if (xr == 0. && xi == 0.)
+            {
+                goto L110;
+            }
 
-	    i__3 = *m;
-	    for (j = 1; j <= i__3; ++j) {
-		zr[i__ + j * zr_dim1] = zr[i__ + j * zr_dim1] + xr * zr[mp + 
-			j * zr_dim1] - xi * zi[mp + j * zi_dim1];
-		zi[i__ + j * zi_dim1] = zi[i__ + j * zi_dim1] + xr * zi[mp + 
-			j * zi_dim1] + xi * zr[mp + j * zr_dim1];
+            i__3 = *m;
+            for (j = 1; j <= i__3; ++j)
+            {
+                zr[i__ + j * zr_dim1] = zr[i__ + j * zr_dim1] + xr * zr[mp +
+                                                                        j * zr_dim1] - xi *
+                                        zi[mp + j * zi_dim1];
+                zi[i__ + j * zi_dim1] = zi[i__ + j * zi_dim1] + xr * zi[mp +
+                                                                        j * zi_dim1] + xi *
+                                        zr[mp + j * zr_dim1];
 /* L100: */
-	    }
+            }
 
 L110:
-	    ;
-	}
+            ;
+        }
 
-	i__ = int__[mp];
-	if (i__ == mp) {
-	    goto L140;
-	}
+        i__ = int__[mp];
+        if (i__ == mp)
+        {
+            goto L140;
+        }
 
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    xr = zr[i__ + j * zr_dim1];
-	    zr[i__ + j * zr_dim1] = zr[mp + j * zr_dim1];
-	    zr[mp + j * zr_dim1] = xr;
-	    xi = zi[i__ + j * zi_dim1];
-	    zi[i__ + j * zi_dim1] = zi[mp + j * zi_dim1];
-	    zi[mp + j * zi_dim1] = xi;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            xr = zr[i__ + j * zr_dim1];
+            zr[i__ + j * zr_dim1] = zr[mp + j * zr_dim1];
+            zr[mp + j * zr_dim1]  = xr;
+            xi = zi[i__ + j * zi_dim1];
+            zi[i__ + j * zi_dim1] = zi[mp + j * zi_dim1];
+            zi[mp + j * zi_dim1]  = xi;
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* combak_ */
-

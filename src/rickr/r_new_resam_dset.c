@@ -1,12 +1,10 @@
-
 /*----------------------------------------------------------------------
  * Exported functions - these are available for use in other functions
  *
- *     r_new_resam_dset            : reorient and/or resamle a dataset
- *     r_fill_resampled_data_brick : warp a dataset into memory
- *     r_dxyz_mod_dataxes          : modify THD_dataxes struct per dxyz
+ *     r_new_resam_dset            : reorient and/or resamle a dataset r_fill_resampled_data_brick :
+ * warp a dataset into memory r_dxyz_mod_dataxes          : modify THD_dataxes struct per dxyz
  *----------------------------------------------------------------------
-*/
+ */
 
 /*----------------------------------------------------------------------
  * history:
@@ -18,8 +16,8 @@
  *   - do not add any history in this library routine
  *
  * 2004.07.26
- *   - added sublist parameter to r_new_resam_dset, as a list of
- *     sub-bricks to resample (all, if NULL)
+ *   - added sublist parameter to r_new_resam_dset, as a list of sub-bricks to resample (all, if
+ *NULL)
  *
  * 2005.03.22
  *   - removed all tabs
@@ -31,180 +29,192 @@
  * 2007.07.24
  *   - added get_data parameter
  *----------------------------------------------------------------------
-*/
+ */
 
 #include "mrilib.h"
 #include "r_misc.h"
 
 /* local #defines and function definitions */
 
-static int apply_dataxes     ( THD_3dim_dataset * dset, THD_dataxes * dax );
-static int apply_orientation ( THD_3dim_dataset * dset, FD_brick * fdb,
-                               char orient[] );
-static int valid_resam_inputs( THD_3dim_dataset * , THD_3dim_dataset *,
-                               double, double, double, char [], int );
-static int daxis_resam_preserve( double dold, double dnew, int nold, int *nnew,
-                                 double *oshift, int btype);
+static int apply_dataxes(THD_3dim_dataset *dset, THD_dataxes *dax);
+static int apply_orientation(THD_3dim_dataset *dset, FD_brick *fdb,
+                             char orient[]);
+static int valid_resam_inputs(THD_3dim_dataset *, THD_3dim_dataset *,
+                              double, double, double, char [], int);
+static int daxis_resam_preserve(double dold, double dnew, int nold, int *nnew,
+                                double *oshift, int btype);
 
 #define LR_RESAM_IN_FAIL        -1
-#define LR_RESAM_IN_NONE         0
-#define LR_RESAM_IN_REORIENT     1
-#define LR_RESAM_IN_RESAM        2
+#define LR_RESAM_IN_NONE        0
+#define LR_RESAM_IN_REORIENT    1
+#define LR_RESAM_IN_RESAM       2
 
-static char * this_file = "r_new_resam_dset.c";
+static char *this_file = "r_new_resam_dset.c";
 
 /*----------------------------------------------------------------------
- * moved here from 3dresample.c by ZSS 
+ * moved here from 3dresample.c by ZSS
  *----------------------------------------------------------------------
-*/
-int resam_str2mode ( char * modestr )
+ */
+int resam_str2mode(char *modestr)
 {
     int mode;
 
-    for (mode = FIRST_RESAM_TYPE; mode <= LAST_RESAM_TYPE; mode++ )
+    for (mode = FIRST_RESAM_TYPE; mode <= LAST_RESAM_TYPE; mode++)
     {
-        if ( ! strncmp( modestr, RESAM_typestr[mode], 2 ) )
+        if (!strncmp(modestr, RESAM_typestr[mode], 2))
+        {
             return mode;
-        else if ( ! strncmp( modestr, RESAM_shortstr[mode], 2 ) )
+        }
+        else if (!strncmp(modestr, RESAM_shortstr[mode], 2))
+        {
             return mode;
+        }
     }
 
     return FAIL;
 }
 
 /* we can get more fancy later, but convert string to bound_type value */
-int resam_str2bound ( char * str )
+int resam_str2bound(char *str)
 {
-    if( ! strcasecmp( str, "FOV"       ) ) return 0;
-    if( ! strcasecmp( str, "SLAB"      ) ) return 1;
-    if( ! strcasecmp( str, "CENT_ORIG" ) ) return 2;
-    if( ! strcasecmp( str, "CENT"      ) ) return 3;
+    if (!strcasecmp(str, "FOV"))
+    {
+        return 0;
+    }
+    if (!strcasecmp(str, "SLAB"))
+    {
+        return 1;
+    }
+    if (!strcasecmp(str, "CENT_ORIG"))
+    {
+        return 2;
+    }
+    if (!strcasecmp(str, "CENT"))
+    {
+        return 3;
+    }
 
-    fprintf(stderr,"** illegal bound_type string '%s'\n", str);
+    fprintf(stderr, "** illegal bound_type string '%s'\n", str);
 
     return -1;  /* bad value, man */
 }
 
 /* ---------------------------------------------------------------------------
  * get resample parameters: compute num new voxels and origin shift
- *                        - this is CENTROID-preserving when dnew/dold or
- *                          dold/dnew is an integer
+ *                        - this is CENTROID-preserving when dnew/dold or dold/dnew is an integer
  *
- *    given: dold    - old delta (signed)
- *           dnew    - new delta (signed)
- *           nold    - old nvox
- *           btype   - bound_type for shifting origin
- *                     2 : truncate toward origin
- *                     3 : truncate toward RAI, to be orientation agnostic
+ *    given: dold    - old delta (signed) dnew    - new delta (signed) nold    - old nvox btype   -
+ * bound_type for shifting origin 2 : truncate toward origin 3 : truncate toward RAI, to be
+ *orientation agnostic
  *
- * Note: here we treat the origin as 0.0, since we only care about offsets
- *       from it.  We don't even know what the origin is.
+ * Note: here we treat the origin as 0.0, since we only care about offsets from it.  We don't even
+ *know what the origin is.
  *
  *    compute:
- *           nnew    - new nvox
- *           oshift  - origin shift (to add to old origin)
+ *           nnew    - new nvox oshift  - origin shift (to add to old origin)
  *
  * To approximately preserve FOV:
  *
- *   downsample, |dnew| < |dold| : find max SLAB strictly inside original FOV
- *   upsample,   |dnew| > |dold| : find max SLAB strictly inside original SLAB
+ *   downsample, |dnew| < |dold| : find max SLAB strictly inside original FOV upsample,   |dnew| >
+ *|dold| : find max SLAB strictly inside original SLAB
  *
- * todo: consider new FOV within half a new vox of old FOV, rather than the
- *       above logic (for "preserve FOV").
- *       Fnew = new FOV = nnew*dnew.
- *       Find nnew such that |Fnew-Fold| <= |dnew/2|
+ * todo: consider new FOV within half a new vox of old FOV, rather than the above logic (for
+ *"preserve FOV"). Fnew = new FOV = nnew*dnew. Find nnew such that |Fnew-Fold| <= |dnew/2|
  * ---------------------------------------------------------------------------
  */
-static int daxis_resam_preserve( double dold, double dnew, int nold,
-                                 int * nnew, double * oshift, int btype)
+static int daxis_resam_preserve(double dold, double dnew, int nold,
+                                int *nnew, double *oshift, int btype)
 {
-   double e = 0.0001;   /* epsilon, for ratio adjustments */
-   int    nsi;          /* num shifted voxels, always an int */
+    double e = 0.0001;  /* epsilon, for ratio adjustments */
+    int    nsi;         /* num shifted voxels, always an int */
 
-   if ( dold == 0 || dnew == 0 || (dold*dnew < 0.0) || !nnew || !oshift ) {
-      fprintf(stderr,"** daxis_resam_preserve: invalid args\n");
-      return 1;
-   }
+    if (dold == 0 || dnew == 0 || (dold * dnew < 0.0) || !nnew || !oshift)
+    {
+        fprintf(stderr, "** daxis_resam_preserve: invalid args\n");
+        return 1;
+    }
 
-   if ( btype != 2 && btype != 3 ) {
-      fprintf(stderr,"** daxis_resam_preserve: invalid btype %d\n", btype);
-      return 1;
-   }
+    if (btype != 2 && btype != 3)
+    {
+        fprintf(stderr, "** daxis_resam_preserve: invalid btype %d\n", btype);
+        return 1;
+    }
 
-   /* initially process as CENT_ORIG */
-   if( fabs(dnew) <= fabs(dold) ) {
-      /* upsample: get biggest SLAB inside FOV
-                   from origin, move out toward FOV edge
+    /* initially process as CENT_ORIG */
+    if (fabs(dnew) <= fabs(dold))
+    {
+        /* upsample: get biggest SLAB inside FOV from origin, move out toward FOV edge
+         *
+         * Include all original points (SLAB) and extend toward orig FOV symmetrically, but do not
+         *reach FOV. If NS = number of points to add on each side of original SLAB:
+         *    NS = floor((upsample_fac-e)/2), for some epsilon e
+         *       = floor(dold/dnew /2 - e) nnew = floor((nold-1)*dold/dnew + e) + 1 + 2*NS Also, set
+         *oshift = -2*NS*dnew, shifting away from middle.
+         */
+        nsi = floor(0.5 * dold / dnew - e);
+        if (nsi < 0)
+        {
+            nsi = 0;          /* be sure */
+        }
+        *nnew   = floor((nold - 1) * dold / dnew + e) + 1 + 2 * nsi;
+        *oshift = -2.0 * nsi * dnew;
+    }
+    else
+    {
+        /* downsample: get biggest SLAB inside of old SLAB from origin, move inside SLAB ~1/2 of
+         * uncovered length
+         *
+         * Here lengths are in SLABS, (n-1)*delta nnew = floor(old_length / dnew + e) + 1
+         *         = floor((nold-1)*dold/dnew + e) + 1 NS = floor(0.5 * (oldlen-newlen)/dold + e)
+         */
+        /* first set nsi = new num intervals, then set nnew */
+        nsi   = floor((nold - 1) * dold / dnew + e);
+        *nnew = nsi + 1;
+        /* now set nsi = number of side intervals (of old (smaller) length) */
+        /*             = floor(1/2 * (old_slab - new_slab) / dold)          */
+        nsi = floor(0.5 * ((nold - 1) * fabs(dold) - (*nnew - 1) * fabs(dnew))
+                    / fabs(dold) + e);
+        *oshift = nsi * dold;
+    }
 
-         Include all original points (SLAB) and extend toward orig FOV
-         symmetrically, but do not reach FOV.
-         If NS = number of points to add on each side of original SLAB:
-            NS = floor((upsample_fac-e)/2), for some epsilon e
-               = floor(dold/dnew /2 - e)
-            nnew = floor((nold-1)*dold/dnew + e) + 1 + 2*NS
-         Also, set oshift = -2*NS*dnew, shifting away from middle.
-       */
-      nsi = floor(0.5*dold/dnew - e);
-      if( nsi < 0 ) nsi = 0;  /* be sure */
+    /* handle CENT (bound type 3), instead of CENT_ORIG (bound type 2) */
+    if (btype == 3)
+    {
+        /* Currently, oshift truncates towards origin (CENT_ORIG).  Handle the CENT method to
+         * truncate towards RAI.  To do so, use the current oshift, but possibly apply it at the
+         * opposite end of the segment.
+         *    - do this if dnew < 0 (negative delta means L, P or S orientation)
+         *    - instead of origin+oshift start from endpoint-oshift, and then find new origin
+         *    - new endpoint is old endpoint - oshift = (nold-1)*dold - oshift
+         *    - then new origin (offset) is [ new endpoint ]           - (nnew-1)*dnew
+         *      = [ (nold-1)*dold - oshift ] - (nnew-1)*dnew
+         */
+        if (dnew < 0)
+        {
+            *oshift = (nold - 1) * dold - *oshift - (*nnew - 1) * dnew;
+        }
+    }
 
-      *nnew = floor((nold-1)*dold/dnew + e) + 1 + 2 * nsi;
-      *oshift = -2.0*nsi*dnew;
-   } else {
-      /* downsample: get biggest SLAB inside of old SLAB
-                     from origin, move inside SLAB ~1/2 of uncovered length
-
-         Here lengths are in SLABS, (n-1)*delta
-            nnew = floor(old_length / dnew + e) + 1
-                 = floor((nold-1)*dold/dnew + e) + 1
-            NS = floor(0.5 * (oldlen-newlen)/dold + e)
-       */
-      /* first set nsi = new num intervals, then set nnew */
-      nsi = floor((nold-1)*dold/dnew + e);
-      *nnew = nsi + 1;
-      /* now set nsi = number of side intervals (of old (smaller) length) */
-      /*             = floor(1/2 * (old_slab - new_slab) / dold)          */
-      nsi = floor( 0.5 * ((nold-1)*fabs(dold)-(*nnew-1)*fabs(dnew))
-                       / fabs(dold) + e );
-      *oshift = nsi*dold;
-   }
-
-   /* handle CENT (bound type 3), instead of CENT_ORIG (bound type 2) */
-   if( btype == 3 ) {
-      /* Currently, oshift truncates towards origin (CENT_ORIG).  Handle the
-         CENT method to truncate towards RAI.  To do so, use the current oshift,
-         but possibly apply it at the opposite end of the segment.
-            - do this if dnew < 0 (negative delta means L, P or S orientation)
-            - instead of origin+oshift start from endpoint-oshift,
-              and then find new origin
-            - new endpoint is old endpoint - oshift = (nold-1)*dold - oshift
-            - then new origin (offset) is
-                [ new endpoint ]           - (nnew-1)*dnew
-              = [ (nold-1)*dold - oshift ] - (nnew-1)*dnew
-      */
-      if( dnew < 0 )
-         *oshift = (nold - 1)*dold - *oshift - (*nnew - 1)*dnew;
-   }
-
-   return 0;
+    return 0;
 }
 
 /* call _eng with bound_type == 0 (FOV bound) */
 THD_3dim_dataset * r_new_resam_dset
-    (
-        THD_3dim_dataset * din,         /* original dataset to resample */
-        THD_3dim_dataset * min,         /* master dataset to align to   */
-        double             dx,          /* delta for new x-axis         */
-        double             dy,          /* delta for new y-axis         */
-        double             dz,          /* delta for new z-axis         */
-        char               orient [],   /* new orientation code         */
-        int                resam,       /* mode to resample with        */
-        int              * sublist,     /* list of sub-bricks to resam  */
-        int                get_data,    /* do we include data with dset */
-        int                killwarpinfo   /* kill default warp field values */
-    )
+(
+    THD_3dim_dataset *din,              /* original dataset to resample */
+    THD_3dim_dataset *min,              /* master dataset to align to   */
+    double dx,                          /* delta for new x-axis         */
+    double dy,                          /* delta for new y-axis         */
+    double dz,                          /* delta for new z-axis         */
+    char orient [],                     /* new orientation code         */
+    int resam,                          /* mode to resample with        */
+    int *sublist,                       /* list of sub-bricks to resam  */
+    int get_data,                       /* do we include data with dset */
+    int killwarpinfo                    /* kill default warp field values */
+)
 {
-   return r_new_resam_dset_eng(din, min, dx, dy, dz, orient, resam, sublist,
-                               get_data, killwarpinfo, 0 /* bound_type */);
+    return r_new_resam_dset_eng(din, min, dx, dy, dz, orient, resam, sublist,
+                                get_data, killwarpinfo, 0 /* bound_type */);
 }
 
 /*----------------------------------------------------------------------
@@ -222,88 +232,99 @@ THD_3dim_dataset * r_new_resam_dset
  *   - killwarpinfo : if set, delete warp field values
  *   - bound_type : 0=FOV bound preserving, 1=SLAB bound preserving
  *
- * output       : a pointer to the resulting THD_3dim_dataset
- *                (or NULL, on failure)
+ * output       : a pointer to the resulting THD_3dim_dataset (or NULL, on failure)
  *
  * notes:
  *   - if (min != NULL)          , dx, dy, dz and orient are ignored
  *   - if (dx == dy == dz == 0.0), no resampling will be done
  *   - if (orient == NULL),        no reorienting will be done
  *----------------------------------------------------------------------
-*/
+ */
 THD_3dim_dataset * r_new_resam_dset_eng
-    (
-        THD_3dim_dataset * din,         /* original dataset to resample */
-        THD_3dim_dataset * min,         /* master dataset to align to   */
-        double             dx,          /* delta for new x-axis         */
-        double             dy,          /* delta for new y-axis         */
-        double             dz,          /* delta for new z-axis         */
-        char               orient [],   /* new orientation code         */
-        int                resam,       /* mode to resample with        */
-        int              * sublist,     /* list of sub-bricks to resam  */
-        int                get_data,    /* do we include data with dset */
-        int                killwarpinfo,/* kill default warp field values */
-        int                bound_type   /* 0=FOV, 1=SLAB boundardy limit  */
+(
+    THD_3dim_dataset *din,              /* original dataset to resample */
+    THD_3dim_dataset *min,              /* master dataset to align to   */
+    double dx,                          /* delta for new x-axis         */
+    double dy,                          /* delta for new y-axis         */
+    double dz,                          /* delta for new z-axis         */
+    char orient [],                     /* new orientation code         */
+    int resam,                          /* mode to resample with        */
+    int *sublist,                       /* list of sub-bricks to resam  */
+    int get_data,                       /* do we include data with dset */
+    int killwarpinfo,                   /* kill default warp field values */
+    int bound_type                      /* 0=FOV, 1=SLAB boundardy limit  */
                                         /* 2=CENT, 3=CENT_ORIG            */
-    )
+)
 {
-    THD_3dim_dataset * dout;
-    THD_3dim_dataset * dtmp;
-    THD_dataxes        new_daxes;
-    FD_brick         * fdb = NULL;
-    int                work;
-    char             * l_orient, l_orient_s[4] = "";
+    THD_3dim_dataset *dout;
+    THD_3dim_dataset *dtmp;
+    THD_dataxes       new_daxes;
+    FD_brick *        fdb = NULL;
+    int   work;
+    char *l_orient, l_orient_s[4] = "";
 
     /* if we have a master, do not rely on orient - use local memory */
-    if ( min ) l_orient = l_orient_s;
-    else       l_orient = orient;
-
-    work = valid_resam_inputs( din, min, dx, dy, dz, l_orient, resam );
-
-    if ( work == LR_RESAM_IN_FAIL )
-        return NULL;
-
-    if ( sublist )
-        dtmp = THD_copy_dset_subs(din, sublist);
-    else
-        dtmp = din;
-
-    dout = EDIT_empty_copy( dtmp );             /* create new brick */
-    if( ! ISVALID_3DIM_DATASET( dout ) )
+    if (min)
     {
-        fprintf( stderr, "ERROR: <%s> - failed to duplicate dataset at %p\n",
-                 this_file, din );
+        l_orient = l_orient_s;
+    }
+    else
+    {
+        l_orient = orient;
+    }
+
+    work = valid_resam_inputs(din, min, dx, dy, dz, l_orient, resam);
+
+    if (work == LR_RESAM_IN_FAIL)
+    {
+        return NULL;
+    }
+
+    if (sublist)
+    {
+        dtmp = THD_copy_dset_subs(din, sublist);
+    }
+    else
+    {
+        dtmp = din;
+    }
+
+    dout = EDIT_empty_copy(dtmp);               /* create new brick */
+    if (!ISVALID_3DIM_DATASET(dout))
+    {
+        fprintf(stderr, "ERROR: <%s> - failed to duplicate dataset at %p\n",
+                this_file, din);
         return NULL;
     }
 
     /* give junk name */
-    EDIT_dset_items(dout, ADN_prefix, "junk_resample", ADN_none );
+    EDIT_dset_items(dout, ADN_prefix, "junk_resample", ADN_none);
 
     /* possibly update view type to that of the master */
-    if ( min                                  &&
-         (dout->view_type != min->view_type)  &&
-         (dout->dblk && dout->dblk->diskptr) )
+    if (min &&
+        (dout->view_type != min->view_type) &&
+        (dout->dblk && dout->dblk->diskptr))
     {
         dout->view_type = min->view_type;
-        THD_init_diskptr_names( dout->dblk->diskptr, NULL, NULL, NULL,
-                                min->view_type, True );
+        THD_init_diskptr_names(dout->dblk->diskptr, NULL, NULL, NULL,
+                               min->view_type, True);
     }
 
 
     /* re-orient the brick? */
-    if ( work & LR_RESAM_IN_REORIENT )
+    if (work & LR_RESAM_IN_REORIENT)
     {
-        if ( ( fdb = THD_oriented_brick( dout, l_orient ) ) == NULL )
+        if ((fdb = THD_oriented_brick(dout, l_orient)) == NULL)
         {
-            fprintf( stderr, "<%s>: failed to create THD_brick with orient "
-                     "string <%.6s>\n", this_file, l_orient );
-            THD_delete_3dim_dataset( dout, FALSE );
+            fprintf(stderr, "<%s>: failed to create THD_brick with orient "
+                    "string <%.6s>\n", this_file, l_orient);
+            THD_delete_3dim_dataset(dout, FALSE);
             return NULL;
         }
 
-        if ( apply_orientation( dout, fdb, l_orient ) != 0 )
+        if (apply_orientation(dout, fdb, l_orient) != 0)
         {
-            THD_delete_3dim_dataset( dout, FALSE );
+            THD_delete_3dim_dataset(dout, FALSE);
             return NULL;
         }
     }
@@ -311,29 +332,35 @@ THD_3dim_dataset * r_new_resam_dset_eng
     new_daxes = *dout->daxes;                /* in case we don't resample */
 
     /* resample the brick? */
-    if ( work & LR_RESAM_IN_RESAM )
+    if (work & LR_RESAM_IN_RESAM)
     {
         /*-- given dx, dy and dz, create a new THD_dataxes structure ---- */
         new_daxes.type = DATAXES_TYPE;
 
         /* fill new_daxes, from the master, new dxyz, or both */
-        if ( min && dx == 0.0 ) new_daxes = *min->daxes;
+        if (min && dx == 0.0)
+        {
+            new_daxes = *min->daxes;
+        }
         else
         {
             /* possibly start with master (must have master's orient) */
-            if ( min ) *dout->daxes = *min->daxes;
-
-            if ( r_dxyz_mod_dataxes(dx,dy,dz, dout->daxes, &new_daxes, 
-                                    bound_type) != 0 )
+            if (min)
             {
-                THD_delete_3dim_dataset( dout, FALSE );
+                *dout->daxes = *min->daxes;
+            }
+
+            if (r_dxyz_mod_dataxes(dx, dy, dz, dout->daxes, &new_daxes,
+                                   bound_type) != 0)
+            {
+                THD_delete_3dim_dataset(dout, FALSE);
                 return NULL;
             }
         }
 
-        if ( apply_dataxes( dout, &new_daxes ) != 0 )
+        if (apply_dataxes(dout, &new_daxes) != 0)
         {
-            THD_delete_3dim_dataset( dout, FALSE );
+            THD_delete_3dim_dataset(dout, FALSE);
             return NULL;
         }
     }
@@ -343,17 +370,17 @@ THD_3dim_dataset * r_new_resam_dset_eng
     dout->warp_parent_idcode = dtmp->idcode;    /* needed for HEAD write */
 
     /* needed to warp from parent */
-    dout->wod_flag        = True;               /* mark for WOD           */
-    dout->vox_warp->type  = ILLEGAL_TYPE;       /* mark for recomputation */
-    *dout->wod_daxes      = new_daxes;          /* used for actual warp   */
+    dout->wod_flag       = True;                /* mark for WOD           */
+    dout->vox_warp->type = ILLEGAL_TYPE;        /* mark for recomputation */
+    *dout->wod_daxes     = new_daxes;           /* used for actual warp   */
 
-    dout->daxes->parent   = (RwcPointer)dout;   /* parent is new dset     */
+    dout->daxes->parent = (RwcPointer)dout;     /* parent is new dset     */
 
     /* moved from "fill", in case data is not added   24 Jul 2007 [rickr] */
     /* a basic warp is needed if header is written out - PLUTO_add_dset() */
-    dout->warp  = myXtNew( THD_warp );
+    dout->warp  = myXtNew(THD_warp);
     *dout->warp = IDENTITY_WARP;
-    ADDTO_KILL( dout->kl, dout->warp );
+    ADDTO_KILL(dout->kl, dout->warp);
 
 
     dout->dblk->diskptr->byte_order   = mri_short_order();
@@ -364,22 +391,25 @@ THD_3dim_dataset * r_new_resam_dset_eng
     THD_daxes_to_mat44(dout->daxes);
     THD_make_cardinal(dout);
 
-    if ( get_data && r_fill_resampled_data_brick( dout, resam ) )
+    if (get_data && r_fill_resampled_data_brick(dout, resam))
     {
-        THD_delete_3dim_dataset( dout, FALSE );
+        THD_delete_3dim_dataset(dout, FALSE);
         dout = NULL;
     }
 
-    if ( sublist ) DSET_delete(dtmp);
+    if (sublist)
+    {
+        DSET_delete(dtmp);
+    }
 
-    if (killwarpinfo) { /* you want to do this if you'll be writing to disk */
-      ZERO_IDCODE( dout->warp_parent_idcode );
-      dout->warp_parent_name[0] = '\0';
-      dout->warp = NULL;
+    if (killwarpinfo)   /* you want to do this if you'll be writing to disk */
+    {
+        ZERO_IDCODE(dout->warp_parent_idcode);
+        dout->warp_parent_name[0] = '\0';
+        dout->warp = NULL;
     }
     return dout;
 }
-
 
 /*----------------------------------------------------------------------
  * r_fill_resampled_data_brick - get the data brick into memory
@@ -387,20 +417,20 @@ THD_3dim_dataset * r_new_resam_dset_eng
  * return FAIL or OK (0)
  *                                  - see adwarp_refashion_dataset
  *----------------------------------------------------------------------
-*/
-int r_fill_resampled_data_brick( THD_3dim_dataset * dset, int resam )
+ */
+int r_fill_resampled_data_brick(THD_3dim_dataset *dset, int resam)
 {
-    MRI_IMAGE   * im;
-    char        * newdata, * dptr;
-    float         bfac;
-    int           ival, dsize;
-    int           nx, ny, nz, nxy, nxyz, nv;
-    int           slice;
+    MRI_IMAGE *im;
+    char *     newdata, *dptr;
+    float      bfac;
+    int        ival, dsize;
+    int        nx, ny, nz, nxy, nxyz, nv;
+    int        slice;
 
-    if ( DSET_LOADED(dset) )
+    if (DSET_LOADED(dset))
     {
-        fprintf( stderr, "error <%s>: trying to fill pre-loaded dataset\n",
-                 this_file );
+        fprintf(stderr, "error <%s>: trying to fill pre-loaded dataset\n",
+                this_file);
         return FAIL;
     }
 
@@ -414,164 +444,176 @@ int r_fill_resampled_data_brick( THD_3dim_dataset * dset, int resam )
     nxyz = nx * ny * nz;
 
     /* recompute sub-bricks */
-    for ( ival = 0; ival < nv; ival++ )            /* for each sub-brick */
+    for (ival = 0; ival < nv; ival++)              /* for each sub-brick */
     {
         /* first create memory to deposit the slices into */
-        dsize = mri_datum_size( DSET_BRICK_TYPE(dset, ival) );
+        dsize = mri_datum_size(DSET_BRICK_TYPE(dset, ival));
 
-        if ( (newdata = (char *)malloc( nxyz * dsize )) == NULL )
+        if ((newdata = (char *)malloc(nxyz * dsize)) == NULL)
         {
-            fprintf( stderr, "r frdb: alloc failure: %d bytes!\n",
-                     nxyz * dsize );
+            fprintf(stderr, "r frdb: alloc failure: %d bytes!\n",
+                    nxyz * dsize);
             return FAIL;
         }
 
         dptr = newdata;                   /* we will copy images at dptr */
 
         /* force return of unscaled slices for output - reset fac at end */
-        bfac = DBLK_BRICK_FACTOR(dset->dblk,ival);
-        DBLK_BRICK_FACTOR(dset->dblk,ival) = 0.0;
+        bfac = DBLK_BRICK_FACTOR(dset->dblk, ival);
+        DBLK_BRICK_FACTOR(dset->dblk, ival) = 0.0;
 
         /* for each slice, insert it into memory */
-        for ( slice = 0; slice < nz; slice++)
+        for (slice = 0; slice < nz; slice++)
         {
-            im = AFNI_dataset_slice( dset, 3, slice, ival, resam );
-            if ( im == NULL )
+            im = AFNI_dataset_slice(dset, 3, slice, ival, resam);
+            if (im == NULL)
             {
-                fprintf( stderr, "r_fill_resampled_data_brick: failure to "
-                         "compute dataset slice %d\n", slice );
-                free( newdata );
+                fprintf(stderr, "r_fill_resampled_data_brick: failure to "
+                        "compute dataset slice %d\n", slice);
+                free(newdata);
                 return FAIL;
             }
 
-            memcpy( (void *)dptr, mri_data_pointer(im), nxy*dsize );
-            mri_free( im );
-            dptr += nxy*dsize;
+            memcpy((void *)dptr, mri_data_pointer(im), nxy * dsize);
+            mri_free(im);
+            dptr += nxy * dsize;
         }
 
-        DBLK_BRICK_FACTOR(dset->dblk,ival) = bfac;
+        DBLK_BRICK_FACTOR(dset->dblk, ival) = bfac;
         /* we now have the raw brick data, so insert it into the brick */
-        EDIT_substitute_brick(dset, ival, DSET_BRICK_TYPE(dset,ival),
+        EDIT_substitute_brick(dset, ival, DSET_BRICK_TYPE(dset, ival),
                               (void *)newdata);
     }
 
     dset->dblk->malloc_type = DATABLOCK_MEM_MALLOC;
-    dset->wod_flag = False;             /* since data is now in memory */
+    dset->wod_flag          = False;    /* since data is now in memory */
 
     /* recompute statistics */
-    THD_load_statistics( dset );
+    THD_load_statistics(dset);
 
     return 0;   /* OK */
 }
 
 /*----------------------------------------------------------------------
- * Fill in a THD_dataxes structure to match the 3D box of an existing
- * one, but where dx, dy and dz are modified.
- * Set deltas (*del), voxel counts (n*) and origins (*org), and then
- * bounding boxex.
+ * Fill in a THD_dataxes structure to match the 3D box of an existing one, but where dx, dy and dz
+ *are modified. Set deltas (*del), voxel counts (n*) and origins (*org), and then bounding boxex.
  *
- * This is identical to THD_edit_dataxes(), except that the requirement
- * for cubical voxels has been lifted.
+ * This is identical to THD_edit_dataxes(), except that the requirement for cubical voxels has been
+ *lifted.
  *
- * bound_type   0 : FOV-style boundary limits, which is the
- *                  THD_edit_dataxes() method
- *              1 : SLAB-style limits, to preserve outer coordinates
- *              2 : CENT-style limits, to preserve voxel centroids
- *                  - with truncation starting from origin
- *              3 : CENT_ORIG-style limits, to preserve voxel centroids
- *                  - with truncation starting from R, A, I
- *                    (this makes the resampling orientation agnostic)
+ * bound_type   0 : FOV-style boundary limits, which is the THD_edit_dataxes() method 1 : SLAB-style
+ *limits, to preserve outer coordinates 2 : CENT-style limits, to preserve voxel centroids
+ *                  - with truncation starting from origin 3 : CENT_ORIG-style limits, to preserve
+ *voxel centroids
+ *                  - with truncation starting from R, A, I (this makes the resampling orientation
+ *agnostic)
  *----------------------------------------------------------------------
-*/
-int r_dxyz_mod_dataxes( double dx, double dy, double dz,
-                        THD_dataxes * daxin, THD_dataxes * daxout,
-                        int bound_type
-                      )
+ */
+int r_dxyz_mod_dataxes(double dx, double dy, double dz,
+                       THD_dataxes *daxin, THD_dataxes *daxout,
+                       int bound_type
+                       )
 {
-    double    rex, rey, rez;
-    double    lxx, lyy, lzz;
-    double    oshift;
-    int       rv, nvox;
+    double rex, rey, rez;
+    double lxx, lyy, lzz;
+    double oshift;
+    int    rv, nvox;
 
-    if ( ! ISVALID_DATAXES( daxin ) || ! ISVALID_DATAXES( daxout ) )
+    if (!ISVALID_DATAXES(daxin) || !ISVALID_DATAXES(daxout))
+    {
         return -1;
+    }
 
     *daxout = *daxin;    /* start with a copy */
 
-    if ( dx <= 0.0 || dy <= 0.0 || dz <= 0.0 )
-        return -1;       /* having duplicated the structures */
-
-    rex = (daxout->xxdel > 0) ? dx : -dx;   /* signed voxel sizes */
+    if (dx <= 0.0 || dy <= 0.0 || dz <= 0.0)
+    {
+        return -1;                        /* having duplicated the structures */
+    }
+    rex = (daxout->xxdel > 0) ? dx : -dx; /* signed voxel sizes */
     rey = (daxout->yydel > 0) ? dy : -dy;
     rez = (daxout->zzdel > 0) ? dz : -dz;
 
     /* preserve either SLAB or FOV     26 Jun 2014 [rickr] */
     /* (SLAB might be better going from high-res to low)   */
 
-    if( bound_type == 1 ) {
-       /* optional way, preserve SLAB */
+    if (bound_type == 1)
+    {
+        /* optional way, preserve SLAB */
 
-       lxx = (daxin->nxx-1) * daxin->xxdel;    /* signed lengths of SLAB */
-       lyy = (daxin->nyy-1) * daxin->yydel;
-       lzz = (daxin->nzz-1) * daxin->zzdel;
+        lxx = (daxin->nxx - 1) * daxin->xxdel; /* signed lengths of SLAB */
+        lyy = (daxin->nyy - 1) * daxin->yydel;
+        lzz = (daxin->nzz - 1) * daxin->zzdel;
 
-       daxout->nxx = (int)( lxx/rex + 0.499 + 1 ); /* so this is > 0 */
-       daxout->nyy = (int)( lyy/rey + 0.499 + 1 );
-       daxout->nzz = (int)( lzz/rez + 0.499 + 1 );
+        daxout->nxx = (int)(lxx / rex + 0.499 + 1); /* so this is > 0 */
+        daxout->nyy = (int)(lyy / rey + 0.499 + 1);
+        daxout->nzz = (int)(lzz / rez + 0.499 + 1);
 
-       /* go from old edge to old center, then back out to new edge */
-       /* (ignore lxx, just to be clear about the symmetry) */
-       daxout->xxorg = daxin->xxorg + 0.5*(daxin->nxx -1)*daxin->xxdel
-                                    - 0.5*(daxout->nxx-1)*rex;
+        /* go from old edge to old center, then back out to new edge */
+        /* (ignore lxx, just to be clear about the symmetry) */
+        daxout->xxorg = daxin->xxorg + 0.5 * (daxin->nxx - 1) * daxin->xxdel
+                        - 0.5 * (daxout->nxx - 1) * rex;
 
-       daxout->yyorg = daxin->yyorg + 0.5*(daxin->nyy -1)*daxin->yydel
-                                    - 0.5*(daxout->nyy-1)*rey;
+        daxout->yyorg = daxin->yyorg + 0.5 * (daxin->nyy - 1) * daxin->yydel
+                        - 0.5 * (daxout->nyy - 1) * rey;
 
-       daxout->zzorg = daxin->zzorg + 0.5*(daxin->nzz -1)*daxin->zzdel
-                                    - 0.5*(daxout->nzz-1)*rez;
-    } else if( bound_type == 2 || bound_type == 3 ) {
-       /* optional way, CENT, preserve original voxel centers */
+        daxout->zzorg = daxin->zzorg + 0.5 * (daxin->nzz - 1) * daxin->zzdel
+                        - 0.5 * (daxout->nzz - 1) * rez;
+    }
+    else if (bound_type == 2 || bound_type == 3)
+    {
+        /* optional way, CENT, preserve original voxel centers */
 
-       /* get updated voxel counts and origin shifts for each axis */
+        /* get updated voxel counts and origin shifts for each axis */
 
-       rv = daxis_resam_preserve(daxin->xxdel, rex, daxin->nxx,
-                                 &nvox, &oshift, bound_type);
-       if( rv ) return -1;
-       daxout->nxx = nvox;
-       daxout->xxorg = daxin->xxorg + oshift;
+        rv = daxis_resam_preserve(daxin->xxdel, rex, daxin->nxx,
+                                  &nvox, &oshift, bound_type);
+        if (rv)
+        {
+            return -1;
+        }
+        daxout->nxx   = nvox;
+        daxout->xxorg = daxin->xxorg + oshift;
 
-       rv = daxis_resam_preserve(daxin->yydel, rey, daxin->nyy,
-                                 &nvox, &oshift, bound_type);
-       if( rv ) return -1;
-       daxout->nyy = nvox;
-       daxout->yyorg = daxin->yyorg + oshift;
+        rv = daxis_resam_preserve(daxin->yydel, rey, daxin->nyy,
+                                  &nvox, &oshift, bound_type);
+        if (rv)
+        {
+            return -1;
+        }
+        daxout->nyy   = nvox;
+        daxout->yyorg = daxin->yyorg + oshift;
 
-       rv = daxis_resam_preserve(daxin->zzdel, rez, daxin->nzz,
-                                 &nvox, &oshift, bound_type);
-       if( rv ) return -1;
-       daxout->nzz = nvox;
-       daxout->zzorg = daxin->zzorg + oshift;
+        rv = daxis_resam_preserve(daxin->zzdel, rez, daxin->nzz,
+                                  &nvox, &oshift, bound_type);
+        if (rv)
+        {
+            return -1;
+        }
+        daxout->nzz   = nvox;
+        daxout->zzorg = daxin->zzorg + oshift;
+    }
+    else
+    {
+        /* original way, preserve FOV */
 
-    } else {
-       /* original way, preserve FOV */
+        lxx = daxin->nxx * daxin->xxdel;       /* signed lengths of data box */
+        lyy = daxin->nyy * daxin->yydel;
+        lzz = daxin->nzz * daxin->zzdel;
 
-       lxx = daxin->nxx * daxin->xxdel;        /* signed lengths of data box */
-       lyy = daxin->nyy * daxin->yydel;
-       lzz = daxin->nzz * daxin->zzdel;
+        daxout->nxx = (int)(lxx / rex + 0.499); /* so this is > 0 */
+        daxout->nyy = (int)(lyy / rey + 0.499);
+        daxout->nzz = (int)(lzz / rez + 0.499);
 
-       daxout->nxx = (int)( lxx/rex + 0.499 ); /* so this is > 0 */
-       daxout->nyy = (int)( lyy/rey + 0.499 );
-       daxout->nzz = (int)( lzz/rez + 0.499 );
+        /* go from old edge to old center, then back out to new edge */
+        daxout->xxorg = daxin->xxorg + 0.5 * (lxx - daxin->xxdel)
+                        - 0.5 * (daxout->nxx - 1) * rex;
 
-       /* go from old edge to old center, then back out to new edge */
-       daxout->xxorg = daxin->xxorg + 0.5*(lxx - daxin->xxdel)
-                                    - 0.5*(daxout->nxx - 1)*rex;
+        daxout->yyorg = daxin->yyorg + 0.5 * (lyy - daxin->yydel)
+                        - 0.5 * (daxout->nyy - 1) * rey;
 
-       daxout->yyorg = daxin->yyorg + 0.5*(lyy - daxin->yydel)
-                                    - 0.5*(daxout->nyy - 1)*rey;
-
-       daxout->zzorg = daxin->zzorg + 0.5*(lzz - daxin->zzdel)
-                                    - 0.5*(daxout->nzz - 1)*rez;
+        daxout->zzorg = daxin->zzorg + 0.5 * (lzz - daxin->zzdel)
+                        - 0.5 * (daxout->nzz - 1) * rez;
     }
 
     /* save new dimensions */
@@ -582,28 +624,28 @@ int r_dxyz_mod_dataxes( double dx, double dy, double dz,
     /* create a new bounding box                        */
     /* (note that xxdel<0 implies we must swap min/max) */
     daxout->xxmin = daxout->xxorg;
-    daxout->xxmax = daxout->xxorg + (daxout->nxx-1)*daxout->xxdel;
-    if ( daxout->xxmin > daxout->xxmax )
+    daxout->xxmax = daxout->xxorg + (daxout->nxx - 1) * daxout->xxdel;
+    if (daxout->xxmin > daxout->xxmax)
     {
-        double tmp    = daxout->xxmin;
+        double tmp = daxout->xxmin;
         daxout->xxmin = daxout->xxmax;
         daxout->xxmax = tmp;
     }
 
     daxout->yymin = daxout->yyorg;
-    daxout->yymax = daxout->yyorg + (daxout->nyy-1)*daxout->yydel;
-    if ( daxout->yymin > daxout->yymax )
+    daxout->yymax = daxout->yyorg + (daxout->nyy - 1) * daxout->yydel;
+    if (daxout->yymin > daxout->yymax)
     {
-        double tmp    = daxout->yymin;
+        double tmp = daxout->yymin;
         daxout->yymin = daxout->yymax;
         daxout->yymax = tmp;
     }
 
     daxout->zzmin = daxout->zzorg;
-    daxout->zzmax = daxout->zzorg + (daxout->nzz-1)*daxout->zzdel;
-    if ( daxout->zzmin > daxout->zzmax )
+    daxout->zzmax = daxout->zzorg + (daxout->nzz - 1) * daxout->zzdel;
+    if (daxout->zzmin > daxout->zzmax)
     {
-        double tmp    = daxout->zzmin;
+        double tmp = daxout->zzmin;
         daxout->zzmin = daxout->zzmax;
         daxout->zzmax = tmp;
     }
@@ -620,48 +662,52 @@ int r_dxyz_mod_dataxes( double dx, double dy, double dz,
     return 0;
 }
 
-
 /*----------------------------------------------------------------------
  * validate an orientation string
  *
  * use explicit boolean return values
  *----------------------------------------------------------------------
-*/
-RwcBoolean r_is_valid_orient_str ( char ostr [] )
+ */
+RwcBoolean r_is_valid_orient_str(char ostr [])
 {
     int o1, o2, o3;
 
-    if ( ostr == NULL )
+    if (ostr == NULL)
+    {
         return False;
+    }
 
     o1 = ORCODE(toupper(ostr[0]));
     o2 = ORCODE(toupper(ostr[1]));
     o3 = ORCODE(toupper(ostr[2]));
 
-    if ( ( o1 != ILLEGAL_TYPE ) &&
-         ( o2 != ILLEGAL_TYPE ) &&
-         ( o3 != ILLEGAL_TYPE ) &&
-           OR3OK(o1,o2,o3) )
+    if ((o1 != ILLEGAL_TYPE) &&
+        (o2 != ILLEGAL_TYPE) &&
+        (o3 != ILLEGAL_TYPE) &&
+        OR3OK(o1, o2, o3))
+    {
         return True;
+    }
     else
+    {
         return False;
+    }
 }
-
 
 /*----------------------------------------------------------------------
  * given an orientation string, fill an orientation code vector
  *
  * return 0 on success
  *----------------------------------------------------------------------
-*/
-int r_orient_str2vec ( char ostr [], THD_ivec3 * ovec )
+ */
+int r_orient_str2vec(char ostr [], THD_ivec3 *ovec)
 {
     int o1, o2, o3;
 
-    if ( !ostr || !ovec )
+    if (!ostr || !ovec)
     {
-        fprintf( stderr, "%s: r_orient_str2vec - invalid parameter pair "
-                 "(%p,%p)\n", this_file, ostr, ovec );
+        fprintf(stderr, "%s: r_orient_str2vec - invalid parameter pair "
+                "(%p,%p)\n", this_file, ostr, ovec);
         return -1;
     }
 
@@ -669,66 +715,63 @@ int r_orient_str2vec ( char ostr [], THD_ivec3 * ovec )
     ovec->ijk[1] = o2 = ORCODE(toupper(ostr[1]));
     ovec->ijk[2] = o3 = ORCODE(toupper(ostr[2]));
 
-    if ( ( o1 == ILLEGAL_TYPE ) ||
-         ( o2 == ILLEGAL_TYPE ) ||
-         ( o3 == ILLEGAL_TYPE ) ||
-         ( !OR3OK(o1,o2,o3) ) )
+    if ((o1 == ILLEGAL_TYPE) ||
+        (o2 == ILLEGAL_TYPE) ||
+        (o3 == ILLEGAL_TYPE) ||
+        (!OR3OK(o1, o2, o3)))
     {
-        fprintf( stderr, "%s: r_orient_str2vec - bad ostr <%.4s>\n",
-                 this_file, ostr );
+        fprintf(stderr, "%s: r_orient_str2vec - bad ostr <%.4s>\n",
+                this_file, ostr);
         return -2;
     }
 
     return 0;
 }
 
-
 /*----------------------------------------------------------------------
  * validate inputs to driving function
  *
  * return one of:
  *
- *    LR_RESAM_IN_NONE      : no changes from original
- *    LR_RESAM_IN_REORIENT  : do a re-orientation
- *    LR_RESAM_IN_RESAM     : resample dataset
- *    LR_RESAM_IN_FAIL      : bad inputs
+ *    LR_RESAM_IN_NONE      : no changes from original LR_RESAM_IN_REORIENT  : do a re-orientation
+ *LR_RESAM_IN_RESAM     : resample dataset LR_RESAM_IN_FAIL      : bad inputs
  *----------------------------------------------------------------------
-*/
-static int valid_resam_inputs( THD_3dim_dataset * dset, THD_3dim_dataset * mset,
-                               double dx, double dy, double dz,
-                               char orient [], int resam )
+ */
+static int valid_resam_inputs(THD_3dim_dataset *dset, THD_3dim_dataset *mset,
+                              double dx, double dy, double dz,
+                              char orient [], int resam)
 {
     int ret_val = LR_RESAM_IN_NONE;
 
-    if( ! ISVALID_3DIM_DATASET(dset) )
+    if (!ISVALID_3DIM_DATASET(dset))
     {
-        fprintf( stderr, "ERROR: <%s> - invalid input dataset\n", this_file );
+        fprintf(stderr, "ERROR: <%s> - invalid input dataset\n", this_file);
         return LR_RESAM_IN_FAIL;
     }
 
     /* validate the resampling mode - this is required in any case */
-    if ( resam < 0 || resam > LAST_RESAM_TYPE )
+    if (resam < 0 || resam > LAST_RESAM_TYPE)
     {
-        fprintf( stderr, "ERROR: <%s> - invalid resample mode of %d\n",
-                 this_file, resam );
+        fprintf(stderr, "ERROR: <%s> - invalid resample mode of %d\n",
+                this_file, resam);
         return LR_RESAM_IN_FAIL;
     }
 
-    if( mset ) /* behold, the master! */
+    if (mset)  /* behold, the master! */
     {
         /* validate mset and its thd_dataxes structure */
-        if ( ! ISVALID_3DIM_DATASET(mset) || !ISVALID_DATAXES(mset->daxes) )
+        if (!ISVALID_3DIM_DATASET(mset) || !ISVALID_DATAXES(mset->daxes))
         {
-            fprintf( stderr, "ERROR: <%s> - invalid master dataset\n",
-                     this_file );
+            fprintf(stderr, "ERROR: <%s> - invalid master dataset\n",
+                    this_file);
             return LR_RESAM_IN_FAIL;
         }
 
         /* we should have orientation memory with a master */
-        if ( ! orient )
+        if (!orient)
         {
-            fprintf( stderr, "ERROR: <%s> - orientation memory should "
-                     "come with master\n", this_file );
+            fprintf(stderr, "ERROR: <%s> - orientation memory should "
+                    "come with master\n", this_file);
             return LR_RESAM_IN_FAIL;
         }
 
@@ -739,10 +782,10 @@ static int valid_resam_inputs( THD_3dim_dataset * dset, THD_3dim_dataset * mset,
         orient[3] = '\0';
 
         /* validate any new dxyz */
-        if ( dx != 0.0 && (dx < 0.0 || dy <= 0.0 || dz <= 0.0) )
+        if (dx != 0.0 && (dx < 0.0 || dy <= 0.0 || dz <= 0.0))
         {
-            fprintf( stderr, "ERROR: <%s> - invalid (dx,dy,dz) = (%f,%f,%f)\n",
-                     this_file, dx, dy, dz );
+            fprintf(stderr, "ERROR: <%s> - invalid (dx,dy,dz) = (%f,%f,%f)\n",
+                    this_file, dx, dy, dz);
             return LR_RESAM_IN_FAIL;
         }
 
@@ -752,59 +795,68 @@ static int valid_resam_inputs( THD_3dim_dataset * dset, THD_3dim_dataset * mset,
     /* so no master dataset, validate dxyz and orientation */
 
     /* validate resampling */
-    if ( dx == 0.0 && dy == 0.0 && dz == 0.0 )        /* no resampling */
-        ret_val &= ~LR_RESAM_IN_RESAM;
-    else if ( dx <= 0.0 || dy <= 0.0 || dz <= 0.0 )
+    if (dx == 0.0 && dy == 0.0 && dz == 0.0)          /* no resampling */
     {
-        fprintf( stderr, "ERROR: <%s> - invalid (dx,dy,dz) = (%f,%f,%f)\n",
-                 this_file, dx, dy, dz );
+        ret_val &= ~LR_RESAM_IN_RESAM;
+    }
+    else if (dx <= 0.0 || dy <= 0.0 || dz <= 0.0)
+    {
+        fprintf(stderr, "ERROR: <%s> - invalid (dx,dy,dz) = (%f,%f,%f)\n",
+                this_file, dx, dy, dz);
         return LR_RESAM_IN_FAIL;
     }
     else
+    {
         ret_val |= LR_RESAM_IN_RESAM;
+    }
 
     /* validate orientation */
-    if ( orient == NULL )
-          ret_val &= ~LR_RESAM_IN_REORIENT;
-    else if ( r_is_valid_orient_str ( orient ) == False )
+    if (orient == NULL)
     {
-        fprintf( stderr, "ERROR: <%s> - invalid orientation string <%.6s>\n",
-                 this_file, orient );
+        ret_val &= ~LR_RESAM_IN_REORIENT;
+    }
+    else if (r_is_valid_orient_str(orient) == False)
+    {
+        fprintf(stderr, "ERROR: <%s> - invalid orientation string <%.6s>\n",
+                this_file, orient);
         return LR_RESAM_IN_FAIL;
     }
     else
+    {
         ret_val |= LR_RESAM_IN_REORIENT;
+    }
 
     return ret_val;
 }
-
 
 /*----------------------------------------------------------------------
  * Apply orientation and delta values to the dataset.
  *
  * return 0 on success
  *----------------------------------------------------------------------
-*/
-static int apply_orientation( THD_3dim_dataset * dset, FD_brick * fdb,
-                              char orient[] )
+ */
+static int apply_orientation(THD_3dim_dataset *dset, FD_brick *fdb,
+                             char orient[])
 {
-    THD_dataxes * daxp = dset->daxes;
-    THD_ivec3     ivnxyz, ivorient;
-    THD_fvec3     fvdel, fvorg;
-    float         org4[4], del4[4];
-    int           aa1, aa2, aa3;
-    int           a1, a2, a3;
-    int           ret_val;
+    THD_dataxes *daxp = dset->daxes;
+    THD_ivec3    ivnxyz, ivorient;
+    THD_fvec3    fvdel, fvorg;
+    float        org4[4], del4[4];
+    int          aa1, aa2, aa3;
+    int          a1, a2, a3;
+    int          ret_val;
 
     LOAD_IVEC3(ivnxyz, fdb->n1, fdb->n2, fdb->n3);
 
-    if ( (ret_val = r_orient_str2vec(orient, &ivorient)) != 0 )
+    if ((ret_val = r_orient_str2vec(orient, &ivorient)) != 0)
+    {
         return ret_val;
+    }
 
-    LOAD_FVEC3( fvdel,
-        ORIENT_sign[ivorient.ijk[0]]=='+' ? fdb->del1 : -fdb->del1,
-        ORIENT_sign[ivorient.ijk[1]]=='+' ? fdb->del2 : -fdb->del2,
-        ORIENT_sign[ivorient.ijk[2]]=='+' ? fdb->del3 : -fdb->del3 );
+    LOAD_FVEC3(fvdel,
+               ORIENT_sign[ivorient.ijk[0]] == '+' ? fdb->del1 : -fdb->del1,
+               ORIENT_sign[ivorient.ijk[1]] == '+' ? fdb->del2 : -fdb->del2,
+               ORIENT_sign[ivorient.ijk[2]] == '+' ? fdb->del3 : -fdb->del3);
 
     /* use original org and delta with permuted index to get new orgs */
     org4[1] = daxp->xxorg;  org4[2] = daxp->yyorg;  org4[3] = daxp->zzorg;
@@ -813,47 +865,45 @@ static int apply_orientation( THD_3dim_dataset * dset, FD_brick * fdb,
     a1  = fdb->a123.ijk[0];  a2 = fdb->a123.ijk[1];  a3 = fdb->a123.ijk[2];
     aa1 = abs(a1);          aa2 = abs(a2);          aa3 = abs(a3);
 
-    LOAD_FVEC3( fvorg,
-                (a1 > 0) ? org4[aa1] : org4[aa1]+(fdb->n1-1)*del4[aa1],
-                (a2 > 0) ? org4[aa2] : org4[aa2]+(fdb->n2-1)*del4[aa2],
-                (a3 > 0) ? org4[aa3] : org4[aa3]+(fdb->n3-1)*del4[aa3] );
+    LOAD_FVEC3(fvorg,
+               (a1 > 0) ? org4[aa1] : org4[aa1] + (fdb->n1 - 1) * del4[aa1],
+               (a2 > 0) ? org4[aa2] : org4[aa2] + (fdb->n2 - 1) * del4[aa2],
+               (a3 > 0) ? org4[aa3] : org4[aa3] + (fdb->n3 - 1) * del4[aa3]);
 
     /* now update the current brick with our new orientation data */
-    EDIT_dset_items( dset,
-                        ADN_nxyz,      ivnxyz,
-                        ADN_xyzdel,    fvdel,
-                        ADN_xyzorg,    fvorg,
-                        ADN_xyzorient, ivorient,
-                     ADN_none );
+    EDIT_dset_items(dset,
+                    ADN_nxyz, ivnxyz,
+                    ADN_xyzdel, fvdel,
+                    ADN_xyzorg, fvorg,
+                    ADN_xyzorient, ivorient,
+                    ADN_none);
     return 0;
 }
-
 
 /*----------------------------------------------------------------------
  * Apply new dataxes structure to dataset and prepare for warp speed.
  *
  * return 0 on success
  *----------------------------------------------------------------------
-*/
-static int apply_dataxes( THD_3dim_dataset * dset, THD_dataxes * dax )
+ */
+static int apply_dataxes(THD_3dim_dataset *dset, THD_dataxes *dax)
 {
-    THD_ivec3     ivnxyz;
-    THD_fvec3     fvdel, fvorg;
+    THD_ivec3 ivnxyz;
+    THD_fvec3 fvdel, fvorg;
 
-    LOAD_IVEC3( ivnxyz, dax->nxx, dax->nyy, dax->nzz );
-    LOAD_FVEC3( fvorg, dax->xxorg, dax->yyorg, dax->zzorg );
-    LOAD_FVEC3( fvdel, dax->xxdel, dax->yydel, dax->zzdel );
+    LOAD_IVEC3(ivnxyz, dax->nxx, dax->nyy, dax->nzz);
+    LOAD_FVEC3(fvorg, dax->xxorg, dax->yyorg, dax->zzorg);
+    LOAD_FVEC3(fvdel, dax->xxdel, dax->yydel, dax->zzdel);
 
-    EDIT_dset_items( dset,
-                        ADN_nxyz,   ivnxyz,
-                        ADN_xyzdel, fvdel,
-                        ADN_xyzorg, fvorg,
-                     ADN_none );
+    EDIT_dset_items(dset,
+                    ADN_nxyz, ivnxyz,
+                    ADN_xyzdel, fvdel,
+                    ADN_xyzorg, fvorg,
+                    ADN_none);
 
     /* prepare the dataset for warping */
-    *dset->wod_daxes         = *dax;            /* used for actual warp  */
-    *dset->daxes             = *dax;
+    *dset->wod_daxes = *dax;                    /* used for actual warp  */
+    *dset->daxes     = *dax;
 
     return 0;
 }
-

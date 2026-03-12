@@ -1,40 +1,44 @@
 /*****************************************************************************
-   Major portions of this software are copyrighted by the Medical College
-   of Wisconsin, 1994-2000, and are released under the Gnu General Public
-   License, Version 2.  See the file README.Copyright for details.
-******************************************************************************/
+ * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
+ ******************************************************************************/
 
 #include "cs.h"
 
 /*****************************************************************************/
 /* insertion_sort : sort an array of int64_t + int64_t                       */
 
-static void isort_intint64_t( int64_t n , int64_t * ar , int64_t * iar )
+static void isort_intint64_t(int64_t n, int64_t *ar, int64_t *iar)
 {
-   register int64_t  j , p ;  /* array indices */
-   register int64_t   temp ;  /* a[j] holding place */
-   register int64_t  itemp ;
-   register int64_t * a = ar ;
-   register int64_t  * ia = iar ;
+    register int64_t  j, p;   /* array indices */
+    register int64_t  temp;   /* a[j] holding place */
+    register int64_t  itemp;
+    register int64_t *a  = ar;
+    register int64_t *ia = iar;
 
-   if( n < 2 ) return ;
+    if (n < 2)
+    {
+        return;
+    }
 
-   for( j=1 ; j < n ; j++ ){
+    for (j = 1 ; j < n ; j++)
+    {
+        if (a[j] < a[j - 1]) /* out of order */
+        {
+            p    = j;
+            temp = a[j]; itemp = ia[j];
 
-     if( a[j] < a[j-1] ){   /* out of order */
-        p    = j ;
-        temp = a[j] ; itemp = ia[j] ;
+            do{
+                a[p]  = a[p - 1]; /* at this point, a[p-1] > temp, so move it up */
+                ia[p] = ia[p - 1];
+                p--;
+            } while (p > 0 && temp < a[p - 1]);
 
-       do{
-           a[p] =  a[p-1] ; /* at this point, a[p-1] > temp, so move it up */
-          ia[p] = ia[p-1] ;
-          p-- ;
-        } while( p > 0 && temp < a[p-1] ) ;
-
-        a[p] = temp ;       /* finally, put temp in its place */
-       ia[p] = itemp ;
-     }
-   }
+            a[p]  = temp;   /* finally, put temp in its place */
+            ia[p] = itemp;
+        }
+    }
 }
 
 /********************************************************************************/
@@ -42,101 +46,129 @@ static void isort_intint64_t( int64_t n , int64_t * ar , int64_t * iar )
 
 #undef  QS_SWAPF
 #undef  QS_SWAPI
-#define QS_SWAPF(x,y) ( temp=(x),(x)=(y),(y)= temp)
-#define QS_SWAPI(i,j) (itemp=(i),(i)=(j),(j)=itemp)
+#define QS_SWAPF(x, y)    (temp = (x), (x) = (y), (y) = temp)
+#define QS_SWAPI(i, j)    (itemp = (i), (i) = (j), (j) = itemp)
 #ifndef QS_STACK
-# define QS_STACK 9999
+# define QS_STACK    9999
 #endif
 
-static void qsrec_intint64_t( int64_t n , int64_t * ar , int64_t * iar , int64_t cutoff )
+static void qsrec_intint64_t(int64_t n, int64_t *ar, int64_t *iar, int64_t cutoff)
 {
-   register int64_t i , j ;        /* scanning indices */
-   register int64_t temp , pivot ; /* holding places */
-   register int64_t  itemp , ipivot ;
-   register int64_t * a = ar ;
-   register int64_t  * ia = iar ;
+    register int64_t  i, j;        /* scanning indices */
+    register int64_t  temp, pivot; /* holding places */
+    register int64_t  itemp, ipivot;
+    register int64_t *a  = ar;
+    register int64_t *ia = iar;
 
-   int64_t left , right , mst , stack[QS_STACK] , nnew ;
+    int64_t left, right, mst, stack[QS_STACK], nnew;
 
-   /* return if too short (insertion sort will clean up) */
+    /* return if too short (insertion sort will clean up) */
 
-   if( cutoff < 3 ) cutoff = 3 ;
-   if( n < cutoff ) return ;
+    if (cutoff < 3)
+    {
+        cutoff = 3;
+    }
+    if (n < cutoff)
+    {
+        return;
+    }
 
-   /* initialize stack to start with whole array */
+    /* initialize stack to start with whole array */
 
-   stack[0] = 0   ;
-   stack[1] = n-1 ;
-   mst      = 2   ;
+    stack[0] = 0;
+    stack[1] = n - 1;
+    mst      = 2;
 
-   /* loop while the stack is nonempty */
+    /* loop while the stack is nonempty */
 
-   while( mst > 0 ){
-      right = stack[--mst] ;  /* work on subarray from left -> right */
-      left  = stack[--mst] ;
+    while (mst > 0)
+    {
+        right = stack[--mst]; /* work on subarray from left -> right */
+        left  = stack[--mst];
 
-      i = ( left + right ) / 2 ;           /* middle of subarray */
+        i = (left + right) / 2;            /* middle of subarray */
 
-      /* sort the left, middle, and right a[]'s */
+        /* sort the left, middle, and right a[]'s */
 
-      if( a[left] > a[i]     ){ QS_SWAPF(a[left] ,a[i]    ); QS_SWAPI(ia[left] ,ia[i]    ); }
-      if( a[left] > a[right] ){ QS_SWAPF(a[left] ,a[right]); QS_SWAPI(ia[left] ,ia[right]); }
-      if( a[i] > a[right]    ){ QS_SWAPF(a[right],a[i]    ); QS_SWAPI(ia[right],ia[i]    ); }
+        if (a[left] > a[i])
+        {
+            QS_SWAPF(a[left], a[i]); QS_SWAPI(ia[left], ia[i]);
+        }
+        if (a[left] > a[right])
+        {
+            QS_SWAPF(a[left], a[right]); QS_SWAPI(ia[left], ia[right]);
+        }
+        if (a[i] > a[right])
+        {
+            QS_SWAPF(a[right], a[i]); QS_SWAPI(ia[right], ia[i]);
+        }
 
-      pivot  = a[i] ;                        /* a[i] is the median-of-3 pivot! */
-      a[i]   = a[right] ;
-      ipivot = ia[i] ;
-      ia[i]  = ia[right] ;
+        pivot  = a[i];                       /* a[i] is the median-of-3 pivot! */
+        a[i]   = a[right];
+        ipivot = ia[i];
+        ia[i]  = ia[right];
 
-      i = left ;                            /* initialize scanning */
-      j = right ;
+        i = left;                           /* initialize scanning */
+        j = right;
 
-      /*----- partition:  move elements bigger than pivot up and elements
-                          smaller than pivot down, scanning in from ends -----*/
+        /*----- partition:  move elements bigger than pivot up and elements smaller than pivot down,
+         * scanning in from ends -----*/
 
-      do{
-        for( ; a[++i] < pivot ; ) ;  /* scan i up,   until a[i] >= pivot */
-        for( ; a[--j] > pivot ; ) ;  /* scan j down, until a[j] <= pivot */
+        do{
+            for ( ; a[++i] < pivot ; )
+            {
+                ;                    /* scan i up,   until a[i] >= pivot */
+            }
+            for ( ; a[--j] > pivot ; )
+            {
+                ;                    /* scan j down, until a[j] <= pivot */
+            }
+            if (j <= i)
+            {
+                break;               /* if j meets i, quit */
+            }
+            QS_SWAPF(a[i], a[j]); QS_SWAPI(ia[i], ia[j]);
+        } while (1);
 
-        if( j <= i ) break ;         /* if j meets i, quit */
+        /*----- at this point, the array is partitioned -----*/
 
-        QS_SWAPF( a[i] , a[j] ) ; QS_SWAPI( ia[i] , ia[j] ) ;
-      } while( 1 ) ;
+        a[right]  = a[i];          /*restore the pivot*/
+        a[i]      = pivot;
+        ia[right] = ia[i];
+        ia[i]     = ipivot;
 
-      /*----- at this point, the array is partitioned -----*/
+        /*----- push subarrays [left..i-1] and [i+1..right] onto stack, if big -----*/
 
-      a[right]  = a[i] ;           /*restore the pivot*/
-      a[i]      = pivot ;
-      ia[right] = ia[i] ;
-      ia[i]     = ipivot ;
+        nnew = 0;
+        if ((i - left) > cutoff)
+        {
+            stack[mst++] = left; stack[mst++] = i - 1; nnew++;
+        }
+        if ((right - i) > cutoff)
+        {
+            stack[mst++] = i + 1; stack[mst++] = right; nnew++;
+        }
 
-      /*----- push subarrays [left..i-1] and [i+1..right] onto stack, if big -----*/
+        /* if just added two subarrays to stack, make sure shorter one comes first */
 
-      nnew = 0 ;
-      if( (i-left)  > cutoff ){ stack[mst++] = left ; stack[mst++] = i-1   ; nnew++ ; }
-      if( (right-i) > cutoff ){ stack[mst++] = i+1  ; stack[mst++] = right ; nnew++ ; }
-
-      /* if just added two subarrays to stack, make sure shorter one comes first */
-
-      if( nnew == 2 && stack[mst-3] - stack[mst-4] > stack[mst-1] - stack[mst-2] ){
-         QS_SWAPI( stack[mst-4] , stack[mst-2] ) ;
-         QS_SWAPI( stack[mst-3] , stack[mst-1] ) ;
-      }
-
-   }  /* end of while stack is non-empty */
-
+        if (nnew == 2 && stack[mst - 3] - stack[mst - 4] > stack[mst - 1] - stack[mst - 2])
+        {
+            QS_SWAPI(stack[mst - 4], stack[mst - 2]);
+            QS_SWAPI(stack[mst - 3], stack[mst - 1]);
+        }
+    } /* end of while stack is non-empty */
 }
 
 /********************************************************************************/
 /* quick_sort :  sort an array partially recursively, and partially insertion   */
 
 #ifndef QS_CUTOFF
-#define QS_CUTOFF 10
+#define QS_CUTOFF    10
 #endif
 
-void qsort_intint64_t( int64_t n , int64_t * a , int64_t * ia )
+void qsort_intint64_t(int64_t n, int64_t *a, int64_t *ia)
 {
-   qsrec_intint64_t( n , a , ia , QS_CUTOFF ) ;
-   isort_intint64_t( n , a , ia ) ;
-   return ;
+    qsrec_intint64_t(n, a, ia, QS_CUTOFF);
+    isort_intint64_t(n, a, ia);
+    return;
 }

@@ -489,8 +489,8 @@ void qh_freestatistics(void)
  *
  * notes:
  *  uses qh_malloc() instead of qh_memalloc() since mem.c not set up yet NOerrors --
- * qh_initstatistics can not use qh_errexit().  One first call, qh_memalloc is not initialized.
- *  Also invoked by QhullQh().
+ * qh_initstatistics can not use qh_errexit().  One first call, qh_memalloc is not initialized. Also
+ *invoked by QhullQh().
  */
 void qh_initstatistics(void)
 {

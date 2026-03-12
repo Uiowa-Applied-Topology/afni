@@ -3,31 +3,31 @@
 /* All definitions here taken out of afni.h  ZSS Jan 2011 */
 
 char *INIT_def_colovr[DEFAULT_NCOLOVR] = {
-    "#ffff00", "#ffcc00",     "#ff9900",     "#ff6900",      "#ff4400",      "#ff0000",
-    "#0000ff", "#0044ff",     "#0069ff",     "#0099ff",      "#00ccff",      "#00ffff",
-    "green",   "limegreen",   "violet",      "hotpink",
-    "white",   "#dddddd",     "#bbbbbb",     "#010101",
+    "#ffff00", "#ffcc00",   "#ff9900", "#ff6900", "#ff4400", "#ff0000",
+    "#0000ff", "#0044ff",   "#0069ff", "#0099ff", "#00ccff", "#00ffff",
+    "green",   "limegreen", "violet",  "hotpink",
+    "white",   "#dddddd",   "#bbbbbb", "#010101",
 
-    "#cc1033", "#992066",     "#663199",     "#3341cc",      /* RGB cycle */
-    "#0051ff", "#0074cc",     "#009799",     "#00b966",      /* 10 Jun 2002 */
-    "#00dc33", "#00ff00",     "#33ff00",     "#66ff00",
-    "#99ff00", "#ccff00",     "#ffff00",     "#ffcc00",
-    "#ff9900", "#ff6600",     "#ff3300",     "#ff0000"
+    "#cc1033", "#992066",   "#663199", "#3341cc", /* RGB cycle */
+    "#0051ff", "#0074cc",   "#009799", "#00b966", /* 10 Jun 2002 */
+    "#00dc33", "#00ff00",   "#33ff00", "#66ff00",
+    "#99ff00", "#ccff00",   "#ffff00", "#ffcc00",
+    "#ff9900", "#ff6600",   "#ff3300", "#ff0000"
 };
 
 char *INIT_def_labovr[DEFAULT_NCOLOVR] = {
-    "yellow",     "yell-oran",      "oran-yell",          "orange",              "oran-red",
+    "yellow",     "yell-oran",  "oran-yell",  "orange",     "oran-red",
     "red",
-    "dk-blue",    "blue",           "lt-blue1",           "lt-blue2",            "blue-cyan",
+    "dk-blue",    "blue",       "lt-blue1",   "lt-blue2",   "blue-cyan",
     "cyan",
-    "green",      "limegreen",      "violet",             "hotpink",
-    "white",      "gry-dd",         "gry-bb",             "black",
+    "green",      "limegreen",  "violet",     "hotpink",
+    "white",      "gry-dd",     "gry-bb",     "black",
 
-    "rbgyr20_01", "rbgyr20_02",     "rbgyr20_03",         "rbgyr20_04",          /* RBG cycle */
-    "rbgyr20_05", "rbgyr20_06",     "rbgyr20_07",         "rbgyr20_08",          /* 10 Jun 2002 */
-    "rbgyr20_09", "rbgyr20_10",     "rbgyr20_11",         "rbgyr20_12",
-    "rbgyr20_13", "rbgyr20_14",     "rbgyr20_15",         "rbgyr20_16",
-    "rbgyr20_17", "rbgyr20_18",     "rbgyr20_19",         "rbgyr20_20"
+    "rbgyr20_01", "rbgyr20_02", "rbgyr20_03", "rbgyr20_04", /* RBG cycle */
+    "rbgyr20_05", "rbgyr20_06", "rbgyr20_07", "rbgyr20_08", /* 10 Jun 2002 */
+    "rbgyr20_09", "rbgyr20_10", "rbgyr20_11", "rbgyr20_12",
+    "rbgyr20_13", "rbgyr20_14", "rbgyr20_15", "rbgyr20_16",
+    "rbgyr20_17", "rbgyr20_18", "rbgyr20_19", "rbgyr20_20"
 };
 
 #define COL_yellow        1
@@ -222,5 +222,6 @@ int INIT_ovin_sgn[NPANE_MAX + 1][NPANE_MAX + 1] = {
         1, 2, 4, 5, 0, 8, 9, 10, 11
     },
     {
-        1, 2, 3, 4, 5, 7, 8, 9, 10, 11 }
+        1, 2, 3, 4, 5, 7, 8, 9, 10, 11
+    }
 };

@@ -11,7 +11,7 @@
 
 /* Allow user to skip the afni_fgets() function, probably for speedup.
  * afni_fgets() is about 4-5 times slower than fgets(), at least on my Mac. Doesn't usually matter,
- * since interpreting the text takes longer than reading it in most case.  (Also, cf machdep.h)
+ *since interpreting the text takes longer than reading it in most case.  (Also, cf machdep.h)
  *//*--------------------------------------------------------------------------*/
 
 static int use_fgets = 0;

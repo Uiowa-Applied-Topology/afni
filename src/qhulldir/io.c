@@ -10,7 +10,7 @@
  * unix.c calls qh_readpoints and qh_produce_output
  *
  * unix.c and user.c are the only callers of io.c functions This allows the user to avoid loading
- * io.o from qhull.a
+ *io.o from qhull.a
  *
  * copyright (c) 1993-2010 The Geometry Center.
  * $Id$$Change: 1179 $
@@ -25,8 +25,8 @@
  * >-------------------------------</a><a name="produce_output">-</a>
  *
  * qh_produce_output() qh_produce_output2() prints out the result of qhull in desired format
- * qh_produce_output2() does not call qh_prepare_output() if qh.GETarea computes and prints area and
- * volume qh.PRINTout[] is an array of output formats
+ *qh_produce_output2() does not call qh_prepare_output() if qh.GETarea computes and prints area and
+ *volume qh.PRINTout[] is an array of output formats
  *
  * notes:
  *  prints output in qh.PRINTout order
@@ -139,7 +139,7 @@ int qh_compare_vertexpoint(const void *p1, const void *p2)
 {
     const vertexT *a = *((vertexT *const *)p1), *b = *((vertexT *const *)p2);
 
-    return (qh_pointid(a->point) > qh_pointid(b->point)?1:-1);
+    return qh_pointid(a->point) > qh_pointid(b->point)?1:-1;
 } /* compare_vertexpoint */
 
 /*-<a                             href="qh-io.htm#TOC"
@@ -250,23 +250,23 @@ void qh_copyfilename(char *filename, int size, const char *source, int length)
  * >-------------------------------</a><a name="countfacets">-</a>
  *
  * qh_countfacets( facetlist, facets, printall, numfacets, numsimplicial, totneighbors, numridges,
- * numcoplanar, numtricoplanars  ) count good facets for printing and set visitid if allfacets,
- * ignores qh_skipfacet()
+ *numcoplanar, numtricoplanars  ) count good facets for printing and set visitid if allfacets,
+ *ignores qh_skipfacet()
  *
  * notes:
  *  qh_printsummary and qh_countfacets must match counts
  *
  * returns:
  *  numfacets, numsimplicial, total neighbors, numridges, coplanars each facet with ->visitid
- * indicating 1-relative position
+ *indicating 1-relative position
  *    ->visitid==0 indicates not good
  *
  * notes numfacets >= numsimplicial if qh.NEWfacets, does not count visible facets (matches
- * qh_printafacet)
+ *qh_printafacet)
  *
  * design:
  *  for all facets on facetlist and in facets set unless facet is skipped or visible (i.e., will be
- * deleted) mark facet->visitid update counts
+ *deleted) mark facet->visitid update counts
  */
 void qh_countfacets(facetT *facetlist, setT *facets, boolT printall,
                     int *numfacetsp, int *numsimplicialp, int *totneighborsp, int *numridgesp,
@@ -348,31 +348,31 @@ void qh_countfacets(facetT *facetlist, setT *facets, boolT printall,
  * >-------------------------------</a><a name="detvnorm">-</a>
  *
  * qh_detvnorm( vertex, vertexA, centers, offset ) compute separating plane of the Voronoi diagram
- * for a pair of input sites centers= set of facets (i.e., Voronoi vertices) facet->visitid= 0 iff
- * vertex-at-infinity (i.e., unbounded)
+ *for a pair of input sites centers= set of facets (i.e., Voronoi vertices) facet->visitid= 0 iff
+ *vertex-at-infinity (i.e., unbounded)
  *
  * assumes:
  *  qh_ASvoronoi and qh_vertexneighbors() already set
  *
  * returns:
  *  norm a pointer into qh.gm_matrix to qh.hull_dim-1 reals copy the data before reusing
- * qh.gm_matrix offset if 'QVn'
+ *qh.gm_matrix offset if 'QVn'
  *      sign adjusted so that qh.GOODvertexp is inside else sign adjusted so that vertex is inside
  *
  *  qh.gm_matrix= simplex of points from centers relative to first center
  *
  * notes:
  *  in io.c so that code for 'v Tv' can be removed by removing io.c returns pointer into
- * qh.gm_matrix to avoid tracking of temporary memory
+ *qh.gm_matrix to avoid tracking of temporary memory
  *
  * design:
  *  determine midpoint of input sites build points as the set of Voronoi vertices select a simplex
- * from points (if necessary) include midpoint if the Voronoi region is unbounded relocate the first
- * vertex of the simplex to the origin compute the normalized hyperplane through the simplex orient
- * the hyperplane toward 'QVn' or 'vertex'
+ *from points (if necessary) include midpoint if the Voronoi region is unbounded relocate the first
+ *vertex of the simplex to the origin compute the normalized hyperplane through the simplex orient
+ *the hyperplane toward 'QVn' or 'vertex'
  *  if 'Tv' or 'Ts'
  *    if bounded test that hyperplane is the perpendicular bisector of the input sites test that
- * Voronoi vertices not in the simplex are still on the hyperplane free up temporary memory
+ *Voronoi vertices not in the simplex are still on the hyperplane free up temporary memory
  */
 pointT *qh_detvnorm(vertexT *vertex, vertexT *vertexA, setT *centers, realT *offsetp)
 {
@@ -565,7 +565,7 @@ pointT *qh_detvnorm(vertexT *vertex, vertexT *vertexA, setT *centers, realT *off
  * >-------------------------------</a><a name="detvridge">-</a>
  *
  * qh_detvridge( vertexA ) determine Voronoi ridge from 'seen' neighbors of vertexA include one
- * vertex-at-infinite if an !neighbor->visitid
+ *vertex-at-infinite if an !neighbor->visitid
  *
  * returns:
  *  temporary set of centers (facets, i.e., Voronoi vertices) sorted by center id
@@ -605,15 +605,15 @@ setT *qh_detvridge(vertexT *vertex)
  * >-------------------------------</a><a name="detvridge3">-</a>
  *
  * qh_detvridge3( atvertex, vertex ) determine 3-d Voronoi ridge from 'seen' neighbors of atvertex
- * and vertex include one vertex-at-infinite for !neighbor->visitid assumes all facet->seen2= True
+ *and vertex include one vertex-at-infinite for !neighbor->visitid assumes all facet->seen2= True
  *
  * returns:
  *  temporary set of centers (facets, i.e., Voronoi vertices) listed in adjacency order (!oriented)
- * all facet->seen2= True
+ *all facet->seen2= True
  *
  * design:
  *  mark all neighbors of atvertex for each adjacent neighbor of both atvertex and vertex if
- * neighbor selected add neighbor to set of Voronoi vertices
+ *neighbor selected add neighbor to set of Voronoi vertices
  */
 setT *qh_detvridge3(vertexT *atvertex, vertexT *vertex)
 {
@@ -689,13 +689,13 @@ setT *qh_detvridge3(vertexT *atvertex, vertexT *vertex)
  * >-------------------------------</a><a name="eachvoronoi">-</a>
  *
  * qh_eachvoronoi( fp, printvridge, vertex, visitall, innerouter, inorder ) if visitall, visit all
- * Voronoi ridges for vertex (i.e., an input site) else visit all unvisited Voronoi ridges for
- * vertex all vertex->seen= False if unvisited assumes all facet->seen= False all facet->seen2= True
- * (for qh_detvridge3) all facet->visitid == 0 if vertex_at_infinity
+ *Voronoi ridges for vertex (i.e., an input site) else visit all unvisited Voronoi ridges for vertex
+ *all vertex->seen= False if unvisited assumes all facet->seen= False all facet->seen2= True (for
+ *qh_detvridge3) all facet->visitid == 0 if vertex_at_infinity
  *                       == index of Voronoi vertex
  *                       >= qh.num_facets if ignored innerouter:
  *    qh_RIDGEall--  both inner (bounded) and outer(unbounded) ridges qh_RIDGEinner- only inner
- * qh_RIDGEouter- only outer
+ *qh_RIDGEouter- only outer
  *
  *  if inorder orders vertices for 3-d Voronoi diagrams
  *
@@ -703,10 +703,10 @@ setT *qh_detvridge3(vertexT *atvertex, vertexT *vertex)
  *  number of visited ridges (does not include previously visited ridges)
  *
  *  if printvridge, calls printvridge( fp, vertex, vertexA, centers) fp== any pointer (assumes
- * FILE*) vertex,vertexA= pair of input sites that define a Voronoi ridge centers= set of facets
- * (i.e., Voronoi vertices)
+ *FILE*) vertex,vertexA= pair of input sites that define a Voronoi ridge centers= set of facets
+ *(i.e., Voronoi vertices)
  *               ->visitid == index or 0 if vertex_at_infinity ordered for 3-d Voronoi diagram
- * notes:
+ *notes:
  *  uses qh.vertex_visit
  *
  * see:
@@ -714,9 +714,9 @@ setT *qh_detvridge3(vertexT *atvertex, vertexT *vertex)
  *
  * design:
  *  mark selected neighbors of atvertex for each selected neighbor (either Voronoi vertex or
- * vertex-at-infinity) for each unvisited vertex if atvertex and vertex share more than d-1
- * neighbors bump totalcount if printvridge defined build the set of shared neighbors (i.e., Voronoi
- * vertices) call printvridge
+ *vertex-at-infinity) for each unvisited vertex if atvertex and vertex share more than d-1 neighbors
+ *bump totalcount if printvridge defined build the set of shared neighbors (i.e., Voronoi vertices)
+ *call printvridge
  */
 int qh_eachvoronoi(FILE *fp, printvridgeT printvridge, vertexT *atvertex, boolT visitall,
                    qh_RIDGE innerouter, boolT inorder)
@@ -837,7 +837,7 @@ int qh_eachvoronoi(FILE *fp, printvridgeT printvridge, vertexT *atvertex, boolT 
  * returns total number of ridges
  *
  *  if isUpper == facet->upperdelaunay  (i.e., a Vornoi vertex) facet->visitid= Voronoi vertex
- * index(same as 'o' format) else facet->visitid= 0
+ *index(same as 'o' format) else facet->visitid= 0
  *
  *  if printvridge, calls printvridge( fp, vertex, vertexA, centers) [see qh_eachvoronoi]
  *
@@ -883,11 +883,11 @@ int qh_eachvoronoi_all(FILE *fp, printvridgeT printvridge, boolT isUpper, qh_RID
  * >-------------------------------</a><a name="facet2point">-</a>
  *
  * qh_facet2point( facet, point0, point1, mindist ) return two projected temporary vertices for a
- * 2-d facet may be non-simplicial
+ *2-d facet may be non-simplicial
  *
  * returns:
  *  point0 and point1 oriented and projected to the facet returns mindist (maximum distance below
- * plane)
+ *plane)
  */
 void qh_facet2point(facetT *facet, pointT **point0, pointT **point1, realT *mindist)
 {
@@ -917,7 +917,7 @@ void qh_facet2point(facetT *facet, pointT **point0, pointT **point1, realT *mind
  * >-------------------------------</a><a name="facetvertices">-</a>
  *
  * qh_facetvertices( facetlist, facets, allfacets ) returns temporary set of vertices in a set
- * and/or list of facets if allfacets, ignores qh_skipfacet()
+ *and/or list of facets if allfacets, ignores qh_skipfacet()
  *
  * returns:
  *  vertices with qh.vertex_visit
@@ -927,7 +927,7 @@ void qh_facet2point(facetT *facet, pointT **point0, pointT **point1, realT *mind
  *
  * design:
  *  if allfacets of facet_list create vertex set from vertex_list else for each selected facet in
- * facets or facetlist append unvisited vertices to vertex set
+ *facets or facetlist append unvisited vertices to vertex set
  */
 setT *qh_facetvertices(facetT *facetlist, setT *facets, boolT allfacets)
 {
@@ -986,7 +986,7 @@ setT *qh_facetvertices(facetT *facetlist, setT *facets, boolT allfacets)
  * >-------------------------------</a><a name="geomplanes">-</a>
  *
  * qh_geomplanes( facet, outerplane, innerplane ) return outer and inner planes for Geomview
- * qh.PRINTradius is size of vertices and points (includes qh.JOGGLEmax)
+ *qh.PRINTradius is size of vertices and points (includes qh.JOGGLEmax)
  *
  * notes:
  *  assume precise calculations in io.c with roundoff covered by qh_GEOMepsilon
@@ -1022,15 +1022,15 @@ void qh_geomplanes(facetT *facet, realT *outerplane, realT *innerplane)
  * >-------------------------------</a><a name="markkeep">-</a>
  *
  * qh_markkeep( facetlist ) mark good facets that meet qh.KEEParea, qh.KEEPmerge, and qh.KEEPminArea
- * ignores visible facets (!part of convex hull)
+ *ignores visible facets (!part of convex hull)
  *
  * returns:
  *  may clear facet->good recomputes qh.num_good
  *
  * design:
  *  get set of good facets if qh.KEEParea sort facets by area clear facet->good for all but n
- * largest facets if qh.KEEPmerge sort facets by merge count clear facet->good for all but n most
- * merged facets if qh.KEEPminarea clear facet->good if area too small update qh.num_good
+ *largest facets if qh.KEEPmerge sort facets by merge count clear facet->good for all but n most
+ *merged facets if qh.KEEPminarea clear facet->good if area too small update qh.num_good
  */
 void qh_markkeep(facetT *facetlist)
 {
@@ -1107,15 +1107,15 @@ void qh_markkeep(facetT *facetlist)
  * >-------------------------------</a><a name="markvoronoi">-</a>
  *
  * qh_markvoronoi( facetlist, facets, printall, isLower, numcenters ) mark voronoi vertices for
- * printing by site pairs
+ *printing by site pairs
  *
  * returns:
  *  temporary set of vertices indexed by pointid isLower set if printing lower hull (i.e., at least
- * one facet is lower hull) numcenters= total number of Voronoi vertices bumps qh.printoutnum for
- * vertex-at-infinity clears all facet->seen and sets facet->seen2
+ *one facet is lower hull) numcenters= total number of Voronoi vertices bumps qh.printoutnum for
+ *vertex-at-infinity clears all facet->seen and sets facet->seen2
  *
  *  if selected facet->visitid= Voronoi vertex id else if upper hull (or 'Qu' and lower hull)
- * facet->visitid= 0 else facet->visitid >= qh num_facets
+ *facet->visitid= 0 else facet->visitid >= qh num_facets
  *
  * notes:
  *  ignores qh.ATinfinity, if defined
@@ -1204,8 +1204,8 @@ setT *qh_markvoronoi(facetT *facetlist, setT *facets, boolT printall, boolT *isL
  *
  * design:
  *  initialize a new neighbor set with the first facet in vertex->neighbors while vertex->neighbors
- * non-empty select next neighbor in the previous facet's neighbor set set vertex->neighbors to the
- * new neighbor set
+ *non-empty select next neighbor in the previous facet's neighbor set set vertex->neighbors to the
+ *new neighbor set
  */
 void qh_order_vertexneighbors(vertexT *vertex)
 {
@@ -1246,8 +1246,8 @@ void qh_order_vertexneighbors(vertexT *vertex)
  * >-------------------------------</a><a name="prepare_output">-</a>
  *
  * qh_prepare_output( ) prepare for qh_produce_output2() according to qh.KEEPminArea, KEEParea,
- * KEEPmerge, GOODvertex, GOODthreshold, GOODpoint, ONLYgood, SPLITthresholds does not reset
- * facet->good
+ *KEEPmerge, GOODvertex, GOODthreshold, GOODpoint, ONLYgood, SPLITthresholds does not reset
+ *facet->good
  *
  * notes except for PRINTstatistics, no-op if previously called with same options
  */
@@ -1285,14 +1285,14 @@ void qh_prepare_output(void)
  * >-------------------------------</a><a name="printafacet">-</a>
  *
  * qh_printafacet( fp, format, facet, printall ) print facet to fp in given output format (see
- * qh.PRINTout)
+ *qh.PRINTout)
  *
  * returns:
  *  nop if !printall and qh_skipfacet() nop if visible facet and NEWfacets and format != PRINTfacets
- * must match qh_countfacets
+ *must match qh_countfacets
  *
  * notes preserves qh.visit_id facet->normal may be null if PREmerge/MERGEexact and STOPcone before
- * merge
+ *merge
  *
  * see qh_printbegin() and qh_printend()
  *
@@ -1565,7 +1565,7 @@ LABELprintinfinite:
  *
  * notes:
  *  uses qh.visit_id for 3/4off changes qh.interior_point if printing centrums qh_countfacets clears
- * facet->visitid for non-good facets
+ *facet->visitid for non-good facets
  *
  * see qh_printend() and qh_printafacet()
  *
@@ -1979,13 +1979,13 @@ LABELnoformat:
  * >-------------------------------</a><a name="printcenter">-</a>
  *
  * qh_printcenter( fp, string, facet ) print facet->center as centrum or Voronoi center string may
- * be NULL.  Don't include '%' codes.
+ *be NULL.  Don't include '%' codes.
  *  nop if qh CENTERtype neither CENTERvoronoi nor CENTERcentrum if upper envelope of Delaunay
- * triangulation and point at-infinity prints qh_INFINITE instead;
+ *triangulation and point at-infinity prints qh_INFINITE instead;
  *
  * notes:
  *  defines facet->center if needed if format=PRINTgeom, adds a 0 if would otherwise be 2-d Same as
- * QhullFacet::printCenter
+ *QhullFacet::printCenter
  */
 void qh_printcenter(FILE *fp, qh_PRINT format, const char *string, facetT *facet)
 {
@@ -2051,7 +2051,7 @@ void qh_printcenter(FILE *fp, qh_PRINT format, const char *string, facetT *facet
  * >-------------------------------</a><a name="printcentrum">-</a>
  *
  * qh_printcentrum( fp, facet, radius ) print centrum for a facet in OOGL format radius defines size
- * of centrum 2-d or 3-d only
+ *of centrum 2-d or 3-d only
  *
  * returns:
  *  defines facet->center if needed
@@ -2282,7 +2282,7 @@ void qh_printend4geom(FILE *fp, facetT *facet, int *nump, boolT printall)
  * >-------------------------------</a><a name="printextremes">-</a>
  *
  * qh_printextremes( fp, facetlist, facets, printall ) print extreme points for convex hulls or
- * halfspace intersections
+ *halfspace intersections
  *
  * notes:
  #points, followed by ids, one per line
@@ -2326,11 +2326,11 @@ void qh_printextremes(FILE *fp, facetT *facetlist, setT *facets, boolT printall)
  * >-------------------------------</a><a name="printextremes_2d">-</a>
  *
  * qh_printextremes_2d( fp, facetlist, facets, printall ) prints point ids for facets in
- * qh_ORIENTclock order
+ *qh_ORIENTclock order
  *
  * notes:
  #points, followed by ids, one per line if facetlist/facets are disjoint than the output includes
- * skips errors if facets form a loop does not print coplanar points
+ *skips errors if facets form a loop does not print coplanar points
  */
 void qh_printextremes_2d(FILE *fp, facetT *facetlist, setT *facets, boolT printall)
 {
@@ -2341,7 +2341,7 @@ void qh_printextremes_2d(FILE *fp, facetT *facetlist, setT *facets, boolT printa
 
     qh_countfacets(facetlist, facets, printall, &numfacets, &numsimplicial,
                    &totneighbors, &numridges, &numcoplanars, &numtricoplanars); /* marks qh visit_id
-                                                                                */
+                                                                                 */
     vertices = qh_facetvertices(facetlist, facets, printall);
     qh_fprintf(fp, 9088, "%d\n", qh_setsize(vertices));
     qh_settempfree(&vertices);
@@ -2394,7 +2394,7 @@ void qh_printextremes_2d(FILE *fp, facetT *facetlist, setT *facets, boolT printa
  * >-------------------------------</a><a name="printextremes_d">-</a>
  *
  * qh_printextremes_d( fp, facetlist, facets, printall ) print extreme points of input sites for
- * Delaunay triangulations
+ *Delaunay triangulations
  *
  * notes:
  #points, followed by ids, one per line
@@ -2470,8 +2470,8 @@ void qh_printfacet(FILE *fp, facetT *facet)
  *
  *  notes:
  *    assume precise calculations in io.c with roundoff covered by qh_GEOMepsilon mindist is
- * calculated within io.c.  maxoutside is calculated elsewhere so a DISTround error may have
- * occurred.
+ *calculated within io.c.  maxoutside is calculated elsewhere so a DISTround error may have
+ *occurred.
  */
 void qh_printfacet2geom(FILE *fp, facetT *facet, realT color[3])
 {
@@ -2502,7 +2502,7 @@ void qh_printfacet2geom(FILE *fp, facetT *facet, realT color[3])
  * >-------------------------------</a><a name="printfacet2geom_points">-</a>
  *
  * qh_printfacet2geom_points( fp, point1, point2, facet, offset, color ) prints a 2-d facet as a
- * VECT with 2 points at some offset. The points are on the facet's plane.
+ *VECT with 2 points at some offset. The points are on the facet's plane.
  */
 void qh_printfacet2geom_points(FILE *fp, pointT *point1, pointT *point2,
                                facetT *facet, realT offset, realT color[3])
@@ -2529,7 +2529,7 @@ void qh_printfacet2geom_points(FILE *fp, pointT *point1, pointT *point2,
  * >-------------------------------</a><a name="printfacet2math">-</a>
  *
  * qh_printfacet2math( fp, facet, format, notfirst ) print 2-d Maple or Mathematica output for a
- * facet may be non-simplicial
+ *facet may be non-simplicial
  *
  * notes:
  *  use %16.8f since Mathematica 2.2 does not handle exponential format see qh_printfacet3math
@@ -2562,7 +2562,7 @@ void qh_printfacet2math(FILE *fp, facetT *facet, qh_PRINT format, int notfirst)
  * >-------------------------------</a><a name="printfacet3geom_nonsimplicial">-</a>
  *
  * qh_printfacet3geom_nonsimplicial( fp, facet, color ) print Geomview OFF for a 3-d nonsimplicial
- * facet.
+ *facet.
  *  if DOintersections, prints ridges to unvisited neighbors(qh visit_id)
  *
  * notes uses facet->visitid for intersections and ridges
@@ -2693,7 +2693,7 @@ void qh_printfacet3geom_points(FILE *fp, setT *points, facetT *facet, realT offs
  *  may flip color uses facet->visitid for intersections and ridges
  *
  *  assume precise calculations in io.c with roundoff covered by qh_GEOMepsilon innerplane may be
- * off by qh DISTround.  Maxoutside is calculated elsewhere so a DISTround error may have occurred.
+ *off by qh DISTround.  Maxoutside is calculated elsewhere so a DISTround error may have occurred.
  */
 void qh_printfacet3geom_simplicial(FILE *fp, facetT *facet, realT color[3])
 {
@@ -2757,7 +2757,7 @@ void qh_printfacet3geom_simplicial(FILE *fp, facetT *facet, realT color[3])
  *
  * notes:
  *  may be non-simplicial use %16.8f since Mathematica 2.2 does not handle exponential format see
- * qh_printfacet2math
+ *qh_printfacet2math
  */
 void qh_printfacet3math(FILE *fp, facetT *facet, qh_PRINT format, int notfirst)
 {
@@ -2840,7 +2840,7 @@ void qh_printfacet3vertex(FILE *fp, facetT *facet, qh_PRINT format)
  * >-------------------------------</a><a name="printfacet4geom_nonsimplicial">-</a>
  *
  * qh_printfacet4geom_nonsimplicial(  ) print Geomview 4OFF file for a 4d nonsimplicial facet prints
- * all ridges to unvisited neighbors (qh.visit_id) if qh.DROPdim prints in OFF format
+ *all ridges to unvisited neighbors (qh.visit_id) if qh.DROPdim prints in OFF format
  *
  * notes:
  *  must agree with printend4geom()
@@ -2912,7 +2912,7 @@ void qh_printfacet4geom_nonsimplicial(FILE *fp, facetT *facet, realT color[3])
  * >-------------------------------</a><a name="printfacet4geom_simplicial">-</a>
  *
  * qh_printfacet4geom_simplicial( fp, facet, color ) print Geomview 4OFF file for a 4d simplicial
- * facet prints triangles for unvisited neighbors (qh.visit_id)
+ *facet prints triangles for unvisited neighbors (qh.visit_id)
  *
  * notes:
  *  must agree with printend4geom()
@@ -2981,7 +2981,7 @@ void qh_printfacet4geom_simplicial(FILE *fp, facetT *facet, realT color[3])
  * >-------------------------------</a><a name="printfacetNvertex_nonsimplicial">-</a>
  *
  * qh_printfacetNvertex_nonsimplicial( fp, facet, id, format ) print vertices for an N-d
- * non-simplicial facet triangulates each ridge to the id
+ *non-simplicial facet triangulates each ridge to the id
  */
 void qh_printfacetNvertex_nonsimplicial(FILE *fp, facetT *facet, int id, qh_PRINT format)
 {
@@ -3017,8 +3017,8 @@ void qh_printfacetNvertex_nonsimplicial(FILE *fp, facetT *facet, int id, qh_PRIN
  * >-------------------------------</a><a name="printfacetNvertex_simplicial">-</a>
  *
  * qh_printfacetNvertex_simplicial( fp, facet, format ) print vertices for an N-d simplicial facet
- * prints vertices for non-simplicial facets 2-d facets (orientation preserved by qh_mergefacet2d)
- * PRINToff ('o') for 4-d and higher
+ *prints vertices for non-simplicial facets 2-d facets (orientation preserved by qh_mergefacet2d)
+ *PRINToff ('o') for 4-d and higher
  */
 void qh_printfacetNvertex_simplicial(FILE *fp, facetT *facet, qh_PRINT format)
 {
@@ -3276,7 +3276,7 @@ void qh_printfacetheader(FILE *fp, facetT *facet)
  *
  * notes:
  *  ridges printed in neighbor order assumes the ridges exist for 'f' output same as
- * QhullFacet::printRidges
+ *QhullFacet::printRidges
  */
 void qh_printfacetridges(FILE *fp, facetT *facet)
 {
@@ -3344,11 +3344,11 @@ void qh_printfacetridges(FILE *fp, facetT *facet)
  * >-------------------------------</a><a name="printfacets">-</a>
  *
  * qh_printfacets( fp, format, facetlist, facets, printall ) prints facetlist and/or facet set in
- * output format
+ *output format
  *
  * notes:
  *  also used for specialized formats ('FO' and summary) turns off 'Rn' option since want actual
- * numbers
+ *numbers
  */
 void qh_printfacets(FILE *fp, qh_PRINT format, facetT *facetlist, setT *facets, boolT printall)
 {
@@ -3464,7 +3464,7 @@ void qh_printfacets(FILE *fp, qh_PRINT format, facetT *facetlist, setT *facets, 
  * >-------------------------------</a><a name="printhyperplaneintersection">-</a>
  *
  * qh_printhyperplaneintersection( fp, facet1, facet2, vertices, color ) print Geomview OFF or 4OFF
- * for the intersection of two hyperplanes in 3-d or 4-d
+ *for the intersection of two hyperplanes in 3-d or 4-d
  */
 void qh_printhyperplaneintersection(FILE *fp, facetT *facet1, facetT *facet2,
                                     setT *vertices, realT color[3])
@@ -3576,7 +3576,7 @@ void qh_printline3geom(FILE *fp, pointT *pointA, pointT *pointB, realT color[3])
  * >-------------------------------</a><a name="printneighborhood">-</a>
  *
  * qh_printneighborhood( fp, format, facetA, facetB, printall ) print neighborhood of one or two
- * facets
+ *facets
  *
  * notes:
  *  calls qh_findgood_all() bumps qh.visit_id
@@ -3625,7 +3625,7 @@ void qh_printneighborhood(FILE *fp, qh_PRINT format, facetT *facetA, facetT *fac
  * >-------------------------------</a><a name="printpoint">-</a>
  *
  * qh_printpoint( fp, string, point ) qh_printpointid( fp, string, dim, point, id ) prints the
- * coordinates of a point
+ *coordinates of a point
  *
  * returns:
  *  if string is defined prints 'string p%d' (skips p%d if id=-1)
@@ -3698,7 +3698,7 @@ void qh_printpoint3(FILE *fp, pointT *point)
  * >-------------------------------</a><a name="printpoints_out">-</a>
  *
  * qh_printpoints_out( fp, facetlist, facets, printall ) prints vertices, coplanar/inside points,
- * for facets by their point coordinates allows qh.CDDoutput
+ *for facets by their point coordinates allows qh.CDDoutput
  *
  * notes:
  *  same format as qhull input if no coplanar/interior points, same order as qh_printextremes
@@ -3796,7 +3796,7 @@ void qh_printpoints_out(FILE *fp, facetT *facetlist, setT *facets, boolT printal
  * >-------------------------------</a><a name="printpointvect">-</a>
  *
  * qh_printpointvect( fp, point, normal, center, radius, color ) prints a 2-d, 3-d, or 4-d point as
- * 3-d VECT's relative to normal or to center point
+ *3-d VECT's relative to normal or to center point
  */
 void qh_printpointvect(FILE *fp, pointT *point, coordT *normal, pointT *center, realT radius,
                        realT color[3])
@@ -3834,7 +3834,7 @@ void qh_printpointvect(FILE *fp, pointT *point, coordT *normal, pointT *center, 
  * >-------------------------------</a><a name="printpointvect2">-</a>
  *
  * qh_printpointvect2( fp, point, normal, center, radius ) prints a 2-d, 3-d, or 4-d point as 2 3-d
- * VECT's for an imprecise point
+ *VECT's for an imprecise point
  */
 void qh_printpointvect2(FILE *fp, pointT *point, coordT *normal, pointT *center, realT radius)
 {
@@ -4019,22 +4019,22 @@ void qh_printvdiagram(FILE *fp, qh_PRINT format, facetT *facetlist, setT *facets
  * >-------------------------------</a><a name="printvdiagram2">-</a>
  *
  * qh_printvdiagram2( fp, printvridge, vertices, innerouter, inorder ) visit all pairs of input
- * sites (vertices) for selected Voronoi vertices vertices may include NULLs
+ *sites (vertices) for selected Voronoi vertices vertices may include NULLs
  *
  * innerouter:
  *  qh_RIDGEall   print inner ridges(bounded) and outer ridges(unbounded) qh_RIDGEinner print only
- * inner ridges qh_RIDGEouter print only outer ridges
+ *inner ridges qh_RIDGEouter print only outer ridges
  *
  * inorder:
  *  print 3-d Voronoi vertices in order
  *
  * assumes:
  *  qh_markvoronoi marked facet->visitid for Voronoi vertices all facet->seen= False all
- * facet->seen2= True
+ *facet->seen2= True
  *
  * returns:
  *  total number of Voronoi ridges if printvridge, calls printvridge( fp, vertex, vertexA, centers)
- * for each ridge [see qh_eachvoronoi()]
+ *for each ridge [see qh_eachvoronoi()]
  *
  * see:
  *  qh_eachvoronoi_all()
@@ -4119,7 +4119,7 @@ void qh_printvertex(FILE *fp, vertexT *vertex)
  * >-------------------------------</a><a name="printvertexlist">-</a>
  *
  * qh_printvertexlist( fp, string, facetlist, facets, printall ) prints vertices used by a facetlist
- * or facet set tests qh_skipfacet() if !printall
+ *or facet set tests qh_skipfacet() if !printall
  */
 void qh_printvertexlist(FILE *fp, const char *string, facetT *facetlist,
                         setT *facets, boolT printall)
@@ -4138,7 +4138,7 @@ void qh_printvertexlist(FILE *fp, const char *string, facetT *facetlist,
  * >-------------------------------</a><a name="printvertices">-</a>
  *
  * qh_printvertices( fp, string, vertices ) prints vertices in a set duplicated as printVertexSet
- * [QhullVertex.cpp]
+ *[QhullVertex.cpp]
  */
 void qh_printvertices(FILE *fp, const char *string, setT *vertices)
 {
@@ -4154,15 +4154,15 @@ void qh_printvertices(FILE *fp, const char *string, setT *vertices)
  * >-------------------------------</a><a name="printvneighbors">-</a>
  *
  * qh_printvneighbors( fp, facetlist, facets, printall ) print vertex neighbors of vertices in
- * facetlist and facets ('FN')
+ *facetlist and facets ('FN')
  *
  * notes:
  *  qh_countfacets clears facet->visitid for non-printed facets
  *
  * design:
  *  collect facet count and related statistics if necessary, build neighbor sets for each vertex
- * collect vertices in facetlist and facets build a point array for point->vertex and
- * point->coplanar facet for each point list vertex neighbors or coplanar facet
+ *collect vertices in facetlist and facets build a point array for point->vertex and point->coplanar
+ *facet for each point list vertex neighbors or coplanar facet
  */
 void qh_printvneighbors(FILE *fp, facetT *facetlist, setT *facets, boolT printall)
 {
@@ -4237,8 +4237,8 @@ void qh_printvneighbors(FILE *fp, facetT *facetlist, setT *facets, boolT printal
  *
  * qh_printvoronoi( fp, format, facetlist, facets, printall ) print voronoi diagram in 'o' or 'G'
  * format for 'o' format prints voronoi centers for each facet and for infinity for each vertex,
- * lists ids of printed facets or infinity assumes facetlist and facets are disjoint for 'G' format
- * prints an OFF object adds a 0 coordinate to center prints infinity but does not list in vertices
+ *lists ids of printed facets or infinity assumes facetlist and facets are disjoint for 'G' format
+ *prints an OFF object adds a 0 coordinate to center prints infinity but does not list in vertices
  *
  * see:
  *  qh_printvdiagram()
@@ -4417,7 +4417,7 @@ void qh_printvoronoi(FILE *fp, qh_PRINT format, facetT *facetlist, setT *facets,
  * >-------------------------------</a><a name="printvnorm">-</a>
  *
  * qh_printvnorm( fp, vertex, vertexA, centers, unbounded ) print one separating plane of the
- * Voronoi diagram for a pair of input sites unbounded==True if centers includes vertex-at-infinity
+ *Voronoi diagram for a pair of input sites unbounded==True if centers includes vertex-at-infinity
  *
  * assumes:
  *  qh_ASvoronoi and qh_vertexneighbors() already set
@@ -4451,7 +4451,7 @@ void qh_printvnorm(FILE *fp, vertexT *vertex, vertexT *vertexA, setT *centers, b
  * >-------------------------------</a><a name="printvridge">-</a>
  *
  * qh_printvridge( fp, vertex, vertexA, centers, unbounded ) print one ridge of the Voronoi diagram
- * for a pair of input sites unbounded==True if centers includes vertex-at-infinity
+ *for a pair of input sites unbounded==True if centers includes vertex-at-infinity
  *
  * see:
  *  qh_printvdiagram()
@@ -4476,7 +4476,7 @@ void qh_printvridge(FILE *fp, vertexT *vertex, vertexT *vertexA, setT *centers, 
  * >-------------------------------</a><a name="projectdim3">-</a>
  *
  * qh_projectdim3( source, destination ) project 2-d 3-d or 4-d point to a 3-d point uses qh.DROPdim
- * and qh.hull_dim source and destination may be the same
+ *and qh.hull_dim source and destination may be the same
  *
  * notes:
  *  allocate 4 elements to destination just in case
@@ -4600,13 +4600,13 @@ int qh_readfeasible(int dim, const char *curline)
  * >-------------------------------</a><a name="readpoints">-</a>
  *
  * qh_readpoints( numpoints, dimension, ismalloc ) read points from qh.fin into qh.first_point,
- * qh.num_points qh.fin is lines of coordinates, one per vertex, first line number of points if
+ *qh.num_points qh.fin is lines of coordinates, one per vertex, first line number of points if
  * 'rbox D4', gives message if qh.ATinfinity, adds point-at-infinity for Delaunay triangulations
  *
  * returns:
  *  number of points, array of point coordinates, dimension, ismalloc True if qh.DELAUNAY &
  * !qh.PROJECTinput, projects points to paraboloid and clears qh.PROJECTdelaunay if qh.HALFspace,
- * reads optional feasible point, reads halfspaces, converts to dual.
+ *reads optional feasible point, reads halfspaces, converts to dual.
  *
  * for feasible point in "cdd format" in 3-d:
  *  3 1 coordinates comments begin n 4 real/integer
@@ -4615,7 +4615,7 @@ int qh_readfeasible(int dim, const char *curline)
  *
  * notes:
  *  dimension will change in qh_initqhull_globals if qh.PROJECTinput uses malloc() since qh_mem not
- * initialized FIXUP QH10012: qh_readpoints needs rewriting, too long
+ *initialized FIXUP QH10012: qh_readpoints needs rewriting, too long
  */
 coordT *qh_readpoints(int *numpoints, int *dimension, boolT *ismalloc)
 {

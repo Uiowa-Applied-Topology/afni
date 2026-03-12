@@ -1,30 +1,49 @@
-/* rsm.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rsm.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int rsm_(integer *nm, integer *n, doublereal *a, doublereal *
-	w, integer *m, doublereal *z__, doublereal *fwork, integer *iwork, 
-	integer *ierr)
+                          w, integer *m, doublereal *z__, doublereal *fwork, integer *iwork,
+                          integer *ierr)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset;
 
     /* Local variables */
-    extern /* Subroutine */ int tred1_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
+    extern /* Subroutine */ int tred1_(integer *, integer *, doublereal *,
+                                       doublereal *, doublereal *, doublereal *);
+
     integer k1, k2, k3, k4, k5, k6, k7, k8;
-    extern /* Subroutine */ int trbak1_(integer *, integer *, doublereal *, 
-	    doublereal *, integer *, doublereal *), tqlrat_(integer *, 
-	    doublereal *, doublereal *, integer *), imtqlv_(integer *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, integer *,
-	     integer *, doublereal *), tinvit_(integer *, integer *, 
-	    doublereal *, doublereal *, doublereal *, integer *, doublereal *,
-	     integer *, doublereal *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *);
+    extern /* Subroutine */ int trbak1_(integer *, integer *, doublereal *,
+                                        doublereal *, integer *, doublereal *), tqlrat_(integer *,
+                                                                                        doublereal *,
+                                                                                        doublereal *,
+                                                                                        integer *),
+    imtqlv_(integer *,
+            doublereal
+            *,
+            doublereal
+            *, doublereal *, doublereal *, integer *,
+            integer
+            *,
+            doublereal
+            *), tinvit_(integer *, integer *,
+                        doublereal
+                        *,
+                        doublereal
+                        *, doublereal *, integer *, doublereal *,
+                        integer
+                        *,
+                        doublereal
+                        *, integer *, doublereal *, doublereal *,
+                        doublereal
+                        *,
+                        doublereal
+                        *, doublereal *);
 
 
 
@@ -64,29 +83,31 @@
 /*        IWORK  IS AN INTEGER TEMPORARY STORAGE ARRAY OF DIMENSION N. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --iwork;
     --w;
-    a_dim1 = *nm;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
-    z_dim1 = *nm;
+    a       -= a_offset;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --fwork;
 
     /* Function Body */
     *ierr = *n * 10;
-    if (*n > *nm || *m > *nm) {
-	goto L50;
+    if (*n > *nm || *m > *nm)
+    {
+        goto L50;
     }
     k1 = 1;
     k2 = k1 + *n;
@@ -96,8 +117,9 @@
     k6 = k5 + *n;
     k7 = k6 + *n;
     k8 = k7 + *n;
-    if (*m > 0) {
-	goto L10;
+    if (*m > 0)
+    {
+        goto L10;
     }
 /*     .......... FIND EIGENVALUES ONLY .......... */
     tred1_(nm, n, &a[a_offset], &w[1], &fwork[k1], &fwork[k2]);
@@ -107,12 +129,11 @@
 L10:
     tred1_(nm, n, &a[a_offset], &fwork[k1], &fwork[k2], &fwork[k3]);
     imtqlv_(n, &fwork[k1], &fwork[k2], &fwork[k3], &w[1], &iwork[1], ierr, &
-	    fwork[k4]);
+            fwork[k4]);
     tinvit_(nm, n, &fwork[k1], &fwork[k2], &fwork[k3], m, &w[1], &iwork[1], &
-	    z__[z_offset], ierr, &fwork[k4], &fwork[k5], &fwork[k6], &fwork[
-	    k7], &fwork[k8]);
+            z__[z_offset], ierr, &fwork[k4], &fwork[k5], &fwork[k6], &fwork[
+                k7], &fwork[k8]);
     trbak1_(nm, n, &a[a_offset], &fwork[k2], m, &z__[z_offset]);
 L50:
     return 0;
 } /* rsm_ */
-

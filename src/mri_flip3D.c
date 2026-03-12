@@ -14,7 +14,7 @@
  *   - -3 => -z
  *
  *  Among (outx,outy,outz), exactly one must be either +1 or -1, one must be +2 or -2, and one must
- * be +3 or -3.  Bad inputs result in a NULL return value.
+ *be +3 or -3.  Bad inputs result in a NULL return value.
  *
  *  If the input image doesn't have a data array, then the output image won't either.
  * ------------------------------------------------------------------------*/

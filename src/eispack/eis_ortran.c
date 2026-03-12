@@ -1,20 +1,20 @@
-/* ortran.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* ortran.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int ortran_(integer *nm, integer *n, integer *low, integer *
-	igh, doublereal *a, doublereal *ort, doublereal *z__)
+                             igh, doublereal *a, doublereal *ort, doublereal *z__)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset, i__1, i__2, i__3;
 
     /* Local variables */
     doublereal g;
-    integer i__, j, kl, mm, mp, mp1;
+    integer    i__, j, kl, mm, mp, mp1;
 
 
 
@@ -54,86 +54,95 @@
 /*        ORT HAS BEEN ALTERED. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
 /*     .......... INITIALIZE Z TO IDENTITY MATRIX .......... */
     /* Parameter adjustments */
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --ort;
-    a_dim1 = *nm;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
+    a       -= a_offset;
 
     /* Function Body */
     i__1 = *n;
-    for (j = 1; j <= i__1; ++j) {
-
-	i__2 = *n;
-	for (i__ = 1; i__ <= i__2; ++i__) {
+    for (j = 1; j <= i__1; ++j)
+    {
+        i__2 = *n;
+        for (i__ = 1; i__ <= i__2; ++i__)
+        {
 /* L60: */
-	    z__[i__ + j * z_dim1] = 0.;
-	}
+            z__[i__ + j * z_dim1] = 0.;
+        }
 
-	z__[j + j * z_dim1] = 1.;
+        z__[j + j * z_dim1] = 1.;
 /* L80: */
     }
 
     kl = *igh - *low - 1;
-    if (kl < 1) {
-	goto L200;
+    if (kl < 1)
+    {
+        goto L200;
     }
 /*     .......... FOR MP=IGH-1 STEP -1 UNTIL LOW+1 DO -- .......... */
     i__1 = kl;
-    for (mm = 1; mm <= i__1; ++mm) {
-	mp = *igh - mm;
-	if (a[mp + (mp - 1) * a_dim1] == 0.) {
-	    goto L140;
-	}
-	mp1 = mp + 1;
+    for (mm = 1; mm <= i__1; ++mm)
+    {
+        mp = *igh - mm;
+        if (a[mp + (mp - 1) * a_dim1] == 0.)
+        {
+            goto L140;
+        }
+        mp1 = mp + 1;
 
-	i__2 = *igh;
-	for (i__ = mp1; i__ <= i__2; ++i__) {
+        i__2 = *igh;
+        for (i__ = mp1; i__ <= i__2; ++i__)
+        {
 /* L100: */
-	    ort[i__] = a[i__ + (mp - 1) * a_dim1];
-	}
+            ort[i__] = a[i__ + (mp - 1) * a_dim1];
+        }
 
-	i__2 = *igh;
-	for (j = mp; j <= i__2; ++j) {
-	    g = 0.;
+        i__2 = *igh;
+        for (j = mp; j <= i__2; ++j)
+        {
+            g = 0.;
 
-	    i__3 = *igh;
-	    for (i__ = mp; i__ <= i__3; ++i__) {
+            i__3 = *igh;
+            for (i__ = mp; i__ <= i__3; ++i__)
+            {
 /* L110: */
-		g += ort[i__] * z__[i__ + j * z_dim1];
-	    }
+                g += ort[i__] * z__[i__ + j * z_dim1];
+            }
+
 /*     .......... DIVISOR BELOW IS NEGATIVE OF H FORMED IN ORTHES.
  */
 /*                DOUBLE DIVISION AVOIDS POSSIBLE UNDERFLOW ......
-.... */
-	    g = g / ort[mp] / a[mp + (mp - 1) * a_dim1];
+ * .... */
+            g = g / ort[mp] / a[mp + (mp - 1) * a_dim1];
 
-	    i__3 = *igh;
-	    for (i__ = mp; i__ <= i__3; ++i__) {
+            i__3 = *igh;
+            for (i__ = mp; i__ <= i__3; ++i__)
+            {
 /* L120: */
-		z__[i__ + j * z_dim1] += g * ort[i__];
-	    }
+                z__[i__ + j * z_dim1] += g * ort[i__];
+            }
 
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* ortran_ */
-

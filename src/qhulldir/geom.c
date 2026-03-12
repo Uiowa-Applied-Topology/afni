@@ -24,11 +24,11 @@
  *
  * notes:
  *  dist > 0 if point is above facet (i.e., outside) does not error (for qh_sortfacets,
- * qh_outerinner)
+ *qh_outerinner)
  *
  * see:
  *  qh_distnorm in geom2.c qh_distplane [geom.c], QhullFacet::distance, and
- * QhullHyperplane::distance are copies
+ *QhullHyperplane::distance are copies
  */
 void qh_distplane(pointT *point, facetT *facet, realT *dist)
 {
@@ -110,37 +110,37 @@ void qh_distplane(pointT *point, facetT *facet, realT *dist)
  *
  * input:
  *  starts search at 'startfacet' (can not be flipped) if !bestoutside(qh_ALL), stops at
- * qh.MINoutside
+ *qh.MINoutside
  *
  * returns:
  *  best facet (reports error if NULL) early out if isoutside defined and bestdist > qh.MINoutside
- * dist is distance to facet isoutside is true if point is outside of facet numpart counts the
- * number of distance tests
+ *dist is distance to facet isoutside is true if point is outside of facet numpart counts the number
+ *of distance tests
  *
  * see also:
  *  qh_findbestnew()
  *
  * notes:
  *  If merging (testhorizon), searches horizon facets of coplanar best facets because after
- * qh_distplane, this and qh_partitionpoint are the most expensive in 3-d avoid calls to distplane,
- * function calls, and real number operations.
+ *qh_distplane, this and qh_partitionpoint are the most expensive in 3-d avoid calls to distplane,
+ *function calls, and real number operations.
  *  caller traces result Optimized for outside points.   Tried recording a search set for
- * qh_findhorizon. Made code more complicated.
+ *qh_findhorizon. Made code more complicated.
  *
  * when called by qh_partitionvisible():
  *  indicated by qh_ISnewfacets qh.newfacet_list is list of simplicial, new facets qh_findbestnew
- * set if qh_sharpnewfacets returns True (to use qh_findbestnew) qh.bestfacet_notsharp set if
- * qh_sharpnewfacets returns False
+ *set if qh_sharpnewfacets returns True (to use qh_findbestnew) qh.bestfacet_notsharp set if
+ *qh_sharpnewfacets returns False
  *
  * when called by qh_findfacet(), qh_partitionpoint(), qh_partitioncoplanar(), qh_check_bestdist(),
- * qh_addpoint() indicated by !qh_ISnewfacets returns best facet in neighborhood of given facet this
- * is best facet overall if dist > -   qh.MAXcoplanar or hull has at least a "spherical" curvature
+ *qh_addpoint() indicated by !qh_ISnewfacets returns best facet in neighborhood of given facet this
+ *is best facet overall if dist > -   qh.MAXcoplanar or hull has at least a "spherical" curvature
  *
  * design:
  *  initialize and test for early exit repeat while there are better facets for each neighbor of
- * facet exit if outside facet found test for better facet if point is inside and partitioning test
- * for new facets with a "sharp" intersection if so, future calls go to qh_findbestnew() test
- * horizon facets
+ *facet exit if outside facet found test for better facet if point is inside and partitioning test
+ *for new facets with a "sharp" intersection if so, future calls go to qh_findbestnew() test horizon
+ *facets
  */
 facetT *qh_findbest(pointT *point, facetT *startfacet,
                     boolT bestoutside, boolT isnewfacets, boolT noupper,
@@ -292,8 +292,8 @@ LABELreturn_best:
  * >-------------------------------</a><a name="findbesthorizon">-</a>
  *
  * qh_findbesthorizon( qh_IScheckmax, point, startfacet, qh_NOupper, &bestdist, &numpart ) search
- * coplanar and better horizon facets from startfacet/bestdist ischeckmax turns off statistics and
- * minsearch update all arguments must be initialized returns(ischeckmax):
+ *coplanar and better horizon facets from startfacet/bestdist ischeckmax turns off statistics and
+ *minsearch update all arguments must be initialized returns(ischeckmax):
  *  best facet returns(!ischeckmax):
  *  best facet that is not upperdelaunay allows upperdelaunay that is clearly outside returns:
  *  bestdist is distance to bestfacet numpart -- updates number of distance tests
@@ -302,8 +302,8 @@ LABELreturn_best:
  *  no early out -- use qh_findbest() or qh_findbestnew() Searches coplanar or better horizon facets
  *
  * when called by qh_check_maxout() (qh_IScheckmax) startfacet must be closest to the point
- * Otherwise, if point is beyond and below startfacet, startfacet may be a local minimum even though
- * other facets are below the point.
+ *Otherwise, if point is beyond and below startfacet, startfacet may be a local minimum even though
+ *other facets are below the point.
  *  updates facet->maxoutside for good, visited facets may return NULL
  *
  *  searchdist is qh.max_outside + 2 * DISTround
@@ -452,34 +452,34 @@ facetT *qh_findbesthorizon(boolT ischeckmax, pointT *point, facetT *startfacet, 
  * >-------------------------------</a><a name="findbestnew">-</a>
  *
  * qh_findbestnew( point, startfacet, dist, isoutside, numpart ) find best newfacet for point
- * searches all of qh.newfacet_list starting at startfacet searches horizon facets of coplanar best
- * newfacets searches all facets if startfacet == qh.facet_list returns:
+ *searches all of qh.newfacet_list starting at startfacet searches horizon facets of coplanar best
+ *newfacets searches all facets if startfacet == qh.facet_list returns:
  *  best new or horizon facet that is not upperdelaunay early out if isoutside and not 'Qf'
  *  dist is distance to facet isoutside is true if point is outside of facet numpart is number of
- * distance tests
+ *distance tests
  *
  * notes:
  *  Always used for merged new facets (see qh_USEfindbestnew) Avoids upperdelaunay facet unless
- * (isoutside and outside)
+ *(isoutside and outside)
  *
  *  Uses qh.visit_id, qh.coplanarfacetset. If share visit_id with qh_findbest, coplanarfacetset is
- * incorrect.
+ *incorrect.
  *
  *  If merging (testhorizon), searches horizon facets of coplanar best facets because a point maybe
- * coplanar to the bestfacet, below its horizon facet, and above a horizon facet of a coplanar
- * newfacet.  For example, rbox 1000 s Z1 G1e-13 | qhull rbox 1000 s W1e-13 P0 t992110337 | QHULL d
- * Qbb Qc
+ *coplanar to the bestfacet, below its horizon facet, and above a horizon facet of a coplanar
+ *newfacet.  For example, rbox 1000 s Z1 G1e-13 | qhull rbox 1000 s W1e-13 P0 t992110337 | QHULL d
+ *Qbb Qc
  *
  *  qh_findbestnew() used if qh_sharpnewfacets -- newfacets contains a sharp angle if many merges,
- * qh_premerge found a merge, or 'Qf' (qh.findbestnew)
+ *qh_premerge found a merge, or 'Qf' (qh.findbestnew)
  *
  * see also:
  *  qh_partitionall() and qh_findbest()
  *
  * design:
  *  for each new facet starting from startfacet test distance from point to facet return facet if
- * clearly outside unless upperdelaunay and a lowerdelaunay exists update best facet test horizon
- * facets
+ *clearly outside unless upperdelaunay and a lowerdelaunay exists update best facet test horizon
+ *facets
  */
 facetT *qh_findbestnew(pointT *point, facetT *startfacet,
                        realT *dist, boolT bestoutside, boolT *isoutside, int *numpart)
@@ -588,14 +588,14 @@ LABELreturn_bestnew:
  * >-------------------------------</a><a name="backnormal">-</a>
  *
  * qh_backnormal( rows, numrow, numcol, sign, normal, nearzero ) given an upper-triangular rows
- * array and a sign, solve for normal equation x using back substitution over rows U
+ *array and a sign, solve for normal equation x using back substitution over rows U
  *
  * returns:
  *   normal= x
  *
  *   if will not be able to divzero() when normalized(qh.MINdenom_2 and qh.MINdenom_1_2), if fails
- * on last row this means that the hyperplane intersects [0,..,1] sets last coordinate of normal to
- * sign otherwise sets tail of normal to [...,sign,0,...], i.e., solves for b= [0...0] sets nearzero
+ *on last row this means that the hyperplane intersects [0,..,1] sets last coordinate of normal to
+ *sign otherwise sets tail of normal to [...,sign,0,...], i.e., solves for b= [0...0] sets nearzero
  *
  * notes:
  *   assumes numrow == numcol-1
@@ -603,13 +603,13 @@ LABELreturn_bestnew:
  *   see Golub & van Loan 4.4-9 for back substitution
  *
  *   solves Ux=b where Ax=b and PA=LU b= [0,...,0,sign or 0]  (sign is either -1 or +1) last row of
- * A= [0,...,0,1]
+ *A= [0,...,0,1]
  *
  *   1) Ly=Pb == y=b since P only permutes the 0's of   b
  *
  * design:
  *  for each row from end perform back substitution if near zero use qh_divzero for division if zero
- * divide and not last row set tail of normal to 0
+ *divide and not last row set tail of normal to 0
  */
 void qh_backnormal(realT **rows, int numrow, int numcol, boolT sign,
                    coordT *normal, boolT *nearzero)
@@ -671,7 +671,7 @@ void qh_backnormal(realT **rows, int numrow, int numcol, boolT sign,
  *
  * returns:
  *  rows is upper triangular (includes row exchanges) flips sign for each row exchange sets nearzero
- * if pivot[k] < qh.NEARzero[k], else clears it
+ *if pivot[k] < qh.NEARzero[k], else clears it
  *
  * notes:
  *  if nearzero, the determinant's sign may be incorrect.
@@ -679,7 +679,7 @@ void qh_backnormal(realT **rows, int numrow, int numcol, boolT sign,
  *
  * design:
  *  for each row determine pivot and exchange rows if necessary test for near zero perform gaussian
- * elimination step
+ *elimination step
  */
 void qh_gausselim(realT **rows, int numrow, int numcol, boolT *sign, boolT *nearzero)
 {
@@ -751,7 +751,7 @@ LABELnextcol:
  * >-------------------------------</a><a name="getangle">-</a>
  *
  * qh_getangle( vect1, vect2 ) returns the dot product of two vectors if qh.RANDOMdist, joggles
- * result
+ *result
  *
  * notes:
  *  the angle may be > 1.0 or < -1.0 because of roundoff errors
@@ -836,7 +836,7 @@ pointT *qh_getcentrum(facetT *facet)
  * >-------------------------------</a><a name="getdistance">-</a>
  *
  * qh_getdistance( facet, neighbor, mindist, maxdist ) returns the maxdist and mindist distance of
- * any vertex from neighbor
+ *any vertex from neighbor
  *
  * returns:
  *  the max absolute value
@@ -888,7 +888,7 @@ realT qh_getdistance(facetT *facet, facetT *neighbor, realT *mindist, realT *max
  * >-------------------------------</a><a name="normalize">-</a>
  *
  * qh_normalize( normal, dim, toporient ) normalize a vector and report if too small does not use
- * min norm
+ *min norm
  *
  * see:
  *  qh_normalize2
@@ -902,19 +902,19 @@ void qh_normalize(coordT *normal, int dim, boolT toporient)
  * >-------------------------------</a><a name="normalize2">-</a>
  *
  * qh_normalize2( normal, dim, toporient, minnorm, ismin ) normalize a vector and report if too
- * small qh.MINdenom/MINdenom1 are the upper limits for divide overflow
+ *small qh.MINdenom/MINdenom1 are the upper limits for divide overflow
  *
  * returns:
  *  normalized vector flips sign if !toporient if minnorm non-NULL, sets ismin if normal < minnorm
  *
  * notes:
  *  if zero norm sets all elements to sqrt(1.0/dim) if divide by zero (divzero()) sets largest
- * element to   +/-1 bumps Znearlysingular
+ *element to   +/-1 bumps Znearlysingular
  *
  * design:
  *  computes norm test for minnorm if not near zero normalizes normal else if zero norm sets normal
- * to standard value else uses qh_divzero to normalize if nearzero sets norm to direction of maximum
- * value
+ *to standard value else uses qh_divzero to normalize if nearzero sets norm to direction of maximum
+ *value
  */
 void qh_normalize2(coordT *normal, int dim, boolT toporient,
                    realT *minnorm, boolT *ismin)
@@ -1041,7 +1041,7 @@ void qh_normalize2(coordT *normal, int dim, boolT toporient,
  *
  * notes:
  *  if dist= distplane(point,facet) this projects point to hyperplane assumes qh_memfree_() is valid
- * for normal_size
+ *for normal_size
  */
 pointT *qh_projectpoint(pointT *point, facetT *facet, realT dist)
 {
@@ -1067,13 +1067,13 @@ pointT *qh_projectpoint(pointT *point, facetT *facet, realT dist)
  *
  * notes:
  *  uses global buffers qh.gm_matrix and qh.gm_row overwrites facet->normal if already defined
- * updates Wnewvertex if PRINTstatistics sets facet->upperdelaunay if upper envelope of Delaunay
- * triangulation
+ *updates Wnewvertex if PRINTstatistics sets facet->upperdelaunay if upper envelope of Delaunay
+ *triangulation
  *
  * design:
  *  copy vertex coordinates to qh.gm_matrix/gm_row compute determinate if nearzero recompute
- * determinate with gaussian elimination if nearzero force outside orientation by testing interior
- * point
+ *determinate with gaussian elimination if nearzero force outside orientation by testing interior
+ *point
  */
 void qh_setfacetplane(facetT *facet)
 {
@@ -1257,35 +1257,34 @@ void qh_setfacetplane(facetT *facet)
  * >-------------------------------</a><a name="sethyperplane_det">-</a>
  *
  * qh_sethyperplane_det( dim, rows, point0, toporient, normal, offset, nearzero ) given dim X dim
- * array indexed by rows[], one row per point, toporient(flips all signs), and point0 (any row) set
- * normalized hyperplane equation from oriented simplex
+ *array indexed by rows[], one row per point, toporient(flips all signs), and point0 (any row) set
+ *normalized hyperplane equation from oriented simplex
  *
  * returns:
  *  normal (normalized) offset (places point0 on the hyperplane) sets nearzero if hyperplane not
- * through points
+ *through points
  *
  * notes:
  *  only defined for dim == 2..4 rows[] is not modified solves det(P-V_0, V_n-V_0, ..., V_1-V_0)=0,
- * i.e. every point is on hyperplane see Bower & Woodworth, A programmer's geometry, Butterworths
- * 1983.
+ *i.e. every point is on hyperplane see Bower & Woodworth, A programmer's geometry, Butterworths
+ *1983.
  *
  * derivation of 3-d minnorm Goal: all vertices V_i within qh.one_merge of hyperplane Plan: exactly
- * translate the facet so that V_0 is the origin exactly rotate the facet so that V_1 is on the
- * x-axis and y_2=0.
+ *translate the facet so that V_0 is the origin exactly rotate the facet so that V_1 is on the
+ *x-axis and y_2=0.
  *        exactly rotate the effective perturbation to only effect n_0 this introduces a factor of
- * sqrt(3) n_0 = ((y_2-y_0)*(z_1-z_0) - (z_2-z_0)*(y_1-y_0)) / norm Let M_d be the max coordinate
- * difference Let M_a be the greater of M_d and the max abs. coordinate Let u be machine roundoff
- * and distround be max error for distance computation The max error for n_0 is sqrt(3) u M_a M_d /
+ *sqrt(3) n_0 = ((y_2-y_0)*(z_1-z_0) - (z_2-z_0)*(y_1-y_0)) / norm Let M_d be the max coordinate
+ *difference Let M_a be the greater of M_d and the max abs. coordinate Let u be machine roundoff and
+ *distround be max error for distance computation The max error for n_0 is sqrt(3) u M_a M_d /
  * norm.  n_1 is approx. 1 and n_2 is approx. 0 The max error for distance of V_1 is sqrt(3) u M_a
- * M_d M_d / norm.  Offset=0 at origin Then minnorm = 1.8 u M_a M_d M_d / qh.ONEmerge Note that
- * qh.one_merge is approx. 45.5 u M_a and norm is usually about M_d M_d
+ *M_d M_d / norm.  Offset=0 at origin Then minnorm = 1.8 u M_a M_d M_d / qh.ONEmerge Note that
+ *qh.one_merge is approx. 45.5 u M_a and norm is usually about M_d M_d
  *
  * derivation of 4-d minnorm same as above except rotate the facet so that V_1 on x-axis and w_2,
- * y_3, w_3=0 [if two vertices fixed on x-axis, can rotate the other two in yzw.] n_0 = det3_(...) =
+ *y_3, w_3=0 [if two vertices fixed on x-axis, can rotate the other two in yzw.] n_0 = det3_(...) =
  * y_2 det2_(z_1, w_1, z_3, w_3) = - y_2 w_1 z_3 [all other terms contain at least two factors
- * nearly zero.] The max error for n_0 is sqrt(4) u M_a M_d M_d / norm Then minnorm = 2 u M_a M_d
- * M_d M_d / qh.ONEmerge Note that qh.one_merge is approx. 82 u M_a and norm is usually about M_d
- * M_d M_d
+ *nearly zero.] The max error for n_0 is sqrt(4) u M_a M_d M_d / norm Then minnorm = 2 u M_a M_d M_d
+ *M_d / qh.ONEmerge Note that qh.one_merge is approx. 82 u M_a and norm is usually about M_d M_d M_d
  */
 void qh_sethyperplane_det(int dim, coordT **rows, coordT *point0,
                           boolT toporient, coordT *normal, realT *offset, boolT *nearzero)
@@ -1375,20 +1374,20 @@ void qh_sethyperplane_det(int dim, coordT **rows, coordT *point0,
  * >-------------------------------</a><a name="sethyperplane_gauss">-</a>
  *
  * qh_sethyperplane_gauss( dim, rows, point0, toporient, normal, offset, nearzero ) given(dim-1) X
- * dim array of rows[i]= V_{i+1} - V_0 (point0) set normalized hyperplane equation from oriented
- * simplex
+ *dim array of rows[i]= V_{i+1} - V_0 (point0) set normalized hyperplane equation from oriented
+ *simplex
  *
  * returns:
  *  normal (normalized) offset (places point0 on the hyperplane)
  *
  * notes:
  *  if nearzero orientation may be incorrect because of incorrect sign flips in gausselim solves
- * [V_n-V_0,...,V_1-V_0, 0 .. 0 1] * N == [0 .. 0 1] or [V_n-V_0,...,V_1-V_0, 0 .. 0 1] * N == [0]
- * i.e., N is normal to the hyperplane, and the unnormalized distance to [0 .. 1] is either 1 or   0
+ *[V_n-V_0,...,V_1-V_0, 0 .. 0 1] * N == [0 .. 0 1] or [V_n-V_0,...,V_1-V_0, 0 .. 0 1] * N == [0]
+ *i.e., N is normal to the hyperplane, and the unnormalized distance to [0 .. 1] is either 1 or   0
  *
  * design:
  *  perform gaussian elimination flip sign for negative values perform back substitution normalize
- * result compute offset
+ *result compute offset
  */
 void qh_sethyperplane_gauss(int dim, coordT **rows, pointT *point0,
                             boolT toporient, coordT *normal, coordT *offset, boolT *nearzero)

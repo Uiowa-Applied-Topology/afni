@@ -12,12 +12,12 @@
  * To remove deleted facets and vertices (qhull() in libqhull.c):
  *   qh_partitionvisible(!qh_ALL, &numoutside);  // visible_list, newfacet_list qh_deletevisible();
  *         // qh.visible_list qh_resetlists(False, qh_RESETvisible);       // qh.visible_list
- * newvertex_list newfacet_list
+ *newvertex_list newfacet_list
  *
  * assumes qh.CENTERtype= centrum
  *
  * merges occur in qh_mergefacet and in qh_mergecycle vertex->neighbors not set until the first
- * merge occurs
+ *merge occurs
  *
  * copyright (c) 1993-2010 C.B. Barber.
  * $Id$$Change: 1164 $
@@ -34,7 +34,7 @@
  * >-------------------------------</a><a name="premerge">-</a>
  *
  * qh_premerge( apex, maxcentrum ) pre-merge nonconvex facets in qh.newfacet_list for apex
- * maxcentrum defines coplanar and concave (qh_test_appendmerge)
+ *maxcentrum defines coplanar and concave (qh_test_appendmerge)
  *
  * returns:
  *  deleted facets added to qh.visible_list with facet->visible set
@@ -44,9 +44,9 @@
  *
  * design:
  *  mark duplicate ridges in qh.newfacet_list merge facet cycles in qh.newfacet_list merge duplicate
- * ridges and concave facets in qh.newfacet_list check merged facet cycles for degenerate and
- * redundant facets merge degenerate and redundant facets collect coplanar and concave facets merge
- * concave, coplanar, degenerate, and redundant facets
+ *ridges and concave facets in qh.newfacet_list check merged facet cycles for degenerate and
+ *redundant facets merge degenerate and redundant facets collect coplanar and concave facets merge
+ *concave, coplanar, degenerate, and redundant facets
  */
 void qh_premerge(vertexT *apex, realT maxcentrum, realT maxangle)
 {
@@ -104,24 +104,24 @@ void qh_premerge(vertexT *apex, realT maxcentrum, realT maxangle)
  * >-------------------------------</a><a name="postmerge">-</a>
  *
  * qh_postmerge( reason, maxcentrum, maxangle, vneighbors ) post-merge nonconvex facets as defined
- * by maxcentrum and maxangle
+ *by maxcentrum and maxangle
  *  'reason' is for reporting progress if vneighbors, calls qh_test_vneighbors at end of
- * qh_all_merge if firstmerge, calls qh_reducevertices before qh_getmergeset
+ *qh_all_merge if firstmerge, calls qh_reducevertices before qh_getmergeset
  *
  * returns:
  *  if first call (qh.visible_list != qh.facet_list), builds qh.facet_newlist, qh.newvertex_list
- * deleted facets added to qh.visible_list with facet->visible qh.visible_list == qh.facet_list
+ *deleted facets added to qh.visible_list with facet->visible qh.visible_list == qh.facet_list
  *
  * notes:
  *
  *
  * design:
  *  if first call set qh.visible_list and qh.newfacet_list to qh.facet_list add all facets to
- * qh.newfacet_list mark non-simplicial facets, facet->newmerge set qh.newvertext_list to
- * qh.vertex_list add all vertices to qh.newvertex_list if a pre-merge occurred set vertex->delridge
+ *qh.newfacet_list mark non-simplicial facets, facet->newmerge set qh.newvertext_list to
+ *qh.vertex_list add all vertices to qh.newvertex_list if a pre-merge occurred set vertex->delridge
  * {will retest the ridge}
  *      if qh.MERGEexact call qh_reducevertices() if no pre-merging merge flipped facets determine
- * non-convex facets merge all non-convex facets
+ *non-convex facets merge all non-convex facets
  */
 void qh_postmerge(const char *reason, realT maxcentrum, realT maxangle,
                   boolT vneighbors)
@@ -192,22 +192,22 @@ void qh_postmerge(const char *reason, realT maxcentrum, realT maxangle,
  * qh_all_merges( othermerge, vneighbors ) merge all non-convex facets
  *
  *  set othermerge if already merged facets (for qh_reducevertices) if vneighbors tests vertex
- * neighbors for convexity at end qh.facet_mergeset lists the non-convex ridges in qh_newfacet_list
- * qh.degen_mergeset is defined if qh.MERGEexact && !qh.POSTmerging, does not merge coplanar facets
+ *neighbors for convexity at end qh.facet_mergeset lists the non-convex ridges in qh_newfacet_list
+ *qh.degen_mergeset is defined if qh.MERGEexact && !qh.POSTmerging, does not merge coplanar facets
  *
  * returns:
  *  deleted facets added to qh.visible_list with facet->visible deleted vertices added
- * qh.delvertex_list with vertex->delvertex
+ *qh.delvertex_list with vertex->delvertex
  *
  * notes:
  *  unless !qh.MERGEindependent, merges facets in independent sets uses qh.newfacet_list as argument
- * since merges call qh_removefacet()
+ *since merges call qh_removefacet()
  *
  * design:
  *  while merges occur for each merge in qh.facet_mergeset unless one of the facets was already
- * merged in this pass merge the facets test merged facets for additional merges add merges to
- * qh.facet_mergeset if vertices record neighboring facets rename redundant vertices update
- * qh.facet_mergeset if vneighbors ??
+ *merged in this pass merge the facets test merged facets for additional merges add merges to
+ *qh.facet_mergeset if vertices record neighboring facets rename redundant vertices update
+ *qh.facet_mergeset if vneighbors ??
  *    tests vertex neighbors for convexity at end
  */
 void qh_all_merges(boolT othermerge, boolT vneighbors)
@@ -317,21 +317,21 @@ void qh_all_merges(boolT othermerge, boolT vneighbors)
  * >-------------------------------</a><a name="appendmergeset">-</a>
  *
  * qh_appendmergeset( facet, neighbor, mergetype, angle ) appends an entry to qh.facet_mergeset or
- * qh.degen_mergeset
+ *qh.degen_mergeset
  *
  *  angle ignored if NULL or !qh.ANGLEmerge
  *
  * returns:
  *  merge appended to facet_mergeset or degen_mergeset sets ->degenerate or ->redundant if
- * degen_mergeset
+ *degen_mergeset
  *
  * see:
  *  qh_test_appendmerge()
  *
  * design:
  *  allocate merge entry if regular merge append to qh.facet_mergeset else if degenerate merge and
- * qh.facet_mergeset is all degenerate append to qh.degen_mergeset else if degenerate merge prepend
- * to qh.degen_mergeset else if redundant merge append to qh.degen_mergeset
+ *qh.facet_mergeset is all degenerate append to qh.degen_mergeset else if degenerate merge prepend
+ *to qh.degen_mergeset else if redundant merge append to qh.degen_mergeset
  */
 void qh_appendmergeset(facetT *facet, facetT *neighbor, mergeType mergetype, realT *angle)
 {
@@ -402,7 +402,7 @@ void qh_appendmergeset(facetT *facet, facetT *neighbor, mergeType mergetype, rea
  * >-------------------------------</a><a name="basevertices">-</a>
  *
  * qh_basevertices( samecycle ) return temporary set of base vertices for samecycle samecycle is
- * first facet in the cycle assumes apex is SETfirst_( samecycle->vertices )
+ *first facet in the cycle assumes apex is SETfirst_( samecycle->vertices )
  *
  * returns:
  *  vertices(settemp) all ->seen are cleared
@@ -452,7 +452,7 @@ setT *qh_basevertices(facetT *samecycle)
  *
  * design:
  *  move first new facet to end of qh.facet_list for all newly appended facets append unvisited
- * neighbors to end of qh.facet_list for all new facets report error if unvisited
+ *neighbors to end of qh.facet_list for all new facets report error if unvisited
  */
 void qh_checkconnect(void /* qh newfacet_list */)
 {
@@ -500,17 +500,17 @@ void qh_checkconnect(void /* qh newfacet_list */)
  *
  * returns:
  *  True if all facets !flipped, !dupridge, normal if all horizon facets are simplicial if all
- * vertices are clearly below neighbor if all opposite vertices of horizon are below clears
- * qh.ZEROall_ok if any problems or coplanar facets
+ *vertices are clearly below neighbor if all opposite vertices of horizon are below clears
+ *qh.ZEROall_ok if any problems or coplanar facets
  *
  * notes:
  *  uses qh.vertex_visit horizon facets may define multiple new facets
  *
  * design:
  *  for all facets in qh.newfacet_list or qh.facet_list check for flagged faults (flipped, etc.) for
- * all facets in qh.newfacet_list or qh.facet_list for each neighbor of facet skip horizon facets
- * for qh.newfacet_list test the opposite vertex if qh.newfacet_list test the other vertices in the
- * facet's horizon facet
+ *all facets in qh.newfacet_list or qh.facet_list for each neighbor of facet skip horizon facets for
+ *qh.newfacet_list test the opposite vertex if qh.newfacet_list test the other vertices in the
+ *facet's horizon facet
  */
 boolT qh_checkzero(boolT testall)
 {
@@ -684,7 +684,7 @@ void qh_copynonconvex(ridgeT *atridge)
  *
  * notes:
  *  bumps vertex_visit called if a facet was redundant but no longer is (qh_merge_degenredundant)
- * qh_appendmergeset() only appends first reference to facet (i.e., redundant)
+ *qh_appendmergeset() only appends first reference to facet (i.e., redundant)
  *
  * see:
  *  qh_degen_redundant_neighbors()
@@ -731,17 +731,17 @@ void qh_degen_redundant_facet(facetT *facet)
  * >-------------------------------</a><a name="degen_redundant_neighbors">-</a>
  *
  * qh_degen_redundant_neighbors( facet, delfacet,  ) append degenerate and redundant neighbors to
- * facet_mergeset if delfacet, only checks neighbors of both delfacet and facet also checks current
- * facet for degeneracy
+ *facet_mergeset if delfacet, only checks neighbors of both delfacet and facet also checks current
+ *facet for degeneracy
  *
  * notes:
  *  bumps vertex_visit called for each qh_mergefacet() and qh_mergecycle() merge and statistics
- * occur in merge_nonconvex qh_appendmergeset() only appends first reference to facet (i.e.,
- * redundant) it appends redundant facets after degenerate ones
+ *occur in merge_nonconvex qh_appendmergeset() only appends first reference to facet (i.e.,
+ *redundant) it appends redundant facets after degenerate ones
  *
  *  a degenerate facet has fewer than hull_dim neighbors a redundant facet's vertices is a subset of
- * its neighbor's vertices tests for redundant merges first (appendmergeset is nop for others) in a
- * merge, only needs to test neighbors of merged facet
+ *its neighbor's vertices tests for redundant merges first (appendmergeset is nop for others) in a
+ *merge, only needs to test neighbors of merged facet
  *
  * see:
  *  qh_merge_degenredundant() and qh_degen_redundant_facet()
@@ -814,22 +814,22 @@ void qh_degen_redundant_neighbors(facetT *facet, facetT *delfacet)
  * >-------------------------------</a><a name="find_newvertex">-</a>
  *
  * qh_find_newvertex( oldvertex, vertices, ridges ) locate new vertex for renaming old vertex
- * vertices is a set of possible new vertices vertices sorted by number of deleted ridges
+ *vertices is a set of possible new vertices vertices sorted by number of deleted ridges
  *
  * returns:
  *  newvertex or NULL each ridge includes both vertex and oldvertex vertices sorted by number of
- * deleted ridges
+ *deleted ridges
  *
  * notes:
  *  modifies vertex->visitid new vertex is in one of the ridges renaming will not cause a duplicate
- * ridge renaming will minimize the number of deleted ridges newvertex may not be adjacent in the
- * dual (though unlikely)
+ *ridge renaming will minimize the number of deleted ridges newvertex may not be adjacent in the
+ *dual (though unlikely)
  *
  * design:
  *  for each vertex in vertices set vertex->visitid to number of references in ridges remove
- * unvisited vertices set qh.vertex_visit above all possible values sort vertices by number of
- * references in ridges add each ridge to qh.hash_table for each vertex in vertices look for a
- * vertex that would not cause a duplicate ridge after a rename
+ *unvisited vertices set qh.vertex_visit above all possible values sort vertices by number of
+ *references in ridges add each ridge to qh.hash_table for each vertex in vertices look for a vertex
+ *that would not cause a duplicate ridge after a rename
  */
 vertexT *qh_find_newvertex(vertexT *oldvertex, setT *vertices, setT *ridges)
 {
@@ -925,12 +925,12 @@ vertexT *qh_find_newvertex(vertexT *oldvertex, setT *vertices, setT *ridges)
  * >-------------------------------</a><a name="findbest_test">-</a>
  *
  * qh_findbest_test( testcentrum, facet, neighbor, bestfacet, dist, mindist, maxdist ) test neighbor
- * of facet for qh_findbestneighbor() if testcentrum, tests centrum (assumes it is defined) else
- * tests vertices
+ *of facet for qh_findbestneighbor() if testcentrum, tests centrum (assumes it is defined) else
+ *tests vertices
  *
  * returns:
  *  if a better facet (i.e., vertices/centrum of facet closer to neighbor) updates bestfacet, dist,
- * mindist, and maxdist
+ *mindist, and maxdist
  */
 void qh_findbest_test(boolT testcentrum, facetT *facet, facetT *neighbor,
                       facetT **bestfacet, realT *distp, realT *mindistp, realT *maxdistp)
@@ -971,19 +971,19 @@ void qh_findbest_test(boolT testcentrum, facetT *facet, facetT *neighbor,
  * >-------------------------------</a><a name="findbestneighbor">-</a>
  *
  * qh_findbestneighbor( facet, dist, mindist, maxdist ) finds best neighbor (least dist) of a facet
- * for merging
+ *for merging
  *
  * returns:
  *  returns min and max distances and their max absolute value
  *
  * notes:
  *  avoids merging old into new assumes ridge->nonconvex only set on one ridge between a pair of
- * facets could use an early out predicate but not worth it
+ *facets could use an early out predicate but not worth it
  *
  * design:
  *  if a large facet will test centrum else will test vertices if a large facet test nonconvex
- * neighbors for best merge else test all neighbors for the best merge if testing centrum get
- * distance information
+ *neighbors for best merge else test all neighbors for the best merge if testing centrum get
+ *distance information
  */
 facetT *qh_findbestneighbor(facetT *facet, realT *distp, realT *mindistp, realT *maxdistp)
 {
@@ -1042,18 +1042,18 @@ facetT *qh_findbestneighbor(facetT *facet, realT *distp, realT *mindistp, realT 
  * >-------------------------------</a><a name="flippedmerges">-</a>
  *
  * qh_flippedmerges( facetlist, wasmerge ) merge flipped facets into best neighbor assumes
- * qh.facet_mergeset at top of temporary stack
+ *qh.facet_mergeset at top of temporary stack
  *
  * returns:
  *  no flipped facets on facetlist sets wasmerge if merge occurred degen/redundant merges passed
- * through
+ *through
  *
  * notes:
  *  othermerges not needed since qh.facet_mergeset is empty before & after keep it in case of change
  *
  * design:
  *  append flipped facets to qh.facetmergeset for each flipped merge find best neighbor merge facet
- * into neighbor merge degenerate and redundant facets remove flipped merges from qh.facet_mergeset
+ *into neighbor merge degenerate and redundant facets remove flipped merges from qh.facet_mergeset
  */
 void qh_flippedmerges(facetT *facetlist, boolT *wasmerge)
 {
@@ -1125,18 +1125,17 @@ void qh_flippedmerges(facetT *facetlist, boolT *wasmerge)
  *
  * returns:
  *  removes all duplicate ridges on facet_mergeset wasmerge set if merge qh.facet_mergeset may
- * include non-forced merges(none for now) qh.degen_mergeset includes degen/redun merges
+ *include non-forced merges(none for now) qh.degen_mergeset includes degen/redun merges
  *
  * notes:
  *  duplicate ridges occur when the horizon is pinched, i.e. a subridge occurs in more than two
- * horizon ridges.
+ *horizon ridges.
  *   could rename vertices that pinch the horizon assumes qh_merge_degenredundant() has not be
- * called othermerges isn't needed since facet_mergeset is empty afterwards keep it in case of
- * change
+ *called othermerges isn't needed since facet_mergeset is empty afterwards keep it in case of change
  *
  * design:
  *  for each duplicate ridge find current facets by chasing f.replace links determine best direction
- * for facet merge one facet into the other remove duplicate ridges from qh.facet_mergeset
+ *for facet merge one facet into the other remove duplicate ridges from qh.facet_mergeset
  */
 void qh_forcedmerges(boolT *wasmerge)
 {
@@ -1241,21 +1240,21 @@ void qh_forcedmerges(boolT *wasmerge)
  * >-------------------------------</a><a name="getmergeset">-</a>
  *
  * qh_getmergeset( facetlist ) determines nonconvex facets on facetlist tests !tested ridges and
- * nonconvex ridges of !tested facets
+ *nonconvex ridges of !tested facets
  *
  * returns:
  *  returns sorted qh.facet_mergeset of facet-neighbor pairs to be merged all ridges tested
  *
  * notes:
  *  assumes no nonconvex ridges with both facets tested uses facet->tested/ridge->tested to prevent
- * duplicate tests can not limit tests to modified ridges since the centrum changed uses qh.visit_id
+ *duplicate tests can not limit tests to modified ridges since the centrum changed uses qh.visit_id
  *
  * see:
  *  qh_getmergeset_initial()
  *
  * design:
  *  for each facet on facetlist for each ridge of facet if untested ridge test ridge for convexity
- * if non-convex append ridge to qh.facet_mergeset sort qh.facet_mergeset by angle
+ *if non-convex append ridge to qh.facet_mergeset sort qh.facet_mergeset by angle
  */
 void qh_getmergeset(facetT *facetlist)
 {
@@ -1328,11 +1327,11 @@ void qh_getmergeset(facetT *facetlist)
  * >-------------------------------</a><a name="getmergeset_initial">-</a>
  *
  * qh_getmergeset_initial( facetlist ) determine initial qh.facet_mergeset for facets tests all
- * facet/neighbor pairs on facetlist
+ *facet/neighbor pairs on facetlist
  *
  * returns:
  *  sorted qh.facet_mergeset with nonconvex ridges sets facet->tested, ridge->tested, and
- * ridge->nonconvex
+ *ridge->nonconvex
  *
  * notes:
  *  uses visit_id, assumes ridge->nonconvex is False
@@ -1342,8 +1341,8 @@ void qh_getmergeset(facetT *facetlist)
  *
  * design:
  *  for each facet on facetlist for each untested neighbor of facet test facet and neighbor for
- * convexity if non-convex append merge to qh.facet_mergeset mark one of the ridges as nonconvex
- * sort qh.facet_mergeset by angle
+ *convexity if non-convex append merge to qh.facet_mergeset mark one of the ridges as nonconvex sort
+ *qh.facet_mergeset by angle
  */
 void qh_getmergeset_initial(facetT *facetlist)
 {
@@ -1439,19 +1438,19 @@ void qh_hashridge(setT *hashtable, int hashsize, ridgeT *ridge, vertexT *oldvert
  * >-------------------------------</a><a name="hashridge_find">-</a>
  *
  * qh_hashridge_find( hashtable, hashsize, ridge, vertex, oldvertex, hashslot ) returns matching
- * ridge without oldvertex in hashtable for ridge without vertex if oldvertex is NULL matches with
- * any one skip
+ *ridge without oldvertex in hashtable for ridge without vertex if oldvertex is NULL matches with
+ *any one skip
  *
  * returns:
  *  matching ridge or NULL if no match, if ridge already in   table hashslot= -1 else hashslot= next
- * NULL index
+ *NULL index
  *
  * notes:
  *  assumes hashtable is large enough can't match ridge to itself
  *
  * design:
  *  get hash value for ridge without vertex for each hashslot return match if ridge matches ridgeA
- * without oldvertex
+ *without oldvertex
  */
 ridgeT *qh_hashridge_find(setT *hashtable, int hashsize, ridgeT *ridge,
                           vertexT *vertex, vertexT *oldvertex, int *hashslot)
@@ -1499,15 +1498,15 @@ ridgeT *qh_hashridge_find(setT *hashtable, int hashsize, ridgeT *ridge,
  *
  * notes:
  *  allows qh_MERGEridge flag uses existing ridges duplicate neighbors ok if ridges already exist
- * (qh_mergecycle_ridges)
+ *(qh_mergecycle_ridges)
  *
  * see:
  *  qh_mergecycle_ridges()
  *
  * design:
  *  look for qh_MERGEridge neighbors mark neighbors that already have ridges for each unprocessed
- * neighbor of facet create a ridge for neighbor and facet if any qh_MERGEridge neighbors delete
- * qh_MERGEridge flags (already handled by qh_mark_dupridges)
+ *neighbor of facet create a ridge for neighbor and facet if any qh_MERGEridge neighbors delete
+ *qh_MERGEridge flags (already handled by qh_mark_dupridges)
  */
 void qh_makeridges(facetT *facet)
 {
@@ -1591,20 +1590,20 @@ void qh_makeridges(facetT *facet)
  * returns:
  *  duplicate ridges on qh.facet_mergeset
  *  ->mergeridge/->mergeridge2 set duplicate ridges marked by qh_MERGEridge and both sides
- * facet->dupridge no MERGEridges in neighbor sets
+ *facet->dupridge no MERGEridges in neighbor sets
  *
  * notes:
  *  duplicate ridges occur when the horizon is pinched, i.e. a subridge occurs in more than two
- * horizon ridges.
+ *horizon ridges.
  *  could rename vertices that pinch the horizon uses qh.visit_id
  *
  * design:
  *  for all facets on facetlist if facet contains a duplicate ridge for each neighbor of facet if
- * neighbor marked qh_MERGEridge (one side of the merge) set facet->mergeridge else if neighbor
- * contains a duplicate ridge and the back link is qh_MERGEridge append duplicate ridge to
- * qh.facet_mergeset for each duplicate ridge make ridge sets in preparation for merging remove
- * qh_MERGEridge from neighbor set for each duplicate ridge restore the missing neighbor from the
- * neighbor set that was qh_MERGEridge add the missing ridge for this neighbor
+ *neighbor marked qh_MERGEridge (one side of the merge) set facet->mergeridge else if neighbor
+ *contains a duplicate ridge and the back link is qh_MERGEridge append duplicate ridge to
+ *qh.facet_mergeset for each duplicate ridge make ridge sets in preparation for merging remove
+ *qh_MERGEridge from neighbor set for each duplicate ridge restore the missing neighbor from the
+ *neighbor set that was qh_MERGEridge add the missing ridge for this neighbor
  */
 void qh_mark_dupridges(facetT *facetlist)
 {
@@ -1669,12 +1668,12 @@ void qh_mark_dupridges(facetT *facetlist)
  *
  * notes:
  *  won't cause redundant facets since vertex inclusion is the same may drop vertex and neighbor if
- * no ridge uses qh.visit_id
+ *no ridge uses qh.visit_id
  *
  * design:
  *  visit all neighbors with ridges for each unvisited neighbor of facet delete neighbor and facet
- * from the neighbor sets if neighbor becomes degenerate append neighbor to qh.degen_mergeset if
- * facet is degenerate append facet to qh.degen_mergeset
+ *from the neighbor sets if neighbor becomes degenerate append neighbor to qh.degen_mergeset if
+ *facet is degenerate append facet to qh.degen_mergeset
  */
 void qh_maydropneighbor(facetT *facet)
 {
@@ -1722,19 +1721,19 @@ void qh_maydropneighbor(facetT *facet)
  * >-------------------------------</a><a name="merge_degenredundant">-</a>
  *
  * qh_merge_degenredundant() merge all degenerate and redundant facets qh.degen_mergeset contains
- * merges from qh_degen_redundant_neighbors()
+ *merges from qh_degen_redundant_neighbors()
  *
  * returns:
  *  number of merges performed resets facet->degenerate/redundant if deleted (visible) facet has no
- * neighbors sets ->f.replace to NULL
+ *neighbors sets ->f.replace to NULL
  *
  * notes:
  *  redundant merges happen before degenerate ones merging and renaming vertices can result in
- * degen/redundant facets
+ *degen/redundant facets
  *
  * design:
  *  for each merge on qh.degen_mergeset if redundant merge if non-redundant facet merged into
- * redundant facet recheck facet for redundancy else merge redundant facet into other facet
+ *redundant facet recheck facet for redundancy else merge redundant facet into other facet
  */
 int qh_merge_degenredundant(void)
 {
@@ -1836,14 +1835,14 @@ int qh_merge_degenredundant(void)
  * >-------------------------------</a><a name="merge_nonconvex">-</a>
  *
  * qh_merge_nonconvex( facet1, facet2, mergetype ) remove non-convex ridge between facet1 into
- * facet2 mergetype gives why the facet's are non-convex
+ *facet2 mergetype gives why the facet's are non-convex
  *
  * returns:
  *  merges one of the facets into the best neighbor
  *
  * design:
  *  if one of the facets is a new facet prefer merging new facet into old facet find best neighbors
- * for both facets merge the nearest facet into its best neighbor update the statistics
+ *for both facets merge the nearest facet into its best neighbor update the statistics
  */
 void qh_merge_nonconvex(facetT *facet1, facetT *facet2, mergeType mergetype)
 {
@@ -1917,20 +1916,20 @@ void qh_merge_nonconvex(facetT *facet1, facetT *facet2, mergeType mergetype)
  * >-------------------------------</a><a name="mergecycle">-</a>
  *
  * qh_mergecycle( samecycle, newfacet ) merge a cycle of facets starting at samecycle into a
- * newfacet newfacet is a horizon facet with ->normal samecycle facets are simplicial from an apex
+ *newfacet newfacet is a horizon facet with ->normal samecycle facets are simplicial from an apex
  *
  * returns:
  *  initializes vertex neighbors on first merge samecycle deleted (placed on qh.visible_list)
- * newfacet at end of qh.facet_list deleted vertices on qh.del_vertices
+ *newfacet at end of qh.facet_list deleted vertices on qh.del_vertices
  *
  * see:
  *  qh_mergefacet() called by qh_mergecycle_all() for multiple, same cycle facets
  *
  * design:
  *  make vertex neighbors if necessary make ridges for newfacet merge neighbor sets of samecycle
- * into newfacet merge ridges of samecycle into newfacet merge vertex neighbors of samecycle into
- * newfacet make apex of samecycle the apex of newfacet if newfacet wasn't a new facet add its
- * vertices to qh.newvertex_list delete samecycle facets a make newfacet a newfacet
+ *into newfacet merge ridges of samecycle into newfacet merge vertex neighbors of samecycle into
+ *newfacet make apex of samecycle the apex of newfacet if newfacet wasn't a new facet add its
+ *vertices to qh.newvertex_list delete samecycle facets a make newfacet a newfacet
  */
 void qh_mergecycle(facetT *samecycle, facetT *newfacet)
 {
@@ -2020,21 +2019,21 @@ void qh_mergecycle(facetT *samecycle, facetT *newfacet)
  * >-------------------------------</a><a name="mergecycle_all">-</a>
  *
  * qh_mergecycle_all( facetlist, wasmerge ) merge all samecycles of coplanar facets into horizon
- * don't merge facets with ->mergeridge (these already have ->normal) all facets are simplicial from
- * apex all facet->cycledone == False
+ *don't merge facets with ->mergeridge (these already have ->normal) all facets are simplicial from
+ *apex all facet->cycledone == False
  *
  * returns:
  *  all newfacets merged into coplanar horizon facets deleted vertices on  qh.del_vertices sets
- * wasmerge if any merge
+ *wasmerge if any merge
  *
  * see:
  *  calls qh_mergecycle for multiple, same cycle facets
  *
  * design:
  *  for each facet on facetlist skip facets with duplicate ridges and normals check that facet is in
- * a samecycle (->mergehorizon) if facet only member of samecycle sets vertex->delridge for all
- * vertices except apex merge facet into horizon else mark all facets in samecycle remove facets
- * with duplicate ridges from samecycle merge samecycle into horizon (deletes facets from facetlist)
+ *a samecycle (->mergehorizon) if facet only member of samecycle sets vertex->delridge for all
+ *vertices except apex merge facet into horizon else mark all facets in samecycle remove facets with
+ *duplicate ridges from samecycle merge samecycle into horizon (deletes facets from facetlist)
  */
 void qh_mergecycle_all(facetT *facetlist, boolT *wasmerge)
 {
@@ -2137,14 +2136,14 @@ void qh_mergecycle_all(facetT *facetlist, boolT *wasmerge)
  * newfacet
  *
  *  newfacet moved to end of qh.facet_list makes newfacet a newfacet (get's facet1->id if it was
- * old) sets newfacet->newmerge clears newfacet->center (unless merging into a large facet) clears
- * newfacet->tested and ridge->tested for facet1
+ *old) sets newfacet->newmerge clears newfacet->center (unless merging into a large facet) clears
+ *newfacet->tested and ridge->tested for facet1
  *
  *  adds neighboring facets to facet_mergeset if redundant or degenerate
  *
  * design:
  *  make newfacet a new facet and set its flags move samecycle facets to qh.visible_list for later
- * deletion unless newfacet is large remove its centrum
+ *deletion unless newfacet is large remove its centrum
  */
 void qh_mergecycle_facets(facetT *samecycle, facetT *newfacet)
 {
@@ -2179,21 +2178,21 @@ void qh_mergecycle_facets(facetT *samecycle, facetT *newfacet)
  *
  * returns:
  *  newfacet with updated neighbors and vice-versa newfacet has ridges all neighbors of newfacet
- * marked with qh.visit_id samecycle facets marked with qh.visit_id-1 ridges updated for simplicial
- * neighbors of samecycle with a ridge
+ *marked with qh.visit_id samecycle facets marked with qh.visit_id-1 ridges updated for simplicial
+ *neighbors of samecycle with a ridge
  *
  * notes:
  *  assumes newfacet not in samecycle usually, samecycle facets are new, simplicial facets without
- * internal ridges not so if horizon facet is coplanar to two different samecycles
+ *internal ridges not so if horizon facet is coplanar to two different samecycles
  *
  * see:
  *  qh_mergeneighbors()
  *
  * design:
  *  check samecycle delete neighbors from newfacet that are also in samecycle for each neighbor of a
- * facet in samecycle if neighbor is simplicial if first visit move the neighbor relation to
- * newfacet update facet links for its ridges else make ridges for neighbor remove samecycle
- * reference else update neighbor sets
+ *facet in samecycle if neighbor is simplicial if first visit move the neighbor relation to newfacet
+ *update facet links for its ridges else make ridges for neighbor remove samecycle reference else
+ *update neighbor sets
  */
 void qh_mergecycle_neighbors(facetT *samecycle, facetT *newfacet)
 {
@@ -2286,8 +2285,8 @@ void qh_mergecycle_neighbors(facetT *samecycle, facetT *newfacet)
  * >-------------------------------</a><a name="mergecycle_ridges">-</a>
  *
  * qh_mergecycle_ridges( samecycle, newfacet ) add ridges/neighbors for facets in samecycle to
- * newfacet all new/old neighbors of newfacet marked with qh.visit_id facets in samecycle marked
- * with qh.visit_id-1 newfacet marked with qh.visit_id
+ *newfacet all new/old neighbors of newfacet marked with qh.visit_id facets in samecycle marked with
+ *qh.visit_id-1 newfacet marked with qh.visit_id
  *
  * returns:
  *  newfacet has merged ridges
@@ -2300,10 +2299,10 @@ void qh_mergecycle_neighbors(facetT *samecycle, facetT *newfacet)
  *
  * design:
  *  remove ridges between newfacet and samecycle for each facet in samecycle for each ridge in facet
- * update facet pointers in ridge skip ridges processed in qh_mergecycle_neighbors free ridges
- * between newfacet and samecycle free ridges between facets of samecycle (on 2nd visit) append
- * remaining ridges to newfacet if simpilicial facet for each neighbor of facet if simplicial facet
- * and not samecycle facet or newfacet make ridge between neighbor and newfacet
+ *update facet pointers in ridge skip ridges processed in qh_mergecycle_neighbors free ridges
+ *between newfacet and samecycle free ridges between facets of samecycle (on 2nd visit) append
+ *remaining ridges to newfacet if simpilicial facet for each neighbor of facet if simplicial facet
+ *and not samecycle facet or newfacet make ridge between neighbor and newfacet
  */
 void qh_mergecycle_ridges(facetT *samecycle, facetT *newfacet)
 {
@@ -2415,19 +2414,19 @@ void qh_mergecycle_ridges(facetT *samecycle, facetT *newfacet)
  * >-------------------------------</a><a name="mergecycle_vneighbors">-</a>
  *
  * qh_mergecycle_vneighbors( samecycle, newfacet ) create vertex neighbors for newfacet from
- * vertices of facets in samecycle samecycle marked with visitid == qh.visit_id - 1
+ *vertices of facets in samecycle samecycle marked with visitid == qh.visit_id - 1
  *
  * returns:
  *  newfacet vertices with updated neighbors marks newfacet with qh.visit_id-1 deletes vertices that
- * are merged away sets delridge on all vertices (faster here than in mergecycle_ridges)
+ *are merged away sets delridge on all vertices (faster here than in mergecycle_ridges)
  *
  * see:
  *  qh_mergevertex_neighbors()
  *
  * design:
  *  for each vertex of samecycle facet set vertex->delridge delete samecycle facets from vertex
- * neighbors append newfacet to vertex neighbors if vertex only in newfacet delete it from newfacet
- * add it to qh.del_vertices for later deletion
+ *neighbors append newfacet to vertex neighbors if vertex only in newfacet delete it from newfacet
+ *add it to qh.del_vertices for later deletion
  */
 void qh_mergecycle_vneighbors(facetT *samecycle, facetT *newfacet)
 {
@@ -2474,15 +2473,15 @@ void qh_mergecycle_vneighbors(facetT *samecycle, facetT *newfacet)
  * >-------------------------------</a><a name="mergefacet">-</a>
  *
  * qh_mergefacet( facet1, facet2, mindist, maxdist, mergeapex ) merges facet1 into facet2
- * mergeapex==qh_MERGEapex if merging new facet into coplanar horizon
+ *mergeapex==qh_MERGEapex if merging new facet into coplanar horizon
  *
  * returns:
  *  qh.max_outside and qh.min_vertex updated initializes vertex neighbors on first merge
  *
  * returns:
  *  facet2 contains facet1's vertices, neighbors, and ridges facet2 moved to end of qh.facet_list
- * makes facet2 a newfacet sets facet2->newmerge set clears facet2->center (unless merging into a
- * large facet) clears facet2->tested and ridge->tested for facet1
+ *makes facet2 a newfacet sets facet2->newmerge set clears facet2->center (unless merging into a
+ *large facet) clears facet2->tested and ridge->tested for facet1
  *
  *  facet1 prepended to visible_list for later deletion and partitioning facet1->f.replace == facet2
  *
@@ -2497,12 +2496,12 @@ void qh_mergecycle_vneighbors(facetT *samecycle, facetT *newfacet)
  *
  * design:
  *  trace merge and check for degenerate simplex make ridges for both facets update qh.max_outside,
- * qh.max_vertex, qh.min_vertex update facet2->maxoutside and keepcentrum update facet2->nummerge
- * update tested flags for facet2 if facet1 is simplicial merge facet1 into facet2 else merge
- * facet1's neighbors into facet2 merge facet1's ridges into facet2 merge facet1's vertices into
- * facet2 merge facet1's vertex neighbors into facet2 add facet2's vertices to qh.new_vertexlist
- * unless qh_MERGEapex test facet2 for degenerate or redundant neighbors move facet1 to
- * qh.visible_list for later deletion move facet2 to end of qh.newfacet_list
+ *qh.max_vertex, qh.min_vertex update facet2->maxoutside and keepcentrum update facet2->nummerge
+ *update tested flags for facet2 if facet1 is simplicial merge facet1 into facet2 else merge
+ *facet1's neighbors into facet2 merge facet1's ridges into facet2 merge facet1's vertices into
+ *facet2 merge facet1's vertex neighbors into facet2 add facet2's vertices to qh.new_vertexlist
+ *unless qh_MERGEapex test facet2 for degenerate or redundant neighbors move facet1 to
+ *qh.visible_list for later deletion move facet2 to end of qh.newfacet_list
  */
 void qh_mergefacet(facetT *facet1, facetT *facet2, realT *mindist, realT *maxdist, boolT mergeapex)
 {
@@ -2689,15 +2688,15 @@ too strong.\n",
  *
  * returns:
  *  build ridges for neighbors if necessary facet2 looks like a simplicial facet except for centrum,
- * ridges neighbors are opposite the corresponding vertex maintains orientation of facet2
+ *ridges neighbors are opposite the corresponding vertex maintains orientation of facet2
  *
  * notes:
  *  qh_mergefacet() retains non-simplicial structures they are not needed in 2d, but later routines
- * may use them preserves qh.vertex_visit for qh_mergevertex_neighbors()
+ *may use them preserves qh.vertex_visit for qh_mergevertex_neighbors()
  *
  * design:
  *  get vertices and neighbors determine new vertices and neighbors set new vertices and neighbors
- * and adjust orientation make ridges for new neighbor if needed
+ *and adjust orientation make ridges for new neighbor if needed
  */
 void qh_mergefacet2d(facetT *facet1, facetT *facet2)
 {
@@ -2779,8 +2778,8 @@ void qh_mergefacet2d(facetT *facet1, facetT *facet2)
  *
  * design:
  *  for each neighbor of facet1 if neighbor is also a neighbor of facet2 if neighbor is simpilicial
- * make ridges for later deletion as a degenerate facet update its neighbor set else move the
- * neighbor relation to facet2 remove the neighbor relation for facet1 and facet2
+ *make ridges for later deletion as a degenerate facet update its neighbor set else move the
+ *neighbor relation to facet2 remove the neighbor relation for facet1 and facet2
  */
 void qh_mergeneighbors(facetT *facet1, facetT *facet2)
 {
@@ -2834,7 +2833,7 @@ void qh_mergeneighbors(facetT *facet1, facetT *facet2)
  *
  * design:
  *  delete ridges between facet1 and facet2 mark (delridge) vertices on these ridges for later
- * testing for each remaining ridge rename facet1 to facet2
+ *testing for each remaining ridge rename facet1 to facet2
  */
 void qh_mergeridges(facetT *facet1, facetT *facet2)
 {
@@ -2871,25 +2870,25 @@ void qh_mergeridges(facetT *facet1, facetT *facet2)
  * >-------------------------------</a><a name="mergesimplex">-</a>
  *
  * qh_mergesimplex( facet1, facet2, mergeapex ) merge simplicial facet1 into facet2
- * mergeapex==qh_MERGEapex if merging samecycle into horizon facet vertex id is latest (most
- * recently created) facet1 may be contained in facet2 ridges exist for both facets
+ *mergeapex==qh_MERGEapex if merging samecycle into horizon facet vertex id is latest (most recently
+ *created) facet1 may be contained in facet2 ridges exist for both facets
  *
  * returns:
  *  facet2 with updated vertices, ridges, neighbors updated neighbors for facet1's vertices facet1
- * not deleted sets vertex->delridge on deleted ridges
+ *not deleted sets vertex->delridge on deleted ridges
  *
  * notes:
  *  special case code since this is the most common merge called from qh_mergefacet()
  *
  * design:
  *  if qh_MERGEapex add vertices of facet2 to qh.new_vertexlist if necessary add apex to facet2 else
- * for each ridge between facet1 and facet2 set vertex->delridge determine the apex for facet1
- * (i.e., vertex to be merged) unless apex already in facet2 insert apex into vertices for facet2
- * add vertices of facet2 to qh.new_vertexlist if necessary add apex to qh.new_vertexlist if
- * necessary for each vertex of facet1 if apex rename facet1 to facet2 in its vertex neighbors else
- * delete facet1 from vertex neighbors if only in facet2 add vertex to qh.del_vertices for later
- * deletion for each ridge of facet1 delete ridges between facet1 and facet2 append other ridges to
- * facet2 after renaming facet to facet2
+ *for each ridge between facet1 and facet2 set vertex->delridge determine the apex for facet1 (i.e.,
+ *vertex to be merged) unless apex already in facet2 insert apex into vertices for facet2 add
+ *vertices of facet2 to qh.new_vertexlist if necessary add apex to qh.new_vertexlist if necessary
+ *for each vertex of facet1 if apex rename facet1 to facet2 in its vertex neighbors else delete
+ *facet1 from vertex neighbors if only in facet2 add vertex to qh.del_vertices for later deletion
+ *for each ridge of facet1 delete ridges between facet1 and facet2 append other ridges to facet2
+ *after renaming facet to facet2
  */
 void qh_mergesimplex(facetT *facet1, facetT *facet2, boolT mergeapex)
 {
@@ -3044,7 +3043,7 @@ void qh_mergesimplex(facetT *facet1, facetT *facet2, boolT mergeapex)
  * >-------------------------------</a><a name="mergevertex_del">-</a>
  *
  * qh_mergevertex_del( vertex, facet1, facet2 ) delete a vertex because of merging facet1 into
- * facet2
+ *facet2
  *
  * returns:
  *  deletes vertex from facet2 adds vertex to qh.del_vertices for later deletion
@@ -3066,7 +3065,7 @@ void qh_mergevertex_del(vertexT *vertex, facetT *facet1, facetT *facet2)
  *
  * returns:
  *  if vertex is current qh.vertex_visit deletes facet1 from vertex->neighbors else renames facet1
- * to facet2 in vertex->neighbors deletes vertices if only one neighbor
+ *to facet2 in vertex->neighbors deletes vertices if only one neighbor
  *
  * notes:
  *  assumes vertex neighbor sets are good
@@ -3112,7 +3111,7 @@ void qh_mergevertex_neighbors(facetT *facet1, facetT *facet2)
  *
  * returns:
  *  replaces vertices2 with merged set preserves vertex_visit for qh_mergevertex_neighbors updates
- * qh.newvertex_list
+ *qh.newvertex_list
  *
  * design:
  *  create a merged set of both vertices (in inverse id order)
@@ -3165,19 +3164,19 @@ void qh_mergevertices(setT *vertices1, setT **vertices2)
  * >-------------------------------</a><a name="neighbor_intersections">-</a>
  *
  * qh_neighbor_intersections( vertex ) return intersection of all vertices in vertex->neighbors
- * except for vertex
+ *except for vertex
  *
  * returns:
  *  returns temporary set of vertices does not include vertex NULL if a neighbor is simplicial NULL
- * if empty set
+ *if empty set
  *
  * notes:
  *  used for renaming vertices
  *
  * design:
  *  initialize the intersection set with vertices of the first two neighbors delete vertex from the
- * intersection for each remaining neighbor intersect its vertex set with the intersection set
- * return NULL if empty return the intersection set
+ *intersection for each remaining neighbor intersect its vertex set with the intersection set return
+ *NULL if empty return the intersection set
  */
 setT *qh_neighbor_intersections(vertexT *vertex)
 {
@@ -3255,20 +3254,19 @@ void qh_newvertices(setT *vertices)
  * >-------------------------------</a><a name="reducevertices">-</a>
  *
  * qh_reducevertices() reduce extra vertices, shared vertices, and redundant vertices
- * facet->newmerge is set if merged since last call if !qh.MERGEvertices, only removes extra
- * vertices
+ *facet->newmerge is set if merged since last call if !qh.MERGEvertices, only removes extra vertices
  *
  * returns:
  *  True if also merged degen_redundant facets vertices are renamed if possible clears
- * facet->newmerge and vertex->delridge
+ *facet->newmerge and vertex->delridge
  *
  * notes:
  *  ignored if 2-d
  *
  * design:
  *  merge any degenerate or redundant facets for each newly merged facet remove extra vertices if
- * qh.MERGEvertices for each newly merged facet for each vertex if vertex was on a deleted ridge
- * rename vertex if it is shared remove delridge flag from new vertices
+ *qh.MERGEvertices for each newly merged facet for each vertex if vertex was on a deleted ridge
+ *rename vertex if it is shared remove delridge flag from new vertices
  */
 boolT qh_reducevertices(void)
 {
@@ -3343,18 +3341,18 @@ LABELrestart:
  * >-------------------------------</a><a name="redundant_vertex">-</a>
  *
  * qh_redundant_vertex( vertex ) detect and rename a redundant vertex vertices have full
- * vertex->neighbors
+ *vertex->neighbors
  *
  * returns:
  *  returns true if find a redundant vertex deletes vertex(vertex->deleted)
  *
  * notes:
  *  only needed if vertex->delridge and hull_dim >= 4 may add degenerate facets to qh.facet_mergeset
- * doesn't change vertex->neighbors or create redundant facets
+ *doesn't change vertex->neighbors or create redundant facets
  *
  * design:
  *  intersect vertices of all facet neighbors of vertex determine ridges for these vertices if find
- * a new vertex for vertex among these ridges and vertices rename vertex to the new vertex
+ *a new vertex for vertex among these ridges and vertices rename vertex to the new vertex
  */
 vertexT *qh_redundant_vertex(vertexT *vertex)
 {
@@ -3385,8 +3383,8 @@ vertexT *qh_redundant_vertex(vertexT *vertex)
  *
  * design:
  *  for each vertex in facet if vertex not in a ridge (i.e., no longer used) delete vertex from
- * facet delete facet from vertice's neighbors unless vertex in another facet add vertex to
- * qh.del_vertices for later deletion
+ *facet delete facet from vertice's neighbors unless vertex in another facet add vertex to
+ *qh.del_vertices for later deletion
  */
 boolT qh_remove_extravertices(facetT *facet)
 {
@@ -3436,22 +3434,22 @@ boolT qh_remove_extravertices(facetT *facet)
  * >-------------------------------</a><a name="rename_sharedvertex">-</a>
  *
  * qh_rename_sharedvertex( vertex, facet ) detect and rename if shared vertex in facet vertices have
- * full ->neighbors
+ *full ->neighbors
  *
  * returns:
  *  newvertex or NULL the vertex may still exist in other facets (i.e., a neighbor was pinched) does
- * not change facet->neighbors updates vertex->neighbors
+ *not change facet->neighbors updates vertex->neighbors
  *
  * notes:
  *  a shared vertex for a facet is only in ridges to one neighbor this may undo a pinched facet
  *
  *  it does not catch pinches involving multiple facets.  These appear to be difficult to detect,
- * since an exhaustive search is too expensive.
+ *since an exhaustive search is too expensive.
  *
  * design:
  *  if vertex only has two neighbors determine the ridges that contain the vertex determine the
- * vertices shared by both neighbors if can find a new vertex in this set rename the vertex to the
- * new vertex
+ *vertices shared by both neighbors if can find a new vertex in this set rename the vertex to the
+ *new vertex
  */
 vertexT *qh_rename_sharedvertex(vertexT *vertex, facetT *facet)
 {
@@ -3524,7 +3522,7 @@ vertexT *qh_rename_sharedvertex(vertexT *vertex, facetT *facet)
  *
  * design:
  *  delete oldvertex from ridge if newvertex already in ridge copy ridge->noconvex to another ridge
- * if possible delete the ridge else insert newvertex into the ridge adjust the ridge's orientation
+ *if possible delete the ridge else insert newvertex into the ridge adjust the ridge's orientation
  */
 void qh_renameridgevertex(ridgeT *ridge, vertexT *oldvertex, vertexT *newvertex)
 {
@@ -3570,7 +3568,7 @@ void qh_renameridgevertex(ridgeT *ridge, vertexT *oldvertex, vertexT *newvertex)
  * >-------------------------------</a><a name="renamevertex">-</a>
  *
  * qh_renamevertex( oldvertex, newvertex, ridges, oldfacet, neighborA ) renames oldvertex as
- * newvertex in ridges gives oldfacet/neighborA if oldvertex is shared between two facets
+ *newvertex in ridges gives oldfacet/neighborA if oldvertex is shared between two facets
  *
  * returns:
  *  oldvertex may still exist afterwards
@@ -3581,12 +3579,12 @@ void qh_renameridgevertex(ridgeT *ridge, vertexT *oldvertex, vertexT *newvertex)
  *
  * design:
  *  for each ridge in ridges rename oldvertex to newvertex and delete degenerate ridges if oldfacet
- * not defined for each neighbor of oldvertex delete oldvertex from neighbor's vertices remove extra
- * vertices from neighbor add oldvertex to qh.del_vertices else if oldvertex only between oldfacet
- * and neighborA delete oldvertex from oldfacet and neighborA add oldvertex to qh.del_vertices else
- * oldvertex is in oldfacet and neighborA and other facets (i.e., pinched) delete oldvertex from
- * oldfacet delete oldfacet from oldvertice's neighbors remove extra vertices (e.g., oldvertex) from
- * neighborA
+ *not defined for each neighbor of oldvertex delete oldvertex from neighbor's vertices remove extra
+ *vertices from neighbor add oldvertex to qh.del_vertices else if oldvertex only between oldfacet
+ *and neighborA delete oldvertex from oldfacet and neighborA add oldvertex to qh.del_vertices else
+ *oldvertex is in oldfacet and neighborA and other facets (i.e., pinched) delete oldvertex from
+ *oldfacet delete oldfacet from oldvertice's neighbors remove extra vertices (e.g., oldvertex) from
+ *neighborA
  */
 void qh_renamevertex(vertexT *oldvertex, vertexT *newvertex, setT *ridges, facetT *oldfacet,
                      facetT *neighborA)
@@ -3657,19 +3655,19 @@ void qh_renamevertex(vertexT *oldvertex, vertexT *newvertex, setT *ridges, facet
  * >-------------------------------</a><a name="test_appendmerge">-</a>
  *
  * qh_test_appendmerge( facet, neighbor ) tests facet/neighbor for convexity appends to mergeset if
- * non-convex if pre-merging, nop if qh.SKIPconvex, or qh.MERGEexact and coplanar
+ *non-convex if pre-merging, nop if qh.SKIPconvex, or qh.MERGEexact and coplanar
  *
  * returns:
  *  true if appends facet/neighbor to mergeset sets facet->center as needed does not change
- * facet->seen
+ *facet->seen
  *
  * design:
  *  if qh.cos_max is defined if the angle between facet normals is too shallow append an
- * angle-coplanar merge to qh.mergeset return True make facet's centrum if needed if facet's centrum
- * is above the neighbor set isconcave else if facet's centrum is not below the neighbor set
- * iscoplanar make neighbor's centrum if needed if neighbor's centrum is above the facet set
- * isconcave else if neighbor's centrum is not below the facet set iscoplanar if isconcave or
- * iscoplanar get angle if needed append concave or coplanar merge to qh.mergeset
+ *angle-coplanar merge to qh.mergeset return True make facet's centrum if needed if facet's centrum
+ *is above the neighbor set isconcave else if facet's centrum is not below the neighbor set
+ *iscoplanar make neighbor's centrum if needed if neighbor's centrum is above the facet set
+ *isconcave else if neighbor's centrum is not below the facet set iscoplanar if isconcave or
+ *iscoplanar get angle if needed append concave or coplanar merge to qh.mergeset
  */
 boolT qh_test_appendmerge(facetT *facet, facetT *neighbor)
 {
@@ -3768,15 +3766,15 @@ boolT qh_test_appendmerge(facetT *facet, facetT *neighbor)
  *
  * returns:
  *  true if non-convex vneighbors appended to qh.facet_mergeset initializes vertex neighbors if
- * needed
+ *needed
  *
  * notes:
  *  assumes all facet neighbors have been tested this can be expensive this does not guarantee that
- * a centrum is below all facets but it is unlikely uses qh.visit_id
+ *a centrum is below all facets but it is unlikely uses qh.visit_id
  *
  * design:
  *  build vertex neighbors if necessary for all new facets for all vertices for each unvisited facet
- * neighbor of the vertex test new facet and neighbor for convexity
+ *neighbor of the vertex test new facet and neighbor for convexity
  */
 boolT qh_test_vneighbors(void /* qh newfacet_list */)
 {
@@ -3922,9 +3920,9 @@ At %d:%d:%d & %2.5g CPU secs, qhull has merged %d facets.  The hull\n\
  *
  * design:
  *  clear facet2->tested clear ridge->tested for facet1's ridges if facet2 has a centrum if facet2
- * is large set facet2->keepcentrum else if facet2 has 3 vertices due to many merges, or not large
- * and post merging clear facet2->keepcentrum unless facet2->keepcentrum clear facet2->center to
- * recompute centrum later clear ridge->tested for facet2's ridges
+ *is large set facet2->keepcentrum else if facet2 has 3 vertices due to many merges, or not large
+ *and post merging clear facet2->keepcentrum unless facet2->keepcentrum clear facet2->center to
+ *recompute centrum later clear ridge->tested for facet2's ridges
  */
 void qh_updatetested(facetT *facet1, facetT *facet2)
 {
@@ -3968,7 +3966,7 @@ void qh_updatetested(facetT *facet1, facetT *facet2)
  * >-------------------------------</a><a name="vertexridges">-</a>
  *
  * qh_vertexridges( vertex ) return temporary set of ridges adjacent to a vertex vertex->neighbors
- * defined
+ *defined
  *
  * ntoes:
  *  uses qh.visit_id does not include implicit ridges for simplicial facets
@@ -4009,14 +4007,14 @@ setT *qh_vertexridges(vertexT *vertex)
  * >-------------------------------</a><a name="vertexridges_facet">-</a>
  *
  * qh_vertexridges_facet( vertex, facet, ridges ) add adjacent ridges for vertex in facet
- * neighbor->visitid==qh.visit_id if it hasn't been visited
+ *neighbor->visitid==qh.visit_id if it hasn't been visited
  *
  * returns:
  *  ridges updated sets facet->visitid to qh.visit_id-1
  *
  * design:
  *  for each ridge of facet if ridge of visited neighbor (i.e., unprocessed) if vertex in ridge
- * append ridge to vertex mark facet processed
+ *append ridge to vertex mark facet processed
  */
 void qh_vertexridges_facet(vertexT *vertex, facetT *facet, setT **ridges)
 {
@@ -4039,7 +4037,7 @@ void qh_vertexridges_facet(vertexT *vertex, facetT *facet, setT **ridges)
  * >-------------------------------</a><a name="willdelete">-</a>
  *
  * qh_willdelete( facet, replace ) moves facet to visible list sets facet->f.replace to replace (may
- * be NULL)
+ *be NULL)
  *
  * returns:
  *  bumps qh.num_visible

@@ -14,12 +14,12 @@
  * see user.h for user-definable constants
  *
  *    use qh_NOmem in mem.h to turn off memory management use qh_NOmerge in user.h to turn off facet
- * merging set qh_KEEPstatistics in user.h to 0 to turn off statistics
+ *merging set qh_KEEPstatistics in user.h to 0 to turn off statistics
  *
  * This is unsupported software.  You're welcome to make changes, but you're on your own if
- * something goes wrong.  Use 'Tc' to check frequently.  Usually qhull will report an error if a
- * data structure becomes inconsistent.  If so, it also reports the last point added to the hull,
- * e.g., 102.  You can then trace the execution of qhull with "T4P102".
+ *something goes wrong.  Use 'Tc' to check frequently.  Usually qhull will report an error if a data
+ *structure becomes inconsistent.  If so, it also reports the last point added to the hull, e.g.,
+ *102.  You can then trace the execution of qhull with "T4P102".
  *
  * Please report any errors that you fix to qhull@qhull.org
  *
@@ -30,8 +30,8 @@
  * you can add additional quick allocation sizes in qh_user_memsizes
  *
  * if the other functions here are redefined to not use qh_print..., then io.o will not be loaded
- * from qhull.a.  See user_eg.c for an example.  We recommend keeping io.o for the extra debugging
- * information it supplies.
+ *from qhull.a.  See user_eg.c for an example.  We recommend keeping io.o for the extra debugging
+ *information it supplies.
  */
 
 #include "qhull_a.h"
@@ -42,7 +42,7 @@
  * >-------------------------------</a><a name="call_qhull">-</a>
  *
  * qh_call_qhull( void ) template for calling qhull from inside your program remove #if 0, #endif to
- * compile
+ *compile
  *
  * returns:
  *  exit code(see qh_ERR... in libqhull.h) all memory freed
@@ -61,8 +61,8 @@
     coordT *points;               /* array of coordinates for each point */
     boolT   ismalloc;             /* True if qhull should free points in qh_freeqhull() or
                                    * reallocation */
-    char    flags[] = "qhull Tv"; /* option flags for qhull, see qh_opt.htm */
-    FILE *  outfile = stdout;     /* output from qh_produce_output() use NULL to skip
+    char  flags[]   = "qhull Tv"; /* option flags for qhull, see qh_opt.htm */
+    FILE *outfile   = stdout;     /* output from qh_produce_output() use NULL to skip
                                    * qh_produce_output() */
     FILE *  errfile = stderr;     /* error messages from qhull code */
     int     exitcode;             /* 0 if no error from qhull */
@@ -94,17 +94,17 @@
  * >-------------------------------</a><a name="new_qhull">-</a>
  *
  * qh_new_qhull( dim, numpoints, points, ismalloc, qhull_cmd, outfile, errfile ) build new qhull
- * data structure and return exitcode (0 if no errors)
+ *data structure and return exitcode (0 if no errors)
  *
  * notes:
  *  do not modify points until finished with results. The qhull data structure contains pointers
- * into the points array.
+ *into the points array.
  *  do not call qhull functions before qh_new_qhull(). The qhull data structure is not initialized
- * until qh_new_qhull().
+ *until qh_new_qhull().
  *
  *  outfile may be null qhull_cmd must start with "qhull "
  *  projects points to a new point array for Delaunay triangulations ('d' and 'v') transforms points
- * into a new point array for halfspace intersection ('H')
+ *into a new point array for halfspace intersection ('H')
  *
  *
  * To allow multiple, concurrent calls to qhull()
@@ -185,17 +185,17 @@ int qh_new_qhull(int dim, int numpoints, coordT *points, boolT ismalloc,
  * >-------------------------------</a><a name="errexit">-</a>
  *
  * qh_errexit( exitcode, facet, ridge ) report and exit from an error report facet and ridge if
- * non-NULL reports useful information such as last point processed set qh.FORCEoutput to print
- * neighborhood of facet
+ *non-NULL reports useful information such as last point processed set qh.FORCEoutput to print
+ *neighborhood of facet
  *
  * see:
  *  qh_errexit2() in libqhull.c for printing 2 facets
  *
  * design:
  *  check for error within error processing compute qh.hulltime print facet and ridge (if any)
- * report commandString, options, qh.furthest_id print summary and statistics (including precision
- * statistics) if qh_ERRsingular print help text for singular data set exit program via long jump
- * (if defined) or exit()
+ *report commandString, options, qh.furthest_id print summary and statistics (including precision
+ *statistics) if qh_ERRsingular print help text for singular data set exit program via long jump (if
+ *defined) or exit()
  */
 void qh_errexit(int exitcode, facetT *facet, ridgeT *ridge)
 {
@@ -277,7 +277,7 @@ void qh_errexit(int exitcode, facetT *facet, ridgeT *ridge)
  * >-------------------------------</a><a name="errprint">-</a>
  *
  * qh_errprint( fp, string, atfacet, otherfacet, atridge, atvertex ) prints out the information of
- * facets and ridges to fp also prints neighbors and geomview output
+ *facets and ridges to fp also prints neighbors and geomview output
  *
  * notes:
  *  except for string, any parameter may be NULL
@@ -339,7 +339,7 @@ void qh_errprint(const char *string, facetT *atfacet, facetT *otherfacet, ridgeT
  * >-------------------------------</a><a name="printfacetlist">-</a>
  *
  * qh_printfacetlist( fp, facetlist, facets, printall ) print all fields for a facet list and/or set
- * of facets to fp if !printall, only prints good facets
+ *of facets to fp if !printall, only prints good facets
  *
  * notes:
  *  also prints all vertices

@@ -245,8 +245,7 @@ int main(int argc, char *argv[])
                 fprintf(stderr,
                         "** Bad dset type for unique operation.\n"
                         "Only Byte, Short, and float dsets are allowed.\n");
-                break; /* this should not happen here,
-                        * so don't bother returning*/
+                break; /* this should not happen here, so don't bother returning*/
 
             case MRI_short: {
                 short *mar = (short *)DSET_ARRAY(dsets_in[ib], isb);
@@ -365,8 +364,8 @@ int main(int argc, char *argv[])
                         ADN_prefix, stmp,
                         ADN_none);
 
-        /* storage_mode was set in EDIT_dset_items(), based on the prefix, do not reset it here
-        *                        [21 Nov 2019 rickr] */
+        /* storage_mode was set in EDIT_dset_items(), based on the prefix, do not reset it here [21
+         * Nov 2019 rickr] */
         /* dsets_in[ib]->dblk->diskptr->storage_mode = STORAGE_BY_BRICK;   */
 
         tross_Make_History("3dRank", argc, argv, dsets_in[ib]);

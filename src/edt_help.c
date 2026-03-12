@@ -1,12 +1,12 @@
 /*****************************************************************************
-   Major portions of this software are copyrighted by the Medical College
-   of Wisconsin, 1994-2000, and are released under the Gnu General Public
-   License, Version 2.  See the file README.Copyright for details.
-******************************************************************************/
+ * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
+ ******************************************************************************/
 
 #include "mrilib.h"
 
-static char * helpstring =
+static char *helpstring =
     "EDITING OPTIONS APPLIED TO EACH INPUT DATASET:\n"
     "  -1thtoin         = Copy threshold data over intensity data.\n"
     "                       This is only valid for datasets with some\n"
@@ -189,5 +189,5 @@ static char * helpstring =
 
 char * EDIT_options_help(void)
 {
-   return helpstring ;
+    return helpstring;
 }

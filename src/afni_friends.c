@@ -100,7 +100,7 @@ static AFNI_friend afni_friends[] = {
     { "V Hradil",            (4 | 8 | 16)                    },
     { "D Handwerker",        (4 | 8)                         },
     { "J Gonzalez-Castillo", (4 | 8 | 128)                   },               /* name is too long :(
-                                                                              */
+                                                                               */
     { "J Evans",             (4 | 8 | 128)                   },
     { "S Inati",             (4 | 8)                         },
     { "P Taylor",            (64 | 128 | 512)                },
@@ -1495,12 +1495,12 @@ static int rosh(int y)
      * next day (Monday, Thursday or Saturday).
      *
      * If the calculated day is a Monday, and if the fraction is greater than or equal to
-     * 23269/25920, and if Remainder(12G|19) is greater than 11, Rosh Hashanah falls on the next
-     * day, a Tuesday.
+     *23269/25920, and if Remainder(12G|19) is greater than 11, Rosh Hashanah falls on the next day,
+     *a Tuesday.
      *
      * If it is a Tuesday, and if the fraction is greater than or equal to 1367/2160, and if
-     * Remainder(12G|19) is greater than 6, Rosh Hashanah falls two days later, on Thursday (NOT
-     * WEDNESDAY!!).                 */
+     *Remainder(12G|19) is greater than 6, Rosh Hashanah falls two days later, on Thursday (NOT
+     *WEDNESDAY!!).                 */
 
     if (dd == 0 || dd == 3 || dd == 5)               /* Sun, Wed, or Fri are taboo */
     {

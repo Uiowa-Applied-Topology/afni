@@ -1,13 +1,13 @@
-/* bakvec.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* bakvec.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int bakvec_(integer *nm, integer *n, doublereal *t, 
-	doublereal *e, integer *m, doublereal *z__, integer *ierr)
+/* Subroutine */ int bakvec_(integer *nm, integer *n, doublereal *t,
+                             doublereal *e, integer *m, doublereal *z__, integer *ierr)
 {
     /* System generated locals */
     integer t_dim1, t_offset, z_dim1, z_offset, i__1, i__2;
@@ -54,65 +54,73 @@
 
 /*        IERR IS SET TO */
 /*          ZERO       FOR NORMAL RETURN, */
-/*          2*N+I      IF E(I) IS ZERO WITH T(I,1) OR T(I-1,3) NON-ZERO. 
-*/
-/*                     IN THIS CASE, THE SYMMETRIC MATRIX IS NOT SIMILAR 
-*/
+
+/*          2*N+I      IF E(I) IS ZERO WITH T(I,1) OR T(I-1,3) NON-ZERO.
+ */
+/*                     IN THIS CASE, THE SYMMETRIC MATRIX IS NOT SIMILAR
+ */
 /*                     TO THE ORIGINAL MATRIX, AND THE EIGENVECTORS */
 /*                     CANNOT BE FOUND BY THIS PROGRAM. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    t_dim1 = *nm;
+    t_dim1   = *nm;
     t_offset = t_dim1 + 1;
-    t -= t_offset;
+    t       -= t_offset;
     --e;
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
 
     /* Function Body */
     *ierr = 0;
-    if (*m == 0) {
-	goto L1001;
+    if (*m == 0)
+    {
+        goto L1001;
     }
     e[1] = 1.;
-    if (*n == 1) {
-	goto L1001;
+    if (*n == 1)
+    {
+        goto L1001;
     }
 
     i__1 = *n;
-    for (i__ = 2; i__ <= i__1; ++i__) {
-	if (e[i__] != 0.) {
-	    goto L80;
-	}
-	if (t[i__ + t_dim1] != 0. || t[i__ - 1 + t_dim1 * 3] != 0.) {
-	    goto L1000;
-	}
-	e[i__] = 1.;
-	goto L100;
+    for (i__ = 2; i__ <= i__1; ++i__)
+    {
+        if (e[i__] != 0.)
+        {
+            goto L80;
+        }
+        if (t[i__ + t_dim1] != 0. || t[i__ - 1 + t_dim1 * 3] != 0.)
+        {
+            goto L1000;
+        }
+        e[i__] = 1.;
+        goto L100;
 L80:
-	e[i__] = e[i__ - 1] * e[i__] / t[i__ - 1 + t_dim1 * 3];
+        e[i__] = e[i__ - 1] * e[i__] / t[i__ - 1 + t_dim1 * 3];
 L100:
-	;
+        ;
     }
 
     i__1 = *m;
-    for (j = 1; j <= i__1; ++j) {
-
-	i__2 = *n;
-	for (i__ = 2; i__ <= i__2; ++i__) {
-	    z__[i__ + j * z_dim1] *= e[i__];
+    for (j = 1; j <= i__1; ++j)
+    {
+        i__2 = *n;
+        for (i__ = 2; i__ <= i__2; ++i__)
+        {
+            z__[i__ + j * z_dim1] *= e[i__];
 /* L120: */
-	}
+        }
     }
 
     goto L1001;
@@ -123,4 +131,3 @@ L1000:
 L1001:
     return 0;
 } /* bakvec_ */
-

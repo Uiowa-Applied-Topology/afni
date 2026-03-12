@@ -1,7 +1,7 @@
 /*
  * 3dTsplit4D.c This is a quick program to split a 3d+time dataset into multiple single 3D files.
- *  Mostly to facilitate transferring data into MATLAB toolboxes. It can also be useful for deal
- * with SPM and FSL programs.
+ *Mostly to facilitate transferring data into MATLAB toolboxes. It can also be useful for deal with
+ *SPM and FSL programs.
  *
  * Author: Peter J. Molfese, Haskins Laboratories/UConn/Yale Contact: Peter.Molfese@yale.edu
  *

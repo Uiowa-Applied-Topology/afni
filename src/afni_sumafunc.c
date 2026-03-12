@@ -12,9 +12,9 @@
  *    = positive  ==> can use *map and *nvused
  *  - *map is set to a newly malloc()-ed array (if return > 0)
  *  - *nvused is set to the number of functional dataset voxels used to make the map (e.g., those
- * that got some color)
+ *that got some color)
  *  - im3d->ss_now[ks]->vn->nvox will have the total number of functional dataset voxels that
- * intersected the surface
+ *intersected the surface
  *
  *  Sample usage:
  *  - SUMA_irgba *map ;
@@ -1287,7 +1287,7 @@ static void AFNI_surf_redraw_CB(MCW_arrowval *av, XtPointer cd)
 /*---------------------------------------------------------------------------*/
 
 /*! Callback for press of a toggle button on the surface controls. All this does is to force a
-* redraw of the images.               */
+ * redraw of the images.               */
 
 static void AFNI_surf_bbox_CB(Widget w, XtPointer cd, XtPointer qd)
 {

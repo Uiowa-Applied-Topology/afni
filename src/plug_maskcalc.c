@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 /***********************************************************************
@@ -836,8 +836,7 @@ num_places(
     junk = (junk == 0) ? 1.0 : junk;
 
     /*
-    ** Allow for at least one place to the left of the decimal,
-    ** and the decimal itself.
+    ** Allow for at least one place to the left of the decimal, and the decimal itself.
     */
 
     places = size - 2 - ( int )floor(log10(junk));
@@ -1218,8 +1217,7 @@ fill_afni_struct(r_afni_s *A)
 
 /***********************************************************************
 **
-**  Create a float brick corresponding to the first subbrick of
-**  every non-mask brick.
+**  Create a float brick corresponding to the first subbrick of every non-mask brick.
 **
 ************************************************************************
 */

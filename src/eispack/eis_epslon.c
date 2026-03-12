@@ -1,7 +1,7 @@
-/* epslon.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* epslon.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
@@ -41,11 +41,12 @@ doublereal epslon_(doublereal *x)
 
     a = 1.3333333333333333;
 L10:
-    b = a - 1.;
+    b   = a - 1.;
     c__ = b + b + b;
     eps = (d__1 = c__ - 1., abs(d__1));
-    if (eps == 0.) {
-	goto L10;
+    if (eps == 0.)
+    {
+        goto L10;
     }
     ret_val = eps * abs(*x);
     return ret_val;

@@ -200,7 +200,7 @@ static void *P_handle = NULL;
 
 /*---------------------------------------------------------------------------
  * Routine called when the imseq wants to send a message. In this case, all we need to handle is the
- * destroy message, so that we can free some memory.
+ *destroy message, so that we can free some memory.
  * -----------------------------------------------------------------------------*/
 
 void PLUGIN_seq_send_CB(MCW_imseq *seq, XtPointer handle, ISQ_cbs *cbs)
@@ -226,7 +226,7 @@ void PLUGIN_seq_send_CB(MCW_imseq *seq, XtPointer handle, ISQ_cbs *cbs)
 
 /*------------------------------------------------------------------
  * Routine to provide data to the imseq for PLUGIN_popup_image. Just returns the control
- * information, or the given image.
+ *information, or the given image.
  * --------------------------------------------------------------------*/
 
 XtPointer PLUGIN_imseq_getim(int n, int type, XtPointer handle)

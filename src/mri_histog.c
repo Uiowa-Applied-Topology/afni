@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
- * and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
- * for details.
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
  ******************************************************************************/
 
 #include "mrilib.h"
@@ -10,7 +10,7 @@
 
 /* - hist[] should be declared as having nbin elements
  * - if initialize != 0, sets hist to all zeros, otherwise accumulates into pre-existing histogram
- * counts
+ *counts
  * - values outside the range hbot..htop are not counted
  */
 

@@ -295,7 +295,7 @@ THD_3dim_dataset * THD_open_analyze(char *hname)
 
       /*fprintf(stderr,  "\n"
        *                 "hdr.hist.originator:   %d %d %d %d %d\n", xyzuv[0], xyzuv[1], xyzuv[2],
-       * xyzuv[3], xyzuv[4]
+       *xyzuv[3], xyzuv[4]
        *                 );*/
       if (1 || (xyzuv[3] == 0 && xyzuv[4] == 0))  /* ZSS Nov 10 05. Looks like xyzuv[3] and xyzuv[4]
                                                    * can be complete rubbish. Not reliable. */
@@ -310,8 +310,8 @@ THD_3dim_dataset * THD_open_analyze(char *hname)
 
           /*fprintf(stderr,  "\n"
            *               "        xx      yy       zz     :   %d %d %d \n"
-           *               "spmorg  spmxx   spmyy    spmzz  : %d %d %d %d\n",
-           *                                       xx, yy, zz, spmorg, spmxx, spmyy, spmzz);*/
+           *               "spmorg  spmxx   spmyy    spmzz  : %d %d %d %d\n", xx, yy, zz, spmorg,
+           *spmxx, spmyy, spmzz);*/
       }
     }
 

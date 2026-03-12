@@ -2,8 +2,8 @@
 
 /*------------------------------------------------------------------------
  * Compute the median of an array of floats.  Will rearrange (partially sort) the array in the
- * process.  The algorithm is based on Quicksort, where we only keep the partition that has the
- * middle element. For large n, this is faster than finishing the whole sort.
+ *process.  The algorithm is based on Quicksort, where we only keep the partition that has the
+ *middle element. For large n, this is faster than finishing the whole sort.
  * --------------------------------------------------------------------------*/
 
 /* macro for median-of-3 */

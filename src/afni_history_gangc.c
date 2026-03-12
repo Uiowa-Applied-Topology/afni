@@ -5,7 +5,7 @@
 /*  (for starting a new file, search for CHANGE)
  *
  *  basic format: 3-field date, user, program_name, impact_level, short description without newline
- * (optional) long description with intermediate newlines
+ *(optional) long description with intermediate newlines
  *
  *  copy entire section: { ... } ,
  *
@@ -14,12 +14,12 @@
  *         - levels are :
  *                  MICRO           - users don't see MINOR           - small effect on users MAJOR
  *           - larger effect on users SUPER           - important changes, like new programs
- * SUPERDUPER      - we expect users to know
+ *SUPERDUPER      - we expect users to know
  *
  *         - types are:
  *                  TYPE_GENERAL    - unspecified update type TYPE_NEW_PROG   - new program
- * TYPE_NEW_OPT    - new program option TYPE_NEW_ENV    - new environment variable or change
- * TYPE_BUG_FIX    - bug fix TYPE_MODIFY     - a change (not new, not a fix) TYPE_ENHANCE    -
+ *TYPE_NEW_OPT    - new program option TYPE_NEW_ENV    - new environment variable or change
+ *TYPE_BUG_FIX    - bug fix TYPE_MODIFY     - a change (not new, not a fix) TYPE_ENHANCE    -
  * general improvement TYPE_REMOVE     - deleted TYPE_REINSTATE  - un-deleted
  *
  *         - PLEASE, stick to what fits on an 80 column terminal

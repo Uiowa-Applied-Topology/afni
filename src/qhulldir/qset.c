@@ -378,7 +378,7 @@ void *qh_setdel(setT *set, void *oldelem)
  *
  * design:
  *  return NULL if empty if full set delete last element and set actual size else delete last
- * element and update actual size
+ *element and update actual size
  */
 void *qh_setdellast(setT *set)
 {
@@ -607,7 +607,7 @@ int qh_setequal(setT *setA, setT *setB)
  * >-------------------------------<a name="setequal_except">-</a>
  *
  * qh_setequal_except( setA, skipelemA, setB, skipelemB ) returns 1 if sorted setA and setB are
- * equal except for skipelemA & B
+ *equal except for skipelemA & B
  *
  * returns:
  *  false if either skipelemA or skipelemB are missing
@@ -670,7 +670,7 @@ int qh_setequal_except(setT *setA, void *skipelemA, setT *setB, void *skipelemB)
  * >-------------------------------<a name="setequal_skip">-</a>
  *
  * qh_setequal_skip( setA, skipA, setB, skipB ) returns 1 if sorted setA and setB are equal except
- * for elements skipA & B
+ *for elements skipA & B
  *
  * returns:
  *  false if different size
@@ -866,7 +866,7 @@ int qh_setindex(setT *set, void *atelem)
  *
  * design:
  *  creates a new set copies the old set to the new set updates pointers in tempstack deletes the
- * old set
+ *old set
  */
 void qh_setlarger(setT **oldsetp)
 {
@@ -939,7 +939,7 @@ void *qh_setlast(setT *set)
  *
  * notes:
  *  setsize means the number of elements (!including the NULL terminator) use
- * qh_settemp/qh_setfreetemp if set is temporary
+ *qh_settemp/qh_setfreetemp if set is temporary
  *
  * design:
  *  allocate memory for set roundup memory if small set initialize as empty set
@@ -981,14 +981,14 @@ setT *qh_setnew(int setsize)
  * >-------------------------------<a name="setnew_delnthsorted">-</a>
  *
  * qh_setnew_delnthsorted( set, size, nth, prepend ) creates a sorted set not containing nth element
- * if prepend, the first prepend elements are undefined
+ *if prepend, the first prepend elements are undefined
  *
  * notes:
  *  set must be defined checks nth see also: setdelnthsorted
  *
  * design:
  *  create new set setup pointers and allocate room for prepend'ed entries append head of old set to
- * new set append tail of old set to new set
+ *new set append tail of old set to new set
  */
 setT *qh_setnew_delnthsorted(setT *set, int size, int nth, int prepend)
 {
@@ -1117,7 +1117,7 @@ void qh_setprint(FILE *fp, const char *string, setT *set)
  *
  * notes:
  *  errors if oldelem not in the set newelem may be NULL, but it turns the set into an indexed set
- * (no FOREACH)
+ *(no FOREACH)
  *
  * design:
  *  find oldelem replace with newelem
@@ -1152,7 +1152,7 @@ void qh_setreplace(setT *set, void *oldelem, void *newelem)
  *
  * notes:
  *  errors if set's maxsize is incorrect same as SETreturnsize_(set) same code for qh_setsize
- * [qset.c] and QhullSetBase::count
+ *[qset.c] and QhullSetBase::count
  *
  * design:
  *  determine actual size of set from maxsize

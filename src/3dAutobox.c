@@ -43,12 +43,10 @@ int THD_fill_char_int_3_ijk(THD_dataxes *daxes, char ostr[4])
     }
 
     /*
-     * INFO_message("TEST1: %d %d %d",
-     *           ORIENT_xyzint[daxes->xxorient]-1,
-     *           ORIENT_xyzint[daxes->yyorient]-1, ORIENT_xyzint[daxes->zzorient]-1);
+     * INFO_message("TEST1: %d %d %d", ORIENT_xyzint[daxes->xxorient]-1,
+     *ORIENT_xyzint[daxes->yyorient]-1, ORIENT_xyzint[daxes->zzorient]-1);
      * INFO_message("TEST1: %c %c %c", ref_str[ORIENT_xyzint[daxes->xxorient]-1 ],
-     *           ref_str[ORIENT_xyzint[daxes->yyorient]-1 ],
-     *           ref_str[ORIENT_xyzint[daxes->zzorient]-1 ]);
+     *ref_str[ORIENT_xyzint[daxes->yyorient]-1 ], ref_str[ORIENT_xyzint[daxes->zzorient]-1 ]);
      */
 
     ostr[0] = ref_str[ORIENT_xyzint[daxes->xxorient] - 1];
@@ -224,8 +222,7 @@ int main(int argc, char *argv[])
     /* PT: default output ordering of IJK depends on the dset orientation, so we don't actually
      * which indices go along the z-direction, like if we wanted to make a 3dcalc expression using
      * 'k' to select rows.  This array contains the IJK extents ordered so the first pair is along
-     * the x-direction, second pair along the y-direction and third along z-direction.  Used with
-     * the
+     *the x-direction, second pair along the y-direction and third along z-direction.  Used with the
      * "-*ijkord*" opts
      */
     int  ijk_as_rai[6] = { -1, -1, -1, -1, -1 };
@@ -233,7 +230,7 @@ int main(int argc, char *argv[])
 
     /* PT: default npad can give indices outside dset.  Activating this flag with the
      * '-npad_safety_on' opt will constrain each index to be in range [0, L-1], where L is matrix
-     * size along that dim.
+     *size along that dim.
      */
     int DO_NPAD_SAFELY = 0;
 

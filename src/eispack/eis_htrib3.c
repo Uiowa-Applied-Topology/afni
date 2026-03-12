@@ -1,21 +1,21 @@
-/* htrib3.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* htrib3.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int htrib3_(integer *nm, integer *n, doublereal *a, 
-	doublereal *tau, integer *m, doublereal *zr, doublereal *zi)
+/* Subroutine */ int htrib3_(integer *nm, integer *n, doublereal *a,
+                             doublereal *tau, integer *m, doublereal *zr, doublereal *zi)
 {
     /* System generated locals */
-    integer a_dim1, a_offset, zr_dim1, zr_offset, zi_dim1, zi_offset, i__1, 
-	    i__2, i__3;
+    integer a_dim1, a_offset, zr_dim1, zr_offset, zi_dim1, zi_offset, i__1,
+            i__2, i__3;
 
     /* Local variables */
     doublereal h__;
-    integer i__, j, k, l;
+    integer    i__, j, k, l;
     doublereal s, si;
 
 
@@ -57,91 +57,104 @@
 /*     IS REAL AND THAT VECTOR EUCLIDEAN NORMS ARE PRESERVED. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    tau -= 3;
-    a_dim1 = *nm;
-    a_offset = a_dim1 + 1;
-    a -= a_offset;
-    zi_dim1 = *nm;
+    tau      -= 3;
+    a_dim1    = *nm;
+    a_offset  = a_dim1 + 1;
+    a        -= a_offset;
+    zi_dim1   = *nm;
     zi_offset = zi_dim1 + 1;
-    zi -= zi_offset;
-    zr_dim1 = *nm;
+    zi       -= zi_offset;
+    zr_dim1   = *nm;
     zr_offset = zr_dim1 + 1;
-    zr -= zr_offset;
+    zr       -= zr_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
 /*     .......... TRANSFORM THE EIGENVECTORS OF THE REAL SYMMETRIC */
 /*                TRIDIAGONAL MATRIX TO THOSE OF THE HERMITIAN */
 /*                TRIDIAGONAL MATRIX. .......... */
     i__1 = *n;
-    for (k = 1; k <= i__1; ++k) {
-
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    zi[k + j * zi_dim1] = -zr[k + j * zr_dim1] * tau[(k << 1) + 2];
-	    zr[k + j * zr_dim1] *= tau[(k << 1) + 1];
+    for (k = 1; k <= i__1; ++k)
+    {
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            zi[k + j * zi_dim1]  = -zr[k + j * zr_dim1] * tau[(k << 1) + 2];
+            zr[k + j * zr_dim1] *= tau[(k << 1) + 1];
 /* L50: */
-	}
+        }
     }
 
-    if (*n == 1) {
-	goto L200;
+    if (*n == 1)
+    {
+        goto L200;
     }
 /*     .......... RECOVER AND APPLY THE HOUSEHOLDER MATRICES .......... */
     i__2 = *n;
-    for (i__ = 2; i__ <= i__2; ++i__) {
-	l = i__ - 1;
-	h__ = a[i__ + i__ * a_dim1];
-	if (h__ == 0.) {
-	    goto L140;
-	}
+    for (i__ = 2; i__ <= i__2; ++i__)
+    {
+        l   = i__ - 1;
+        h__ = a[i__ + i__ * a_dim1];
+        if (h__ == 0.)
+        {
+            goto L140;
+        }
 
-	i__1 = *m;
-	for (j = 1; j <= i__1; ++j) {
-	    s = 0.;
-	    si = 0.;
+        i__1 = *m;
+        for (j = 1; j <= i__1; ++j)
+        {
+            s  = 0.;
+            si = 0.;
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
-		s = s + a[i__ + k * a_dim1] * zr[k + j * zr_dim1] - a[k + i__ 
-			* a_dim1] * zi[k + j * zi_dim1];
-		si = si + a[i__ + k * a_dim1] * zi[k + j * zi_dim1] + a[k + 
-			i__ * a_dim1] * zr[k + j * zr_dim1];
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
+                s = s + a[i__ + k * a_dim1] * zr[k + j * zr_dim1] - a[k + i__
+                                                                      * a_dim1] *
+                    zi[k + j * zi_dim1];
+                si = si + a[i__ + k * a_dim1] * zi[k + j * zi_dim1] + a[k +
+                                                                        i__ * a_dim1] *
+                     zr[k + j * zr_dim1];
 /* L110: */
-	    }
-/*     .......... DOUBLE DIVISIONS AVOID POSSIBLE UNDERFLOW ......
-.... */
-	    s = s / h__ / h__;
-	    si = si / h__ / h__;
+            }
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
-		zr[k + j * zr_dim1] = zr[k + j * zr_dim1] - s * a[i__ + k * 
-			a_dim1] - si * a[k + i__ * a_dim1];
-		zi[k + j * zi_dim1] = zi[k + j * zi_dim1] - si * a[i__ + k * 
-			a_dim1] + s * a[k + i__ * a_dim1];
+/*     .......... DOUBLE DIVISIONS AVOID POSSIBLE UNDERFLOW ......
+ * .... */
+            s  = s / h__ / h__;
+            si = si / h__ / h__;
+
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
+                zr[k + j * zr_dim1] = zr[k + j * zr_dim1] - s * a[i__ + k *
+                                                                  a_dim1] - si *
+                                      a[k + i__ * a_dim1];
+                zi[k + j * zi_dim1] = zi[k + j * zi_dim1] - si * a[i__ + k *
+                                                                   a_dim1] + s *
+                                      a[k + i__ * a_dim1];
 /* L120: */
-	    }
+            }
 
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* htrib3_ */
-

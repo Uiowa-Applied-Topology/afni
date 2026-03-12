@@ -1,8 +1,8 @@
 /*****************************************************************************
-   Major portions of this software are copyrighted by the Medical College
-   of Wisconsin, 1994-2000, and are released under the Gnu General Public
-   License, Version 2.  See the file README.Copyright for details.
-******************************************************************************/
+ * Major portions of this software are copyrighted by the Medical College of Wisconsin, 1994-2000,
+ *and are released under the Gnu General Public License, Version 2.  See the file README.Copyright
+ *for details.
+ ******************************************************************************/
 
 #include "mrilib.h"
 
@@ -10,26 +10,28 @@
 
 /*** Makes a 2D image that is a given function of (x,y) ***/
 
-MRI_IMAGE * mri_float_func( int   nx    , int   ny ,
-                            float xzero , float yzero ,
-                            float dx    , float dy ,
-                            float (* func)( float , float ) )
+MRI_IMAGE * mri_float_func(int nx, int ny,
+                           float xzero, float yzero,
+                           float dx, float dy,
+                           float (* func)(float, float))
 {
-   int ii , jj , jpos ;
-   float yy ;
-   MRI_IMAGE * im ;
-   float *     flim ;
+    int        ii, jj, jpos;
+    float      yy;
+    MRI_IMAGE *im;
+    float *    flim;
 
-   im   = mri_new( nx ,ny , MRI_float ) ;
-   flim = mri_data_pointer( im ) ;
+    im   = mri_new(nx, ny, MRI_float);
+    flim = mri_data_pointer(im);
 
-   for( jj=0 ; jj < ny ; jj++ ){
-      jpos = nx * jj ;
-      yy   = yzero + jj * dy ;
-      for( ii=0 ; ii < nx ; ii++ ){
-         flim[ii+jpos] = func( xzero + ii*dx , yy ) ;
-      }
-   }
+    for (jj = 0 ; jj < ny ; jj++)
+    {
+        jpos = nx * jj;
+        yy   = yzero + jj * dy;
+        for (ii = 0 ; ii < nx ; ii++)
+        {
+            flim[ii + jpos] = func(xzero + ii * dx, yy);
+        }
+    }
 
-   return im ;
+    return im;
 }

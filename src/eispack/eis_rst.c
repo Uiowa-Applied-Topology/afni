@@ -1,22 +1,23 @@
-/* rst.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rst.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int rst_(integer *nm, integer *n, doublereal *w, doublereal *
-	e, integer *matz, doublereal *z__, integer *ierr)
+                          e, integer *matz, doublereal *z__, integer *ierr)
 {
     /* System generated locals */
     integer z_dim1, z_offset, i__1, i__2;
 
     /* Local variables */
     integer i__, j;
+
     extern /* Subroutine */ int imtql1_(integer *, doublereal *, doublereal *,
-	     integer *), imtql2_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, integer *);
+                                        integer *), imtql2_(integer *, integer *, doublereal *,
+                                                            doublereal *, doublereal *, integer *);
 
 
 
@@ -54,31 +55,34 @@
 /*           AND IMTQL2.  THE NORMAL COMPLETION CODE IS ZERO. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --e;
     --w;
 
     /* Function Body */
-    if (*n <= *nm) {
-	goto L10;
+    if (*n <= *nm)
+    {
+        goto L10;
     }
     *ierr = *n * 10;
     goto L50;
 
 L10:
-    if (*matz != 0) {
-	goto L20;
+    if (*matz != 0)
+    {
+        goto L20;
     }
 /*     .......... FIND EIGENVALUES ONLY .......... */
     imtql1_(n, &w[1], &e[1], ierr);
@@ -86,15 +90,16 @@ L10:
 /*     .......... FIND BOTH EIGENVALUES AND EIGENVECTORS .......... */
 L20:
     i__1 = *n;
-    for (i__ = 1; i__ <= i__1; ++i__) {
-
-	i__2 = *n;
-	for (j = 1; j <= i__2; ++j) {
-	    z__[j + i__ * z_dim1] = 0.;
+    for (i__ = 1; i__ <= i__1; ++i__)
+    {
+        i__2 = *n;
+        for (j = 1; j <= i__2; ++j)
+        {
+            z__[j + i__ * z_dim1] = 0.;
 /* L30: */
-	}
+        }
 
-	z__[i__ + i__ * z_dim1] = 1.;
+        z__[i__ + i__ * z_dim1] = 1.;
 /* L40: */
     }
 
@@ -102,4 +107,3 @@ L20:
 L50:
     return 0;
 } /* rst_ */
-

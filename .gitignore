@@ -72,3 +72,5 @@ AFNI_version.h
 .direnv
 *unc-backup*
 *uncrustify*
+.emcache/
+.build/

@@ -1,74 +1,68 @@
-
 /*----------------------------------------------------------------------
  * serial_helper.c    - pass data from plug_realtime to serial port
  *
- * This program is meant to run as a tcp server.  The intention is
- * to read motion parameter data from the realtime plugin to afni,
- * and to write this data to a serial port.
+ * This program is meant to run as a tcp server.  The intention is to read motion parameter data
+ *from the realtime plugin to afni, and to write this data to a serial port.
  *
  * The basic outline is:
  *
- *     open tcp socket
- *     for ever
- *         wait for socket connection (listen())...
- *         open serial port
- *         while data is coming from tcp socket
- *             write data to serial port
- *         close serial port and data socket
+ *     open tcp socket for ever wait for socket connection (listen())...
+ *         open serial port while data is coming from tcp socket write data to serial port close
+ *serial port and data socket
  *
  * This program was written for Tom Ross.
  *----------------------------------------------------------------------
  */
 
 static char g_history[] =
- "----------------------------------------------------------------------\n"
- " history:\n"
- "\n"
- " 0.1  March 25, 2004  [tross]\n"
- "    - basic outline with serial functions\n"
- "\n"
- " 1.0  March 31, 2004  [rickr]\n"
- "    - initial full release\n"
- "\n"
- " 1.1  April 1, 2004  [rickr]\n"
- "    - added a little more to the -help section\n"
- "\n"
- " 1.2  April 1, 2004  [rickr]\n"
- "    - complain about bad options\n"
- "\n"
- " 1.3  April 2, 2004  [tross/rickr]\n"
- "    - set SH_DEF_MIN_FVAL to -12.7\n"
- "    - use -128 as the special value denoting start of serial data\n"
- "\n"
- " 1.4  April 7, 2004  [rickr]\n"
- "    - added 'sys/file.h' for solaris builds (thanks, Vince)\n"
- "\n"
- " 1.4a March 22, 2005  [rickr]\n"
- "    - removed all tabs\n"
- "\n"
- " 1.5  November 11, 2006 [rickr]\n"
- "    - added -num_extras option, for processing extra floats per TR\n"
- "\n"
- " 1.6  November 15, 2006 [rickr]\n"
- "    - encode nex in handshake byte written to serial port each TR\n"
- "\n"
- " 1.7  July 16, 2008 [rickr]\n"
- "    - added -disp_all for P Kundu\n"
- "\n"
- " 1.8  July 29, 2008 [rickr]\n"
- "    - captured more exit signals\n"
- "    - enhanced failure text\n"
- "    - flushed output buffer\n"
- "\n"
- " 1.9  July 30, 2008 [rickr]\n"
- "    - added handshake interface for HELLO version 1 (old is version 0)\n"
- "    - added -show_times option\n"
- " 1.10 December 5, 2012 [rickr]\n"
- "    - use unnecessary %s in snprintf to avoid compiler warning\n"
- "    - requested by Y Halchenko\n"
- "----------------------------------------------------------------------\n";
+    "----------------------------------------------------------------------\n"
+    " history:\n"
+    "\n"
+    " 0.1  March 25, 2004  [tross]\n"
+    "    - basic outline with serial functions\n"
+    "\n"
+    " 1.0  March 31, 2004  [rickr]\n"
+    "    - initial full release\n"
+    "\n"
+    " 1.1  April 1, 2004  [rickr]\n"
+    "    - added a little more to the -help section\n"
+    "\n"
+    " 1.2  April 1, 2004  [rickr]\n"
+    "    - complain about bad options\n"
+    "\n"
+    " 1.3  April 2, 2004  [tross/rickr]\n"
+    "    - set SH_DEF_MIN_FVAL to -12.7\n"
+    "    - use -128 as the special value denoting start of serial data\n"
+    "\n"
+    " 1.4  April 7, 2004  [rickr]\n"
+    "    - added 'sys/file.h' for solaris builds (thanks, Vince)\n"
+    "\n"
+    " 1.4a March 22, 2005  [rickr]\n"
+    "    - removed all tabs\n"
+    "\n"
+    " 1.5  November 11, 2006 [rickr]\n"
+    "    - added -num_extras option, for processing extra floats per TR\n"
+    "\n"
+    " 1.6  November 15, 2006 [rickr]\n"
+    "    - encode nex in handshake byte written to serial port each TR\n"
+    "\n"
+    " 1.7  July 16, 2008 [rickr]\n"
+    "    - added -disp_all for P Kundu\n"
+    "\n"
+    " 1.8  July 29, 2008 [rickr]\n"
+    "    - captured more exit signals\n"
+    "    - enhanced failure text\n"
+    "    - flushed output buffer\n"
+    "\n"
+    " 1.9  July 30, 2008 [rickr]\n"
+    "    - added handshake interface for HELLO version 1 (old is version 0)\n"
+    "    - added -show_times option\n"
+    " 1.10 December 5, 2012 [rickr]\n"
+    "    - use unnecessary %s in snprintf to avoid compiler warning\n"
+    "    - requested by Y Halchenko\n"
+    "----------------------------------------------------------------------\n";
 
-#define VERSION "1.10 (December 5, 2012)"
+#define VERSION    "1.10 (December 5, 2012)"
 
 #include <stdio.h>   /* Standard input/output definitions */
 #include <string.h>  /* String function definitions */
@@ -86,41 +80,40 @@ static char g_history[] =
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define SH_MAX_VALS            6
+#define SH_MAX_VALS        6
 #define SH_DEF_MIN_FVAL    -12.7
-#define SH_DEF_MAX_FVAL     12.7
+#define SH_DEF_MAX_FVAL    12.7
 #define SH_DEF_SOCKET      53214
 
-#define SH_USE_HIST            1
-#define SH_USE_VERSION         2
-#define SH_USE_SHORT           3
-#define SH_USE_LONG            4
+#define SH_USE_HIST        1
+#define SH_USE_VERSION     2
+#define SH_USE_SHORT       3
+#define SH_USE_LONG        4
 
-#define CHECK_NULL_STR(str) ( str ? str : "(NULL)" )
+#define CHECK_NULL_STR(str)    (str ? str : "(NULL)")
 
-typedef struct{
-    char  * serial_port;
-    int     no_serial;
-    float   mp_min;
-    float   mp_max;
-    int     sock_num;
-    int     num_extra;          /* number of extra data values per TR */
-    int     disp_all;           /* flag to display all results */
-    int     show_times;         /* flag to display data times */
-    int     swap;
-    int     debug;
+typedef struct {
+    char *serial_port;
+    int   no_serial;
+    float mp_min;
+    float mp_max;
+    int   sock_num;
+    int   num_extra;            /* number of extra data values per TR */
+    int   disp_all;             /* flag to display all results */
+    int   show_times;           /* flag to display data times */
+    int   swap;
+    int   debug;
 } optiondata;
 
 typedef struct {
-    int     nread;              /* number of instances processed */
-    int     nvals;
-    int     nex;                /* opt->num_extra */
-    float   data[SH_MAX_VALS];
-    float * extras;             /* extra data values received per TR */
+    int    nread;               /* number of instances processed */
+    int    nvals;
+    int    nex;                 /* opt->num_extra */
+    float  data[SH_MAX_VALS];
+    float *extras;              /* extra data values received per TR */
 } motparm;
 
-typedef struct
-{
+typedef struct {
     int debug;                  /* for global access in clean_n_exit() */
     int sport;
     int tdata_sd;
@@ -128,23 +121,23 @@ typedef struct
 } port_list;
 
 
-int   alloc_extras         ( motparm * mp, int nex );
-void  clean_n_exit         ( int sig_num );
-int   close_data_ports     ( port_list * plist );
-int   disp_optiondata      ( char * info, optiondata * D );
-int   format_output        ( optiondata * opt, motparm * mp, char ** outstr,
-                                                             int * oslen);
-int   get_options          ( optiondata *opt, motparm * mp, port_list * plist,
-                             int argc, char *argv[] );
-int   init_structs         ( optiondata *opt, motparm * mp, port_list * plist );
-int   open_incoming_socket ( optiondata *opt, port_list * plist );
-int   open_serial          ( optiondata *opt, port_list * plist );
-int   read_socket          ( optiondata *opt, port_list * plist, motparm * mp );
-void  send_serial          ( optiondata * opt, port_list * plist, motparm *mot);
-int   show_time            ( char * mesg );
-void  swap_4               ( void * data, int nswaps );
-int   usage                ( char * prog, int level );
-int   wait_for_socket      ( optiondata *opt, port_list * plist, motparm *mot );
+int   alloc_extras(motparm *mp, int nex);
+void  clean_n_exit(int sig_num);
+int   close_data_ports(port_list *plist);
+int   disp_optiondata(char *info, optiondata *D);
+int   format_output(optiondata *opt, motparm *mp, char **outstr,
+                    int *oslen);
+int   get_options(optiondata *opt, motparm *mp, port_list *plist,
+                  int argc, char *argv[]);
+int   init_structs(optiondata *opt, motparm *mp, port_list *plist);
+int   open_incoming_socket(optiondata *opt, port_list *plist);
+int   open_serial(optiondata *opt, port_list *plist);
+int   read_socket(optiondata *opt, port_list *plist, motparm *mp);
+void  send_serial(optiondata *opt, port_list *plist, motparm *mot);
+int   show_time(char *mesg);
+void  swap_4(void *data, int nswaps);
+int   usage(char *prog, int level);
+int   wait_for_socket(optiondata *opt, port_list *plist, motparm *mot);
 
 /* global port numbers, for clean_n_exit */
 static port_list g_ports;
@@ -155,48 +148,66 @@ static int  g_magic_len   = 4;
 
 int main(int argc, char *argv[])
 {
-    optiondata  opt;
-    motparm     mp;  
-    port_list * plist = &g_ports;
-    int         rv;
+    optiondata opt;
+    motparm    mp;
+    port_list *plist = &g_ports;
+    int        rv;
 
-    if ( (rv = get_options(&opt, &mp, plist, argc, argv)) != 0 ) {
+    if ((rv = get_options(&opt, &mp, plist, argc, argv)) != 0)
+    {
         /* return 0 on terminal success */
-        if( rv > 0 ) return 0;
-        else         return 1;
+        if (rv > 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
     }
-    
+
     /* register interrupt trap */
-    signal( SIGHUP,  clean_n_exit );
-    signal( SIGINT,  clean_n_exit );
-    signal( SIGQUIT, clean_n_exit );
-    signal( SIGKILL, clean_n_exit );
-    signal( SIGTERM, clean_n_exit );
-    
-    if ( (rv = open_incoming_socket(&opt, plist)) < 0 )
+    signal(SIGHUP, clean_n_exit);
+    signal(SIGINT, clean_n_exit);
+    signal(SIGQUIT, clean_n_exit);
+    signal(SIGKILL, clean_n_exit);
+    signal(SIGTERM, clean_n_exit);
+
+    if ((rv = open_incoming_socket(&opt, plist)) < 0)
+    {
         return rv;
+    }
 
     while (1)           /* run until interrupt or error (consider restart?) */
     {
-        mp.nread = 0;           /* reset our counter */
+        mp.nread = 0;   /* reset our counter */
 
         /* wait for AFNI to talk to us */
-        if ( (rv = wait_for_socket(&opt, plist, &mp)) < 0 ) {
+        if ((rv = wait_for_socket(&opt, plist, &mp)) < 0)
+        {
             clean_n_exit(0);
             return rv;
         }
 
-        if ( ! opt.no_serial )
-            if ( (rv = open_serial(&opt, plist)) != 0 )
+        if (!opt.no_serial)
+        {
+            if ((rv = open_serial(&opt, plist)) != 0)
+            {
                 return rv;
+            }
+        }
 
         /* read data while it is there */
-        while ( (rv = read_socket(&opt, plist, &mp)) == 0)
-            if ( ! opt.no_serial )
+        while ((rv = read_socket(&opt, plist, &mp)) == 0)
+        {
+            if (!opt.no_serial)
+            {
                 send_serial(&opt, plist, &mp);
+            }
+        }
 
         close_data_ports(plist);
-    } 
+    }
 
     return 0;   /* should not be reached, of course */
 }
@@ -209,59 +220,80 @@ int readnclose(int sd, int verb)
     char           buf[4];
     int            rv;
 
-    if( sd <= 0 ) return 0;
+    if (sd <= 0)
+    {
+        return 0;
+    }
 
     FD_ZERO(&fd);  FD_SET(sd, &fd);
 
     tv.tv_sec = 0; tv.tv_usec = 2;
 
-    rv = select(sd+1, &fd, NULL, NULL, &tv);
-    if( rv == -1 ) perror("socket bad on readnclose");
+    rv = select(sd + 1, &fd, NULL, NULL, &tv);
+    if (rv == -1)
+    {
+        perror("socket bad on readnclose");
+    }
 
-    if( verb ) fprintf(stderr,"-- select returns %d for fd %d\n", rv, sd);
+    if (verb)
+    {
+        fprintf(stderr, "-- select returns %d for fd %d\n", rv, sd);
+    }
 
     /* maybe we're done */
-    if( !rv ) { close(sd); return 0; }
+    if (!rv)
+    {
+        close(sd); return 0;
+    }
 
     /* otherwise, do a test read */
     rv = recv(sd, buf, 1, MSG_PEEK);
 
-    if( verb ) fprintf(stderr,"-- recv returns %d for fd %d\n", rv, sd);
+    if (verb)
+    {
+        fprintf(stderr, "-- recv returns %d for fd %d\n", rv, sd);
+    }
 
     return rv;
 }
+
 #endif
 
 /* ----------------------------------------------------------------------
  * close serial port and data socket
  * ----------------------------------------------------------------------
  */
-int close_data_ports( port_list * plist )
+int close_data_ports(port_list *plist)
 {
-    if ( plist->sport      != 0 ) close(plist->sport);
-    if ( plist->tdata_sd   != 0 ) close(plist->tdata_sd);
+    if (plist->sport != 0)
+    {
+        close(plist->sport);
+    }
+    if (plist->tdata_sd != 0)
+    {
+        close(plist->tdata_sd);
+    }
 
     plist->sport = plist->tdata_sd = 0;
 
     return 0;
 }
 
-
 /* ----------------------------------------------------------------------
  * block until data comes return the open socket
  *
- * we expect to read g_magic_hi 
+ * we expect to read g_magic_hi
  * ----------------------------------------------------------------------
  */
-int wait_for_socket(optiondata *opt, port_list * plist, motparm * mp)
+int wait_for_socket(optiondata *opt, port_list *plist, motparm *mp)
 {
     struct sockaddr_in sin;
-    char               data[8];
-    int                sd, len, ver, nex;
+    char data[8];
+    int  sd, len, ver, nex;
 
     len = sizeof(sin);
     /* block until a connection is made */
-    if ( (sd = accept(plist->tserver_sd, (struct sockaddr *)&sin, &len)) == -1 )
+    if ((sd = accept(plist->tserver_sd, (struct sockaddr *)&sin, &len)) == -1)
     {
         perror("wait for socket: accept");
         return -1;
@@ -269,65 +301,88 @@ int wait_for_socket(optiondata *opt, port_list * plist, motparm * mp)
 
     plist->tdata_sd = sd;
 
-    if ( opt->debug > 0 )
-        fprintf(stderr,"++ accepting call from '%s'\n",inet_ntoa(sin.sin_addr));
-    if ( opt->show_times )
+    if (opt->debug > 0)
+    {
+        fprintf(stderr, "++ accepting call from '%s'\n", inet_ntoa(sin.sin_addr));
+    }
+    if (opt->show_times)
+    {
         show_time("accepted connection");
+    }
 
-    if ( (len = recv(sd, data, g_magic_len, 0)) == -1 )
+    if ((len = recv(sd, data, g_magic_len, 0)) == -1)
     {
         perror("wait for socket: recv");
         return -1;
     }
 
     /* check the first 3 bytes of magic_hi, with the 4th determining version */
-    if ( strncmp(data, g_magic_hi, g_magic_len-1) != 0 )
+    if (strncmp(data, g_magic_hi, g_magic_len - 1) != 0)
     {
         fprintf(stderr, "** bad data on socket: 0x%02hhx%02hhx%02hhx%02hhx\n",
-                data[0], data[1], data[2], data[3] );
+                data[0], data[1], data[2], data[3]);
         return -1;
     }
 
     /* Hey, they said the magic word! */
 
-    if ( opt->debug > 0 )
+    if (opt->debug > 0)
+    {
         fprintf(stderr,
                 "++ received hello on socket: 0x%02hhx%02hhx%02hhx%02hhx\n",
                 data[0], data[1], data[2], data[3]);
+    }
 
     /* check the hello version */
     ver = data[3] - (char)0xab;
-    if( ver == 1 || ver == 2 ) {
+    if (ver == 1 || ver == 2)
+    {
         /* version 1: also receive num_extra over socket */
         /* version 2: also receive disp_all voxels over socket */
-        if ( (len = recv(sd, (void *)&nex, sizeof(int), 0)) == -1 )
+        if ((len = recv(sd, (void *)&nex, sizeof(int), 0)) == -1)
         {
             perror("wait for socket: recv");
             return -1;
-        } else if ( len != sizeof(int) ) {
-            fprintf(stderr,"** received only %d of 4 bytes for nextra\n",len);
+        }
+        else if (len != sizeof(int))
+        {
+            fprintf(stderr, "** received only %d of 4 bytes for nextra\n", len);
             return -1;
         }
-        if ( opt->show_times ) show_time("received num_extra");
+        if (opt->show_times)
+        {
+            show_time("received num_extra");
+        }
 
         /* have num extra, apply it */
-        if ( opt->swap ) swap_4(&nex, 1);
+        if (opt->swap)
+        {
+            swap_4(&nex, 1);
+        }
 
         /* modify num_extras and disp_all, depending on the version */
-        if( ver == 2 ) {
+        if (ver == 2)
+        {
             opt->disp_all = 1;
-            nex *= 8;
-        } else
+            nex          *= 8;
+        }
+        else
+        {
             opt->disp_all = 0;
+        }
 
-        fprintf(stderr,"++ hello version %d, received nextra = %d (was %d)\n",
+        fprintf(stderr, "++ hello version %d, received nextra = %d (was %d)\n",
                 ver, nex, mp->nex);
 
         /* we may want to alloc some/more/less memory for this */
-        if( mp->nex != nex && alloc_extras(mp, nex) ) return -1;
-
-    } else if ( ver != 0 ) {
-        fprintf(stderr,"** bad magic version from socket: %d\n",ver);
+        if (mp->nex != nex && alloc_extras(mp, nex))
+        {
+            return -1;
+        }
+    }
+    else if (ver != 0)
+    {
+        fprintf(stderr, "** bad magic version from socket: %d\n", ver);
         return -1;
     } /* else, default hello version */
 
@@ -340,23 +395,30 @@ int wait_for_socket(optiondata *opt, port_list * plist, motparm * mp)
  * return 0 on success
  * ----------------------------------------------------------------------
  */
-int alloc_extras(motparm * mp, int nex)
+int alloc_extras(motparm *mp, int nex)
 {
-    if ( mp->nex == nex ) return 0;
+    if (mp->nex == nex)
+    {
+        return 0;
+    }
 
     mp->nex = nex;
 
-    if( nex <= 0 ) {    /* then free any pointer and return */
-        if( mp->extras ) { free(mp->extras); mp->extras = NULL; }
+    if (nex <= 0)       /* then free any pointer and return */
+    {
+        if (mp->extras)
+        {
+            free(mp->extras); mp->extras = NULL;
+        }
         mp->nex = 0;
         return 0;
     }
 
     /* else update the memory */
-    mp->extras = (float *)realloc(mp->extras, mp->nex*sizeof(float));
-    if( !mp->extras )
+    mp->extras = (float *)realloc(mp->extras, mp->nex * sizeof(float));
+    if (!mp->extras)
     {
-        fprintf(stderr,"** failed to alloc for %d extra floats\n", mp->nex);
+        fprintf(stderr, "** failed to alloc for %d extra floats\n", mp->nex);
         return 1;
     }
 
@@ -367,59 +429,67 @@ int alloc_extras(motparm * mp, int nex)
  * show the current time, at the ms resolution, modulo an hour
  * ----------------------------------------------------------------------
  */
-int show_time( char * mesg )
+int show_time(char *mesg)
 {
-   struct timeval  tval ;
-   struct timezone tzone ;
+    struct timeval  tval;
+    struct timezone tzone;
 
-   gettimeofday( &tval , &tzone ) ;
+    gettimeofday(&tval, &tzone);
 
-   if( mesg ) fprintf(stderr,"++ SH TIME (%s): ", mesg);
-   else       fprintf(stderr,"++ SH TIME : ");
+    if (mesg)
+    {
+        fprintf(stderr, "++ SH TIME (%s): ", mesg);
+    }
+    else
+    {
+        fprintf(stderr, "++ SH TIME : ");
+    }
 
-   fprintf(stderr,"%d seconds, %d ms\n", ((int)tval.tv_sec)%3600,
-                                         ((int)tval.tv_usec)/1000);
+    fprintf(stderr, "%d seconds, %d ms\n", ((int)tval.tv_sec) % 3600,
+            ((int)tval.tv_usec) / 1000);
 
-   return 0;
+    return 0;
 }
 
 /* ---------------------------------------------------------------------- */
 /* create the socket, and announce that we are listening                  */
-int open_incoming_socket( optiondata * opt, port_list * plist )
+int open_incoming_socket(optiondata *opt, port_list *plist)
 {
     struct sockaddr_in sin;
-    int                sd;
+    int sd;
 
-    if ( opt->sock_num < 5000 || opt->sock_num > 65535 )
+    if (opt->sock_num < 5000 || opt->sock_num > 65535)
     {
         fprintf(stderr, "** bad socket number: %d\n", opt->sock_num);
         return -1;
     }
 
-    if ( opt->debug > 1 )
-        fprintf(stderr,"-- attempting to open port %d\n", opt->sock_num);
+    if (opt->debug > 1)
+    {
+        fprintf(stderr, "-- attempting to open port %d\n", opt->sock_num);
+    }
 
     /* create a comm. endpoint */
-    if ( (sd = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
+    if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror("open incoming socket: socket");
         return sd;
     }
 
-    memset( &sin, 0, sizeof(sin) );
+    memset(&sin, 0, sizeof(sin));
     sin.sin_family      = AF_INET;
     sin.sin_addr.s_addr = INADDR_ANY;
     sin.sin_port        = htons(opt->sock_num);
 
     /* actually bind the port to the socket */
-    if ( bind(sd, (struct sockaddr *)&sin, sizeof(sin)) == -1 )
+    if (bind(sd, (struct sockaddr *)&sin, sizeof(sin)) == -1)
     {
         perror("open incoming socket: bind");
         return -1;
     }
 
     /* announce that we are ready to accept connections */
-    if ( listen(sd, 3) == -1 )
+    if (listen(sd, 3) == -1)
     {
         perror("open incoming socket: listen");
         return -1;
@@ -430,9 +500,11 @@ int open_incoming_socket( optiondata * opt, port_list * plist )
     /* store the socket descriptor and return success */
     plist->tserver_sd = sd;
 
-    if ( opt->debug > 0 )
-        fprintf(stderr,"++ port %d open (sd = %d), listening...\n",
+    if (opt->debug > 0)
+    {
+        fprintf(stderr, "++ port %d open (sd = %d), listening...\n",
                 opt->sock_num, sd);
+    }
 
     return 0;
 }
@@ -441,11 +513,11 @@ int open_incoming_socket( optiondata * opt, port_list * plist )
  * initialize data structures
  * ----------------------------------------------------------------------
  */
-int init_structs( optiondata *opt, motparm * mp, port_list * plist )
+int init_structs(optiondata *opt, motparm *mp, port_list *plist)
 {
-    memset(opt,   0, sizeof(*opt)  );
+    memset(opt, 0, sizeof(*opt));
     memset(plist, 0, sizeof(*plist));
-    memset(mp,    0, sizeof(*mp)   );
+    memset(mp, 0, sizeof(*mp));
 
     opt->serial_port = NULL;
     opt->mp_min      = SH_DEF_MIN_FVAL;
@@ -455,140 +527,161 @@ int init_structs( optiondata *opt, motparm * mp, port_list * plist )
     return 0;
 }
 
-
 /* close any open ports (to possibly catch an interrupt) */
 void clean_n_exit(int sig_num)
 {
-    if ( g_ports.debug > 0 )
+    if (g_ports.debug > 0)
     {
         fputs("-- final check: closing ports\n", stderr);
-        if ( g_ports.debug > 1 )
+        if (g_ports.debug > 1)
         {
-            fprintf(stderr,"   descriptors: ser = %d, data = %d, serv = %d\n",
+            fprintf(stderr, "   descriptors: ser = %d, data = %d, serv = %d\n",
                     g_ports.sport, g_ports.tdata_sd, g_ports.tserver_sd);
-            fprintf(stderr,"-- sig_num = %d\n", sig_num);
+            fprintf(stderr, "-- sig_num = %d\n", sig_num);
         }
         fflush(stderr);
     }
 
     close_data_ports(&g_ports);
-    if ( g_ports.tserver_sd ) close(g_ports.tserver_sd); /* only at exit */
-
+    if (g_ports.tserver_sd)
+    {
+        close(g_ports.tserver_sd);                       /* only at exit */
+    }
     exit(sig_num);
 }
-        
-#define CHECK_ARG_COUNT(ac,str)         \
-        do {                            \
-            if ((ac+1) >= argc) {       \
-                fputs(str,stderr);      \
-                return -1;              \
-            }                           \
-        } while (0)                     \
+
+#define CHECK_ARG_COUNT(ac, str)    \
+        do {                        \
+            if ((ac + 1) >= argc) { \
+                fputs(str, stderr); \
+                return -1;          \
+            }                       \
+        } while (0)                 \
 
 
-/* return  0 : success with continuation
-           1 : success, but termination
-          -1 : failure
-*/
-int get_options(optiondata *opt, motparm * mp, port_list * plist,
+/* return  0 : success with continuation 1 : success, but termination
+ *        -1 : failure
+ */
+int get_options(optiondata *opt, motparm *mp, port_list *plist,
                 int argc, char *argv[])
 {
-    char * prog = argv[0];
-    int    ac;
+    char *prog = argv[0];
+    int   ac;
 
     init_structs(opt, mp, plist);
 
-    if ( argc < 2 )
-        return usage(prog, SH_USE_SHORT);
-
-    for ( ac = 1; ac < argc; ac++ )   /* help, hist first, rest alphabetical */
+    if (argc < 2)
     {
-        if ( !strncmp(argv[ac], "-help", 5) )
+        return usage(prog, SH_USE_SHORT);
+    }
+
+    for (ac = 1; ac < argc; ac++)     /* help, hist first, rest alphabetical */
+    {
+        if (!strncmp(argv[ac], "-help", 5))
+        {
             return usage(prog, SH_USE_LONG);
-        if ( !strncmp(argv[ac], "-hist", 5) )
+        }
+        if (!strncmp(argv[ac], "-hist", 5))
+        {
             return usage(prog, SH_USE_HIST);
-        else if ( !strncmp(argv[ac], "-debug", 6) )
+        }
+        else if (!strncmp(argv[ac], "-debug", 6))
         {
             CHECK_ARG_COUNT(ac, "opt use: -debug DEBUG_LEVEL\n");
             opt->debug = atoi(argv[++ac]);
         }
-        else if ( !strncmp(argv[ac], "-disp_all", 9) )
+        else if (!strncmp(argv[ac], "-disp_all", 9))
         {
             CHECK_ARG_COUNT(ac, "opt use: -disp_all NVOXELS\n");
-            if( opt->num_extra > 0 ) {
-                fprintf(stderr,"** cannot use both -num_extra and -disp_all\n");
+            if (opt->num_extra > 0)
+            {
+                fprintf(stderr, "** cannot use both -num_extra and -disp_all\n");
                 return -1;
             }
             opt->num_extra = atoi(argv[++ac]) * 8;
-            opt->disp_all = 1;
+            opt->disp_all  = 1;
         }
-        else if ( !strncmp(argv[ac], "-mp_max", 6) )
+        else if (!strncmp(argv[ac], "-mp_max", 6))
         {
             CHECK_ARG_COUNT(ac, "opt use: -mp_max MAX_MP_VAL\n");
             opt->mp_max = atof(argv[++ac]);
         }
-        else if ( !strncmp(argv[ac], "-mp_min", 6) )
+        else if (!strncmp(argv[ac], "-mp_min", 6))
         {
             CHECK_ARG_COUNT(ac, "opt use: -mp_min MIN_MP_VAL\n");
             opt->mp_min = atof(argv[++ac]);
         }
-        else if ( !strncmp(argv[ac], "-no_serial", 7) )
-            opt->no_serial = 1;
-        else if ( !strncmp(argv[ac], "-num_extra", 7) )
+        else if (!strncmp(argv[ac], "-no_serial", 7))
         {
-            if( opt->disp_all ) {
-                fprintf(stderr,"** cannot use both -num_extra and -disp_all\n");
+            opt->no_serial = 1;
+        }
+        else if (!strncmp(argv[ac], "-num_extra", 7))
+        {
+            if (opt->disp_all)
+            {
+                fprintf(stderr, "** cannot use both -num_extra and -disp_all\n");
                 return -1;
             }
             CHECK_ARG_COUNT(ac, "opt use: -num_extra NVALS\n");
             opt->num_extra = atoi(argv[++ac]);
         }
-        else if ( !strncmp(argv[ac], "-serial_port", 7) )
+        else if (!strncmp(argv[ac], "-serial_port", 7))
         {
             CHECK_ARG_COUNT(ac, "opt use: -serial_port SERIAL_FILENAME\n");
             opt->serial_port = argv[++ac];
         }
-        else if ( !strncmp(argv[ac], "-show_times", 5) )
+        else if (!strncmp(argv[ac], "-show_times", 5))
+        {
             opt->show_times = 1;
-        else if ( !strncmp(argv[ac], "-sock_num", 7) )
+        }
+        else if (!strncmp(argv[ac], "-sock_num", 7))
         {
             CHECK_ARG_COUNT(ac, "opt use: -sock_num SOCKET_NUMBER\n");
             opt->sock_num = atoi(argv[++ac]);
         }
-        else if ( !strncmp(argv[ac], "-swap", 5) )
+        else if (!strncmp(argv[ac], "-swap", 5))
+        {
             opt->swap = 1;
-        else if ( !strncmp(argv[ac], "-ver", 4) )
+        }
+        else if (!strncmp(argv[ac], "-ver", 4))
+        {
             return usage(prog, SH_USE_VERSION);
+        }
         else
         {
-            fprintf(stderr,"** invalid option '%s', exiting...\n", argv[ac]);
+            fprintf(stderr, "** invalid option '%s', exiting...\n", argv[ac]);
             return -1;
         }
     }
 
     /* check basic options */
-    if ( opt->sock_num <= 0 || opt->sock_num > 65536 )
+    if (opt->sock_num <= 0 || opt->sock_num > 65536)
     {
-        fprintf(stderr,"** socket number %d is out of range\n", opt->sock_num);
+        fprintf(stderr, "** socket number %d is out of range\n", opt->sock_num);
         return -1;
     }
-    if ( ! opt->serial_port && opt->no_serial == 0 )
+    if (!opt->serial_port && opt->no_serial == 0)
     {
-        fprintf(stderr,"** missing option '-serial_port'\n");
+        fprintf(stderr, "** missing option '-serial_port'\n");
         return -1;
     }
 
-    if ( opt->num_extra < 0 || opt->num_extra > 1000 )
+    if (opt->num_extra < 0 || opt->num_extra > 1000)
     {
-        fprintf(stderr,"** -num_extra %d is out of range [0,1000]\n",
+        fprintf(stderr, "** -num_extra %d is out of range [0,1000]\n",
                 opt->num_extra);
         return -1;
     }
 
-    if( opt->num_extra > 0 ) alloc_extras(mp, opt->num_extra);
+    if (opt->num_extra > 0)
+    {
+        alloc_extras(mp, opt->num_extra);
+    }
 
-    if ( opt->debug > 1 )
-        disp_optiondata( "options read: ", opt );
+    if (opt->debug > 1)
+    {
+        disp_optiondata("options read: ", opt);
+    }
 
     plist->debug = opt->debug;          /* for clean_n_exit() */
     mp->nvals    = 6;
@@ -596,25 +689,29 @@ int get_options(optiondata *opt, motparm * mp, port_list * plist,
     return 0;
 }
 
-
 /* ----------------------------------------------------------------------
  * display usage
  *
- * SH_USE_SHORT   : most basic usage info
- * SH_USE_VERSION : display version number
- * SH_USE_LONG    : display complete description of program and options
+ * SH_USE_SHORT   : most basic usage info SH_USE_VERSION : display version number SH_USE_LONG    :
+ * display complete description of program and options
  * ----------------------------------------------------------------------
  */
-int usage( char * prog, int level )
+int usage(char *prog, int level)
 {
-    if ( level == SH_USE_SHORT )
-        printf( "usage: %s -help\n"
-                "usage: %s [options] -serial_port FILENAME\n", prog, prog );
-    else if ( level == SH_USE_HIST )
-        fputs( g_history, stdout );
-    else if ( level == SH_USE_VERSION )
-        printf( "%s, version %s, compiled %s\n", prog, VERSION, __DATE__ );
-    else if ( level == SH_USE_LONG )
+    if (level == SH_USE_SHORT)
+    {
+        printf("usage: %s -help\n"
+               "usage: %s [options] -serial_port FILENAME\n", prog, prog);
+    }
+    else if (level == SH_USE_HIST)
+    {
+        fputs(g_history, stdout);
+    }
+    else if (level == SH_USE_VERSION)
+    {
+        printf("%s, version %s, compiled %s\n", prog, VERSION, __DATE__);
+    }
+    else if (level == SH_USE_LONG)
     {
         printf(
             "------------------------------------------------------------\n"
@@ -877,17 +974,17 @@ int usage( char * prog, int level )
             );
     }
     else
-        fprintf(stderr,"** usage error: invalid level %d\n", level);
+    {
+        fprintf(stderr, "** usage error: invalid level %d\n", level);
+    }
 
     return 1;
 }
 
-
 /* ----------------------------------------------------------------------
  * check for close request
  *
- * return  1 : close
- *         0 : continue
+ * return  1 : close 0 : continue
  *        -1 : error
  * ----------------------------------------------------------------------
  */
@@ -896,15 +993,17 @@ int test_socket(int sd)
     char data[16];
     int  len;
 
-    if ( (len = recv(sd, data, g_magic_len, MSG_PEEK)) == -1 )
+    if ((len = recv(sd, data, g_magic_len, MSG_PEEK)) == -1)
     {
         fputs("** test_socket_failure\n", stderr);
         perror("test_socket: recv");
         return -1;
     }
 
-    if ( strncmp(data, g_magic_bye, g_magic_len) == 0 )
+    if (strncmp(data, g_magic_bye, g_magic_len) == 0)
+    {
         return 1;
+    }
 
     return 0;
 }
@@ -912,71 +1011,89 @@ int test_socket(int sd)
 /* ----------------------------------------------------------------------
  * read one set of motion parameters (extras?) and store in structure
  *
- * return 1 : finished
- *        0 : have data: continue
+ * return 1 : finished 0 : have data: continue
  *       -1 : error
  * ----------------------------------------------------------------------
  */
-int read_socket(optiondata * opt, port_list * plist, motparm * mp)
+int read_socket(optiondata *opt, port_list *plist, motparm *mp)
 {
-    static char * outstring = NULL;
-    static int    oslen = 0;
-    int           rv, len;
+    static char *outstring = NULL;
+    static int   oslen     = 0;
+    int          rv, len;
 
-    if ( (rv = test_socket(plist->tdata_sd)) < 0 )
-        return -1;
-    else if ( rv == 1 )
+    if ((rv = test_socket(plist->tdata_sd)) < 0)
     {
-        if ( opt->debug > 0 )
-            fprintf(stderr,"++ found close request, mpcount = %d\n", mp->nread);
+        return -1;
+    }
+    else if (rv == 1)
+    {
+        if (opt->debug > 0)
+        {
+            fprintf(stderr, "++ found close request, mpcount = %d\n", mp->nread);
+        }
         return 1;
     }
 
     /* get motion params */
     len = mp->nvals * sizeof(float);
-    if ( (rv = recv(plist->tdata_sd, (void *)mp->data, len, 0)) < len )
+    if ((rv = recv(plist->tdata_sd, (void *)mp->data, len, 0)) < len)
     {
-        fprintf(stderr,"** read only %d of %d bytes on socket\n", rv, len);
+        fprintf(stderr, "** read only %d of %d bytes on socket\n", rv, len);
         perror("recv mot parm");
         return -1;
     }
 
-    if ( opt->show_times && opt->debug > 2 ) show_time("received mp data");
+    if (opt->show_times && opt->debug > 2)
+    {
+        show_time("received mp data");
+    }
 
-    if ( opt->swap ) swap_4(mp->data, mp->nvals);
+    if (opt->swap)
+    {
+        swap_4(mp->data, mp->nvals);
+    }
 
     /* get extra floats */
-    if( mp->nex > 0 )
+    if (mp->nex > 0)
     {
         len = mp->nex * sizeof(float);
-        if ( (rv = recv(plist->tdata_sd, (void *)mp->extras, len, 0)) < len )
+        if ((rv = recv(plist->tdata_sd, (void *)mp->extras, len, 0)) < len)
         {
-            fprintf(stderr,"** read only %d of %d Ebytes on socket\n", rv, len);
+            fprintf(stderr, "** read only %d of %d Ebytes on socket\n", rv, len);
             perror("recv extra floats");
             return -1;
         }
 
-        if ( opt->swap ) swap_4(mp->extras, mp->nex);
+        if (opt->swap)
+        {
+            swap_4(mp->extras, mp->nex);
+        }
     }
 
     mp->nread++;
 
-    if ( opt->show_times ) {
+    if (opt->show_times)
+    {
         char mesg[32];
         sprintf(mesg, "received mp data #%03d", mp->nread);
         show_time(mesg);
     }
 
-    if ( opt->debug > 2 || opt->disp_all ) {
+    if (opt->debug > 2 || opt->disp_all)
+    {
         rv = format_output(opt, mp, &outstring, &oslen);
-        if( rv ) {
-            fprintf(stderr,"** failed to format output string\n");
-            if( outstring ) { free(outstring); outstring = NULL; }
+        if (rv)
+        {
+            fprintf(stderr, "** failed to format output string\n");
+            if (outstring)
+            {
+                free(outstring); outstring = NULL;
+            }
             return 1;
         }
 
         /* will probably want to send elsewhere, later */
-        fputs(outstring,stderr);
+        fputs(outstring, stderr);
         fflush(stderr);  /* may get buffered */
     }
 
@@ -984,42 +1101,54 @@ int read_socket(optiondata * opt, port_list * plist, motparm * mp)
 }
 
 #undef LENTEST
-#define LENTEST(bytes,posn,len) \
-    do { if( bytes > (len - posn) ) {                                     \
-             fprintf(stderr,"** format error: bytes %d exceeds %d-%d\n",  \
-                            bytes, len, posn);                            \
-             return 1;                                                    \
-         } else if (opt->debug > 4) {                                     \
-             fprintf(stderr, "-- bytes, posn, len = %d, %d, %d\n",        \
-                             bytes, posn, len);                           \
-         } } while(0)
+#define LENTEST(bytes, posn, len)                                             \
+        do { if (bytes > (len - posn)) {                                      \
+                 fprintf(stderr, "** format error: bytes %d exceeds %d-%d\n", \
+                         bytes, len, posn);                                   \
+                 return 1;                                                    \
+             } else if (opt->debug > 4) {                                     \
+                 fprintf(stderr, "-- bytes, posn, len = %d, %d, %d\n",        \
+                         bytes, posn, len);                                   \
+             } } while (0)
 
-int format_output(optiondata * opt, motparm * mp, char ** outstr, int * oslen)
+int format_output(optiondata *opt, motparm *mp, char **outstr, int *oslen)
 {
     char dhdr1[] = "++ recv floats:";
     char dhdr2[] = "++ recv %d extra floats:";
     int  ind, ind2, len, posn, bytes;
 
-    if( !opt || !mp || !outstr || !oslen ) return 1;
-    if( opt->debug > 3 ) fprintf(stderr,"-- formatting output...\n");
+    if (!opt || !mp || !outstr || !oslen)
+    {
+        return 1;
+    }
+    if (opt->debug > 3)
+    {
+        fprintf(stderr, "-- formatting output...\n");
+    }
 
-    if( opt->disp_all && (mp->nex % 8) ) {
-        fprintf(stderr,"** num extras (%d) not multiple of 8\n",mp->nex);
+    if (opt->disp_all && (mp->nex % 8))
+    {
+        fprintf(stderr, "** num extras (%d) not multiple of 8\n", mp->nex);
         return 1;
     }
 
     /* first compute needed length */
-    len = strlen(dhdr1) + strlen(dhdr2) + 10; /* headers and newlines */
-    len += mp->nvals*12;
-    len += mp->nex*12;
-    if(opt->disp_all) len += (mp->nex/8 * 6); /* extra spaces/newlines */
+    len  = strlen(dhdr1) + strlen(dhdr2) + 10; /* headers and newlines */
+    len += mp->nvals * 12;
+    len += mp->nex * 12;
+    if (opt->disp_all)
+    {
+        len += (mp->nex / 8 * 6);             /* extra spaces/newlines */
+    }
     len += 10;                                /* a little extra padding */
 
-    if( !*outstr || *oslen < len ) {
+    if (!*outstr || *oslen < len)
+    {
         /* allocate space for string */
-        *outstr = (char *)realloc(*outstr, len*sizeof(char));
-        if( !*outstr ) {
-            fprintf(stderr,"** failed to re-alloc %d bytes for ostr\n", len);
+        *outstr = (char *)realloc(*outstr, len * sizeof(char));
+        if (!*outstr)
+        {
+            fprintf(stderr, "** failed to re-alloc %d bytes for ostr\n", len);
             *oslen = 0;
             return 1;
         }
@@ -1029,101 +1158,119 @@ int format_output(optiondata * opt, motparm * mp, char ** outstr, int * oslen)
     /* motion params - common output*/
     posn = 0;
     /* use %s, just to avoid whining from the compiler */
-    bytes = snprintf(*outstr+posn, len-posn, "%s", dhdr1);
+    bytes = snprintf(*outstr + posn, len - posn, "%s", dhdr1);
     posn += bytes;
-    for( ind = 0; ind < mp->nvals; ind++ ) {
-        bytes = snprintf(*outstr+posn, len-posn, "  %10f", mp->data[ind]);
-        LENTEST(bytes,posn,len);
+    for (ind = 0; ind < mp->nvals; ind++)
+    {
+        bytes = snprintf(*outstr + posn, len - posn, "  %10f", mp->data[ind]);
+        LENTEST(bytes, posn, len);
         posn += bytes;
     }
     strcat(*outstr, "\n");
     posn++;
 
     /* extras varies per debug or disp_all */
-    if ( opt->disp_all ) {
-        bytes = snprintf(*outstr+posn, len-posn,
-                         "++ recv %dx%d extra floats:\n", mp->nex/8, 8);
-        LENTEST(bytes,posn,len);
+    if (opt->disp_all)
+    {
+        bytes = snprintf(*outstr + posn, len - posn,
+                         "++ recv %dx%d extra floats:\n", mp->nex / 8, 8);
+        LENTEST(bytes, posn, len);
         posn += bytes;
 
-        for( ind = 0; ind < mp->nex/8; ind++ ) {
+        for (ind = 0; ind < mp->nex / 8; ind++)
+        {
             strcat(*outstr, "    ");
             posn += 4;
-            for( ind2 = 0; ind2 < 8; ind2++ ) {
-                bytes = snprintf(*outstr+posn, len-posn, " %11f",
-                                 mp->extras[ind*8+ind2]);
-                LENTEST(bytes,posn,len);
+            for (ind2 = 0; ind2 < 8; ind2++)
+            {
+                bytes = snprintf(*outstr + posn, len - posn, " %11f",
+                                 mp->extras[ind * 8 + ind2]);
+                LENTEST(bytes, posn, len);
                 posn += bytes;
             }
             strcat(*outstr, "\n");
             posn++;
         }
-    } else if( opt->debug > 2 && mp->nex > 0 ) {
-        bytes = snprintf(*outstr+posn, len-posn, dhdr2, mp->nex);
-        LENTEST(bytes,posn,len);
+    }
+    else if (opt->debug > 2 && mp->nex > 0)
+    {
+        bytes = snprintf(*outstr + posn, len - posn, dhdr2, mp->nex);
+        LENTEST(bytes, posn, len);
         posn += bytes;
 
-        for( ind = 0; ind < mp->nex; ind++ ) {
-            bytes = snprintf(*outstr+posn, len-posn, "  %10f", mp->extras[ind]);
-            LENTEST(bytes,posn,len);
+        for (ind = 0; ind < mp->nex; ind++)
+        {
+            bytes = snprintf(*outstr + posn, len - posn, "  %10f", mp->extras[ind]);
+            LENTEST(bytes, posn, len);
             posn += bytes;
         }
         strcat(*outstr, "\n");
         posn++;
     }
 
-    if( opt->debug > 3 ) fprintf(stderr,"++ posn, len = %d, %d\n",posn,len);
+    if (opt->debug > 3)
+    {
+        fprintf(stderr, "++ posn, len = %d, %d\n", posn, len);
+    }
 
     return 0;
 }
 
-/* Here we convert each mp data value to a char after multiplying by 10.
-   For now, I'm not sure what to do with the extras, send as is... */
-void send_serial(optiondata * opt, port_list * plist, motparm *mot)
+/* Here we convert each mp data value to a char after multiplying by 10. For now, I'm not sure what
+ * to do with the extras, send as is... */
+void send_serial(optiondata *opt, port_list *plist, motparm *mot)
 {
     static char outdata[7];
-    int i, len;
-    
+    int         i, len;
+
     outdata[0] = (char)(-128 + mot->nex);  /* encode nex in handshake byte */
-    for(i = 0; i < 6; i++)
+    for (i = 0; i < 6; i++)
     {
-        if (mot->data[i] > opt->mp_max) 
+        if (mot->data[i] > opt->mp_max)
+        {
             mot->data[i] = opt->mp_max;
+        }
         if (mot->data[i] < opt->mp_min)
+        {
             mot->data[i] = opt->mp_min;
-        outdata[i+1] = (char) (mot->data[i] * 10.0);
+        }
+        outdata[i + 1] = (char)(mot->data[i] * 10.0);
     }
     i = write(plist->sport, outdata, 7);
-    if( i < 7 )
-        fprintf(stderr, "** warning: wrote %d of 7 bytes to serial port\n",i);
+    if (i < 7)
+    {
+        fprintf(stderr, "** warning: wrote %d of 7 bytes to serial port\n", i);
+    }
 
-    if( mot->nex > 0 )
+    if (mot->nex > 0)
     {
         len = mot->nex * sizeof(float);
-        i = write(plist->sport, mot->extras, len);
-        if( i < len )
-            fprintf(stderr,"** warning: wrote %d of %d Ebytes to serial port\n",
+        i   = write(plist->sport, mot->extras, len);
+        if (i < len)
+        {
+            fprintf(stderr, "** warning: wrote %d of %d Ebytes to serial port\n",
                     i, len);
-    }
-} 
-
-
-int open_serial(optiondata *opt, port_list * plist)
-{
-        int sport;
-        struct termios options;
-        
-        sport = open(opt->serial_port, O_RDWR | O_NOCTTY | O_NDELAY); 
-        if (sport == -1) {
-                perror("pe: Failed to open the serial port ");
-                return -1;
         }
-        
-        /*******************
-         set up the port 
-         *******************/
-         
-        fcntl(sport, F_SETFL, FNDELAY);  /* nonblocking reads */
+    }
+}
+
+int open_serial(optiondata *opt, port_list *plist)
+{
+    int            sport;
+    struct termios options;
+
+    sport = open(opt->serial_port, O_RDWR | O_NOCTTY | O_NDELAY);
+    if (sport == -1)
+    {
+        perror("pe: Failed to open the serial port ");
+        return -1;
+    }
+
+    /*******************
+    *  set up the port
+    *******************/
+
+    fcntl(sport, F_SETFL, FNDELAY);      /* nonblocking reads */
 
     /* Get the current options for the port...*/
     tcgetattr(sport, &options);
@@ -1133,58 +1280,60 @@ int open_serial(optiondata *opt, port_list * plist)
     cfsetospeed(&options, B9600);
 
     /* Enable the receiver and set local mode */
-        options.c_cflag |= (CLOCAL | CREAD );
-        
-        /* set 8 bit N parity */
-        options.c_cflag &= ~PARENB;
-        options.c_cflag &= ~CSTOPB;
-        options.c_cflag &= ~CSIZE;
-        options.c_cflag |= CS8;
+    options.c_cflag |= (CLOCAL | CREAD);
 
-        /* raw data input and output */
+    /* set 8 bit N parity */
+    options.c_cflag &= ~PARENB;
+    options.c_cflag &= ~CSTOPB;
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+
+    /* raw data input and output */
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
     options.c_oflag &= ~OPOST;
 
     /*Set the new options for the port*/
-    if (tcsetattr(sport, TCSANOW, &options) == -1) {
-                perror("pe: Failed to set attributes on the serial port ");
-                close(sport);
-                return -1;
-        }
-        
+    if (tcsetattr(sport, TCSANOW, &options) == -1)
+    {
+        perror("pe: Failed to set attributes on the serial port ");
+        close(sport);
+        return -1;
+    }
+
     plist->sport = sport;
     return 0;
 }
-
 
 /* ----------------------------------------------------------------------
  * swap 4 bytes at a time
  * ----------------------------------------------------------------------
  */
-void swap_4( void * data, int nswaps )
+void swap_4(void *data, int nswaps)
 {
-    char * cp, tmp;
-    int    c;
-    for ( c = 0, cp = (char *)data; c < nswaps; c++, cp += 4 )
+    char *cp, tmp;
+    int   c;
+
+    for (c = 0, cp = (char *)data; c < nswaps; c++, cp += 4)
     {
         tmp = cp[0];  cp[0] = cp[3];  cp[3] = tmp;
         tmp = cp[1];  cp[1] = cp[2];  cp[2] = tmp;
     }
 }
 
-
 /* ----------------------------------------------------------------------
  * display contents of optiondata struct
  * ----------------------------------------------------------------------
  */
-int disp_optiondata( char * info, optiondata * D )
+int disp_optiondata(char *info, optiondata *D)
 {
-    if ( info )
-        fputs(info, stderr);
-    
-    if ( ! D )
+    if (info)
     {
-        fprintf(stderr,"** disp_optiondata: D == NULL\n");
+        fputs(info, stderr);
+    }
+
+    if (!D)
+    {
+        fprintf(stderr, "** disp_optiondata: D == NULL\n");
         return -1;
     }
 

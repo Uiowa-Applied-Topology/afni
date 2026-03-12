@@ -64,11 +64,11 @@ rboxT rbox;
  * >-------------------------------</a><a name="rboxpoints">-</a>
  *
  * qh_rboxpoints( fout, ferr, rbox_command ) Generate points to fout according to rbox options
- * Report errors on ferr
+ *Report errors on ferr
  *
  * returns:
  *  0 (qh_ERRnone) on success 1 (qh_ERRinput) on input error 4 (qh_ERRmem) on memory error 5
- * (qh_ERRqhull) on internal error
+ *(qh_ERRqhull) on internal error
  *
  * notes:
  *  To avoid stdio, redefine qh_malloc, qh_free, and qh_fprintf_rbox (user.c)

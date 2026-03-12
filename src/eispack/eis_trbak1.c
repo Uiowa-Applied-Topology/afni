@@ -1,19 +1,19 @@
-/* trbak1.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* trbak1.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int trbak1_(integer *nm, integer *n, doublereal *a, 
-	doublereal *e, integer *m, doublereal *z__)
+/* Subroutine */ int trbak1_(integer *nm, integer *n, doublereal *a,
+                             doublereal *e, integer *m, doublereal *z__)
 {
     /* System generated locals */
     integer a_dim1, a_offset, z_dim1, z_offset, i__1, i__2, i__3;
 
     /* Local variables */
-    integer i__, j, k, l;
+    integer    i__, j, k, l;
     doublereal s;
 
 
@@ -54,67 +54,75 @@
 /*     NOTE THAT TRBAK1 PRESERVES VECTOR EUCLIDEAN NORMS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --e;
-    a_dim1 = *nm;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
-    z_dim1 = *nm;
+    a       -= a_offset;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
-    if (*n == 1) {
-	goto L200;
+    if (*n == 1)
+    {
+        goto L200;
     }
 
     i__1 = *n;
-    for (i__ = 2; i__ <= i__1; ++i__) {
-	l = i__ - 1;
-	if (e[i__] == 0.) {
-	    goto L140;
-	}
+    for (i__ = 2; i__ <= i__1; ++i__)
+    {
+        l = i__ - 1;
+        if (e[i__] == 0.)
+        {
+            goto L140;
+        }
 
-	i__2 = *m;
-	for (j = 1; j <= i__2; ++j) {
-	    s = 0.;
+        i__2 = *m;
+        for (j = 1; j <= i__2; ++j)
+        {
+            s = 0.;
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
 /* L110: */
-		s += a[i__ + k * a_dim1] * z__[k + j * z_dim1];
-	    }
-/*     .......... DIVISOR BELOW IS NEGATIVE OF H FORMED IN TRED1. 
-*/
-/*                DOUBLE DIVISION AVOIDS POSSIBLE UNDERFLOW ......
-.... */
-	    s = s / a[i__ + l * a_dim1] / e[i__];
+                s += a[i__ + k * a_dim1] * z__[k + j * z_dim1];
+            }
 
-	    i__3 = l;
-	    for (k = 1; k <= i__3; ++k) {
+/*     .......... DIVISOR BELOW IS NEGATIVE OF H FORMED IN TRED1.
+ */
+/*                DOUBLE DIVISION AVOIDS POSSIBLE UNDERFLOW ......
+ * .... */
+            s = s / a[i__ + l * a_dim1] / e[i__];
+
+            i__3 = l;
+            for (k = 1; k <= i__3; ++k)
+            {
 /* L120: */
-		z__[k + j * z_dim1] += s * a[i__ + k * a_dim1];
-	    }
+                z__[k + j * z_dim1] += s * a[i__ + k * a_dim1];
+            }
 
 /* L130: */
-	}
+        }
 
 L140:
-	;
+        ;
     }
 
 L200:
     return 0;
 } /* trbak1_ */
-

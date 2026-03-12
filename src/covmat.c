@@ -1,6 +1,6 @@
 /*** program COVMAT:
  *   inputs:  (optional) covariance matrix file, reference time series file, a sequence of image
- * files.
+ *files.
  *   output:  (updated) covariance matrix file, with all vectors correlated above threshold "added"
  * into covariance matrix, (optional) file with all such vectors saved for display
  *

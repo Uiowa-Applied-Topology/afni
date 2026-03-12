@@ -1,21 +1,21 @@
-/* rebakb.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rebakb.f -- translated by f2c (version 19961017). You must link the resulting object file with
+ * the libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int rebakb_(integer *nm, integer *n, doublereal *b, 
-	doublereal *dl, integer *m, doublereal *z__)
+/* Subroutine */ int rebakb_(integer *nm, integer *n, doublereal *b,
+                             doublereal *dl, integer *m, doublereal *z__)
 {
     /* System generated locals */
     integer b_dim1, b_offset, z_dim1, z_offset, i__1, i__2, i__3;
 
     /* Local variables */
-    integer i__, j, k;
+    integer    i__, j, k;
     doublereal x;
-    integer i1, ii;
+    integer    i1, ii;
 
 
 
@@ -52,53 +52,58 @@
 /*          IN ITS FIRST M COLUMNS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --dl;
-    b_dim1 = *nm;
+    b_dim1   = *nm;
     b_offset = b_dim1 + 1;
-    b -= b_offset;
-    z_dim1 = *nm;
+    b       -= b_offset;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
 
     /* Function Body */
-    if (*m == 0) {
-	goto L200;
+    if (*m == 0)
+    {
+        goto L200;
     }
 
     i__1 = *m;
-    for (j = 1; j <= i__1; ++j) {
+    for (j = 1; j <= i__1; ++j)
+    {
 /*     .......... FOR I=N STEP -1 UNTIL 1 DO -- .......... */
-	i__2 = *n;
-	for (ii = 1; ii <= i__2; ++ii) {
-	    i1 = *n - ii;
-	    i__ = i1 + 1;
-	    x = dl[i__] * z__[i__ + j * z_dim1];
-	    if (i__ == 1) {
-		goto L80;
-	    }
+        i__2 = *n;
+        for (ii = 1; ii <= i__2; ++ii)
+        {
+            i1  = *n - ii;
+            i__ = i1 + 1;
+            x   = dl[i__] * z__[i__ + j * z_dim1];
+            if (i__ == 1)
+            {
+                goto L80;
+            }
 
-	    i__3 = i1;
-	    for (k = 1; k <= i__3; ++k) {
+            i__3 = i1;
+            for (k = 1; k <= i__3; ++k)
+            {
 /* L60: */
-		x += b[i__ + k * b_dim1] * z__[k + j * z_dim1];
-	    }
+                x += b[i__ + k * b_dim1] * z__[k + j * z_dim1];
+            }
 
 L80:
-	    z__[i__ + j * z_dim1] = x;
+            z__[i__ + j * z_dim1] = x;
 /* L100: */
-	}
+        }
     }
 
 L200:
     return 0;
 } /* rebakb_ */
-

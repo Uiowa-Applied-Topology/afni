@@ -36,9 +36,9 @@ qhT qh_qh;              /* all global variables. Add "= {0}" if this causes a co
  *
  * notes:
  *  change date:    Changes.txt, Announce.txt, index.htm, README.txt, qhull-news.html, Eudora
- * signatures, change version: README.txt, qh-get.htm, File_id.diz, Makefile.txt change year:
+ *signatures, change version: README.txt, qh-get.htm, File_id.diz, Makefile.txt change year:
  *    Copying.txt check download size recompile user_eg.c, rbox.c, libqhull.c, qconvex.c, qdelaun.c
- * qvoronoi.c, qhalf.c
+ *qvoronoi.c, qhalf.c
  */
 
 const char *qh_version = "2010.1 2010/01/14";
@@ -70,11 +70,11 @@ void qh_appendprint(qh_PRINT format)
  * >-------------------------------</a><a name="checkflags">-</a>
  *
  * qh_checkflags( commandStr, hiddenFlags ) errors if commandStr contains hiddenFlags hiddenFlags
- * starts and ends with a space and is space deliminated (checked)
+ *starts and ends with a space and is space deliminated (checked)
  *
  * notes:
  *  ignores first word (e.g., "qconvex i") use qh_strtol/strtod since strtol/strtod may or may not
- * skip trailing spaces
+ *skip trailing spaces
  *
  * see:
  *  qh_initflags() initializes Qhull according to commandStr
@@ -239,7 +239,7 @@ void qh_clear_outputflags(void)
     qh VERIFYoutput     = False;
 
     for (k = qh input_dim + 1; k--; ) /* duplicated in qh_initqhull_buffers and qh_clear_ouputflags
-                                      */
+                                       */
     {
         qh lower_threshold[k] = -REALmax;
         qh upper_threshold[k] = REALmax;
@@ -378,12 +378,12 @@ void qh_freebuffers(void)
  * >-------------------------------</a><a name="freebuild">-</a>
  *
  * qh_freebuild( allmem ) free global memory used by qh_initbuild and qh_buildhull if !allmem, does
- * not free short memory (e.g., facetT, freed by qh_memfreeshort)
+ *not free short memory (e.g., facetT, freed by qh_memfreeshort)
  *
  * design:
  *  free centrums free each vertex mark unattached ridges for each facet free ridges free outside
- * set, coplanar set, neighbor set, ridge set, vertex set free facet free hash table free interior
- * point free merge set free temporary sets
+ *set, coplanar set, neighbor set, ridge set, vertex set free facet free hash table free interior
+ *point free merge set free temporary sets
  */
 void qh_freebuild(boolT allmem)
 {
@@ -508,7 +508,7 @@ void qh_freeqhull(boolT allmem)
  * >-------------------------------</a><a name="freeqhull2">-</a>
  *
  * qh_freeqhull2( allmem ) free global memory if !allmem, does not free short memory (freed by
- * qh_memfreeshort)
+ *qh_memfreeshort)
  *
  * notes:
  * sets qh.NOerrexit in case caller forgets to
@@ -539,13 +539,13 @@ void qh_freeqhull2(boolT allmem)
  * >-------------------------------</a><a name="init_A">-</a>
  *
  * qh_init_A( infile, outfile, errfile, argc, argv ) initialize memory and stdio files convert input
- * options to option string (qh.qhull_command)
+ *options to option string (qh.qhull_command)
  *
  * notes:
  *  infile may be NULL if qh_readpoints() is not called
  *
  *  errfile should always be defined.  It is used for reporting errors.  outfile is used for output
- * and format options.
+ *and format options.
  *
  *  argc/argv may be 0/NULL
  *
@@ -564,26 +564,26 @@ void qh_init_A(FILE *infile, FILE *outfile, FILE *errfile, int argc, char *argv[
  * qh_init_B( points, numpoints, dim, ismalloc ) initialize globals for points array
  *
  *  points has numpoints dim-dimensional points points[0] is the first coordinate of the first point
- * points[1] is the second coordinate of the first point points[dim] is the first coordinate of the
- * second point
+ *points[1] is the second coordinate of the first point points[dim] is the first coordinate of the
+ *second point
  *
  *  ismalloc=True Qhull will call qh_free(points) on exit or input transformation ismalloc=False
- * Qhull will allocate a new point array if needed for input transformation
+ *Qhull will allocate a new point array if needed for input transformation
  *
  *  qh.qhull_command is the option string. It is defined by qh_init_B(), qh_qhull_command(), or
- * qh_initflags
+ *qh_initflags
  *
  * returns:
  *  if qh.PROJECTinput or (qh.DELAUNAY and qh.PROJECTdelaunay) projects the input to a new point
- * array
+ *array
  *
  *      if qh.DELAUNAY, qh.hull_dim is increased by one if qh.ATinfinity, qh_projectinput adds
- * point-at-infinity for Delaunay tri.
+ *point-at-infinity for Delaunay tri.
  *
  *  if qh.SCALEinput changes the upper and lower bounds of the input, see qh_scaleinput()
  *
  *  if qh.ROTATEinput rotates the input by a random rotation, see qh_rotateinput() if qh.DELAUNAY
- * rotates about the last coordinate
+ *rotates about the last coordinate
  *
  * notes:
  *  called after points are defined qh_errexit() may be used
@@ -655,7 +655,7 @@ void qh_init_qhull_command(int argc, char *argv[])
  *
  * notes:
  *  ignores first word (e.g., "qhull d") use qh_strtol/strtod since strtol/strtod may or may not
- * skip trailing spaces
+ *skip trailing spaces
  *
  * see:
  *  qh_initthresholds() continues processing of 'Pdn' and 'PDn'
@@ -663,9 +663,9 @@ void qh_init_qhull_command(int argc, char *argv[])
  *
  * design:
  *  for each space-deliminated option group if top-level option check syntax append appropriate
- * option to option string set appropriate global variable or append printFormat to print options
- * else for each sub-option check syntax append appropriate option to option string set appropriate
- * global variable or append printFormat to print options
+ *option to option string set appropriate global variable or append printFormat to print options
+ *else for each sub-option check syntax append appropriate option to option string set appropriate
+ *global variable or append printFormat to print options
  */
 void qh_initflags(char *command)
 {
@@ -1684,7 +1684,7 @@ LABELcheckdigit:
 
                             qh_copyfilename(filename, (int)sizeof(filename), s, (int)(t - s)); /*
                                                                                                 * WARN64
-                                                                                               */
+                                                                                                */
                             s = t;
                             if (!freopen(filename, "r", stdin))
                             {
@@ -1717,7 +1717,7 @@ LABELcheckdigit:
 
                             qh_copyfilename(filename, (int)sizeof(filename), s, (int)(t - s)); /*
                                                                                                 * WARN64
-                                                                                               */
+                                                                                                */
                             s = t;
                             if (!freopen(filename, "w", stdout))
                             {
@@ -1876,7 +1876,7 @@ void qh_initqhull_buffers(void)
     qh lower_bound      = (realT *)qh_memalloc((qh input_dim + 1) * sizeof(realT));
     qh upper_bound      = (realT *)qh_memalloc((qh input_dim + 1) * sizeof(realT));
     for (k = qh input_dim + 1; k--; ) /* duplicated in qh_initqhull_buffers and qh_clear_ouputflags
-                                      */
+                                       */
     {
         qh lower_threshold[k] = -REALmax;
         qh upper_threshold[k] = REALmax;
@@ -1891,12 +1891,12 @@ void qh_initqhull_buffers(void)
  * >-------------------------------</a><a name="initqhull_globals">-</a>
  *
  * qh_initqhull_globals( points, numpoints, dim, ismalloc ) initialize globals if ismalloc points
- * were malloc'd and qhull should free at end
+ *were malloc'd and qhull should free at end
  *
  * returns:
  *  sets qh.first_point, num_points, input_dim, hull_dim and others seeds random number generator
- * (seed=1 if tracing) modifies qh.hull_dim if ((qh.DELAUNAY and qh.PROJECTdelaunay) or
- * qh.PROJECTinput) adjust user flags as needed also checks DIM3 dependencies and constants
+ *(seed=1 if tracing) modifies qh.hull_dim if ((qh.DELAUNAY and qh.PROJECTdelaunay) or
+ *qh.PROJECTinput) adjust user flags as needed also checks DIM3 dependencies and constants
  *
  * notes:
  *  do not use qh_point() since an input transformation may move them elsewhere
@@ -1906,9 +1906,9 @@ void qh_initqhull_buffers(void)
  *
  * design:
  *  initialize points array from input arguments test for qh.ZEROcentrum (i.e., use opposite vertex
- * instead of cetrum for convexity testing) initialize qh.CENTERtype, qh.normal_size,
- * qh.center_size, qh.TRACEpoint/level, initialize and test random numbers
- * qh_initqhull_outputflags() -- adjust and test output flags
+ *instead of cetrum for convexity testing) initialize qh.CENTERtype, qh.normal_size, qh.center_size,
+ *qh.TRACEpoint/level, initialize and test random numbers qh_initqhull_outputflags() -- adjust and
+ *test output flags
  */
 void qh_initqhull_globals(coordT *points, int numpoints, int dim, boolT ismalloc)
 {
@@ -2156,8 +2156,8 @@ qhull configuration warning (qh_RANDOMmax in user.h):\n\
  * >-------------------------------</a><a name="initqhull_mem">-</a>
  *
  * qh_initqhull_mem(  ) initialize mem.c for qhull qh.hull_dim and qh.normal_size determine some of
- * the allocation sizes if qh.MERGING, includes ridgeT calls qh_user_memsizes() to add up to 10
- * additional sizes for quick allocation (see numsizes below)
+ *the allocation sizes if qh.MERGING, includes ridgeT calls qh_user_memsizes() to add up to 10
+ *additional sizes for quick allocation (see numsizes below)
  *
  * returns:
  *  mem.c already for qh_memalloc/qh_memfree (errors if called beforehand)
@@ -2203,7 +2203,7 @@ void qh_initqhull_mem(void)
  *
  * design:
  *  test for qh.PRINTgood (i.e., only print 'good' facets) check for conflicting print output
- * options
+ *options
  */
 void qh_initqhull_outputflags(void)
 {
@@ -2369,7 +2369,7 @@ available for 4-d output(ignored).  Could use 'GDn' instead.\n");
  * >-------------------------------</a><a name="initqhull_start">-</a>
  *
  * qh_initqhull_start( infile, outfile, errfile ) allocate memory if needed and call
- * qh_initqhull_start2()
+ *qh_initqhull_start2()
  */
 void qh_initqhull_start(FILE *infile, FILE *outfile, FILE *errfile)
 {
@@ -2394,9 +2394,9 @@ void qh_initqhull_start(FILE *infile, FILE *outfile, FILE *errfile)
  * >-------------------------------</a><a name="initqhull_start2">-</a>
  *
  * qh_initqhull_start2( infile, outfile, errfile ) start initialization of qhull initialize
- * statistics, stdio, default values for global variables assumes qh_qh is defined notes:
+ *statistics, stdio, default values for global variables assumes qh_qh is defined notes:
  *  report errors elsewhere, error handling and g_qhull_output [Qhull.cpp, QhullQh()] not in
- * initialized see:
+ *initialized see:
  *  qh_maxmin() determines the precision constants qh_freeqhull2()
  */
 void qh_initqhull_start2(FILE *infile, FILE *outfile, FILE *errfile)
@@ -2467,8 +2467,8 @@ void qh_initqhull_start2(FILE *infile, FILE *outfile, FILE *errfile)
  *
  * design:
  *  for each 'Pdn' or 'PDn' option check syntax set qh.lower_threshold or qh.upper_threshold set
- * qh.GOODthreshold if an unbounded threshold is used set qh.SPLITthreshold if a bounded threshold
- * is used
+ *qh.GOODthreshold if an unbounded threshold is used set qh.SPLITthreshold if a bounded threshold is
+ *used
  */
 void qh_initthresholds(char *command)
 {
@@ -2634,7 +2634,7 @@ void qh_initthresholds(char *command)
  *
  * notes:
  *  NOerrors -- qh_option can not call qh_errexit() [qh_initqhull_start2] will be printed with
- * statistics ('Ts') and errors strlen(option) < 40
+ *statistics ('Ts') and errors strlen(option) < 40
  */
 void qh_option(const char *option, int *i, realT *r)
 {
@@ -2668,12 +2668,12 @@ void qh_option(const char *option, int *i, realT *r)
  * >-------------------------------</a><a name="restore_qhull">-</a>
  *
  * qh_restore_qhull( oldqh ) restores a previously saved qhull also restores qh_qhstat and
- * qhmem.tempstack Sets *oldqh to NULL notes:
+ *qhmem.tempstack Sets *oldqh to NULL notes:
  *  errors if current qhull hasn't been saved or freed uses qhmem for error reporting
  *
  * NOTE 1998/5/11:
  *  Freeing memory after qh_save_qhull and qh_restore_qhull is complicated.  The procedures will be
- * redesigned.
+ *redesigned.
  *
  * see:
  *  qh_save_qhull(), UsingLibQhull
@@ -2713,7 +2713,7 @@ void qh_restore_qhull(qhT **oldqh)
  * >-------------------------------</a><a name="save_qhull">-</a>
  *
  * qh_save_qhull(  ) saves qhull for a later qh_restore_qhull also saves qh_qhstat and
- * qhmem.tempstack
+ *qhmem.tempstack
  *
  * returns:
  *  qh_qh=NULL
@@ -2723,7 +2723,7 @@ void qh_restore_qhull(qhT **oldqh)
  *
  * NOTE 1998/5/11:
  *  Freeing memory after qh_save_qhull and qh_restore_qhull is complicated.  The procedures will be
- * redesigned.
+ *redesigned.
  *
  * see:
  *  qh_restore_qhull()

@@ -6,11 +6,11 @@
  * see README.txt  see COPYING.txt for copyright information.
  *
  * If you redefine one of these functions you must redefine all of them. If you recompile and load
- * this file, then userprintf.o will not be loaded from qhull.a or qhull.lib
+ *this file, then userprintf.o will not be loaded from qhull.a or qhull.lib
  *
  * See libqhull.h for data structures, macros, and user-callable functions. See user.c for
- * qhull-related, redefinable functions see user.h for user-definable constants See usermem.c for
- * qh_exit(), qh_free(), and qh_malloc() see Qhull.cpp and RboxPoints.cpp for examples.
+ *qhull-related, redefinable functions see user.h for user-definable constants See usermem.c for
+ *qh_exit(), qh_free(), and qh_malloc() see Qhull.cpp and RboxPoints.cpp for examples.
  *
  * Please report any errors that you fix to qhull@qhull.org
  */
@@ -25,11 +25,11 @@
  * >-------------------------------</a><a name="qh_fprintf">-</a>
  *
  * qh_fprintf(fp, msgcode, format, list of args ) print arguments to *fp according to format Use
- * qh_fprintf_rbox() for rboxlib.c
+ *qh_fprintf_rbox() for rboxlib.c
  *
  * notes:
  *   same as fprintf() fgets() is not trapped like fprintf() exit qh_fprintf via qh_errexit() exit
- * qh_fprintf_rbox via qh_errexit_rbox()
+ *qh_fprintf_rbox via qh_errexit_rbox()
  */
 
 void qh_fprintf(FILE *fp, int msgcode, const char *fmt, ...)

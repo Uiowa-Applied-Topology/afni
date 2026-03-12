@@ -6,11 +6,11 @@
  * see README.txt  see COPYING.txt for copyright information.
  *
  * If you redefine one of these functions you must redefine all of them. If you recompile and load
- * this file, then usermem.o will not be loaded from qhull.a or qhull.lib
+ *this file, then usermem.o will not be loaded from qhull.a or qhull.lib
  *
  * See libqhull.h for data structures, macros, and user-callable functions. See user.c for
- * qhull-related, redefinable functions see user.h for user-definable constants See userprintf.c for
- * qh_fprintf and qh_fprintf_rbox
+ *qhull-related, redefinable functions see user.h for user-definable constants See userprintf.c for
+ *qh_fprintf and qh_fprintf_rbox
  *
  * Please report any errors that you fix to qhull@qhull.org
  */

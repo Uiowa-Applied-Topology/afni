@@ -1,35 +1,47 @@
-/* rsg.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rsg.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
 /* Subroutine */ int rsg_(integer *nm, integer *n, doublereal *a, doublereal *
-	b, doublereal *w, integer *matz, doublereal *z__, doublereal *fv1, 
-	doublereal *fv2, integer *ierr)
+                          b, doublereal *w, integer *matz, doublereal *z__, doublereal *fv1,
+                          doublereal *fv2, integer *ierr)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, z_dim1, z_offset;
 
     /* Local variables */
-    extern /* Subroutine */ int tred1_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *), tred2_(integer *, 
-	    integer *, doublereal *, doublereal *, doublereal *, doublereal *)
-	    , rebak_(integer *, integer *, doublereal *, doublereal *, 
-	    integer *, doublereal *), reduc_(integer *, integer *, doublereal 
-	    *, doublereal *, doublereal *, integer *), tqlrat_(integer *, 
-	    doublereal *, doublereal *, integer *), tql2_(integer *, integer *
-	    , doublereal *, doublereal *, doublereal *, integer *);
+    extern /* Subroutine */ int tred1_(integer *, integer *, doublereal *,
+                                       doublereal *, doublereal *, doublereal *), tred2_(integer *,
+                                                                                         integer *,
+                                                                                         doublereal
+                                                                                         *,
+                                                                                         doublereal
+                                                                                         *,
+                                                                                         doublereal
+                                                                                         *,
+                                                                                         doublereal
+                                                                                         *),
+    rebak_(integer *, integer *, doublereal *, doublereal *,
+           integer *, doublereal *), reduc_(integer *, integer *, doublereal
+                                            *, doublereal *, doublereal *, integer *),
+    tqlrat_(integer *,
+            doublereal
+            *, doublereal *, integer *), tql2_(integer *, integer *,
+                                               doublereal
+                                               *, doublereal *, doublereal *, integer *);
 
 
 
 /*     THIS SUBROUTINE CALLS THE RECOMMENDED SEQUENCE OF */
 /*     SUBROUTINES FROM THE EIGENSYSTEM SUBROUTINE PACKAGE (EISPACK) */
 /*     TO FIND THE EIGENVALUES AND EIGENVECTORS (IF DESIRED) */
-/*     FOR THE REAL SYMMETRIC GENERALIZED EIGENPROBLEM  AX = (LAMBDA)BX. 
-*/
+
+/*     FOR THE REAL SYMMETRIC GENERALIZED EIGENPROBLEM  AX = (LAMBDA)BX.
+ */
 
 /*     ON INPUT */
 
@@ -60,42 +72,46 @@
 /*        FV1  AND  FV2  ARE TEMPORARY STORAGE ARRAYS. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
     --fv2;
     --fv1;
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --w;
-    b_dim1 = *nm;
+    b_dim1   = *nm;
     b_offset = b_dim1 + 1;
-    b -= b_offset;
-    a_dim1 = *nm;
+    b       -= b_offset;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
+    a       -= a_offset;
 
     /* Function Body */
-    if (*n <= *nm) {
-	goto L10;
+    if (*n <= *nm)
+    {
+        goto L10;
     }
     *ierr = *n * 10;
     goto L50;
 
 L10:
     reduc_(nm, n, &a[a_offset], &b[b_offset], &fv2[1], ierr);
-    if (*ierr != 0) {
-	goto L50;
+    if (*ierr != 0)
+    {
+        goto L50;
     }
-    if (*matz != 0) {
-	goto L20;
+    if (*matz != 0)
+    {
+        goto L20;
     }
 /*     .......... FIND EIGENVALUES ONLY .......... */
     tred1_(nm, n, &a[a_offset], &w[1], &fv1[1], &fv2[1]);
@@ -105,11 +121,11 @@ L10:
 L20:
     tred2_(nm, n, &a[a_offset], &w[1], &fv1[1], &z__[z_offset]);
     tql2_(nm, n, &w[1], &fv1[1], &z__[z_offset], ierr);
-    if (*ierr != 0) {
-	goto L50;
+    if (*ierr != 0)
+    {
+        goto L50;
     }
     rebak_(nm, n, &b[b_offset], &fv2[1], n, &z__[z_offset]);
 L50:
     return 0;
 } /* rsg_ */
-

@@ -1,13 +1,13 @@
-/* figi2.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* figi2.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
 
-/* Subroutine */ int figi2_(integer *nm, integer *n, doublereal *t, 
-	doublereal *d__, doublereal *e, doublereal *z__, integer *ierr)
+/* Subroutine */ int figi2_(integer *nm, integer *n, doublereal *t,
+                            doublereal *d__, doublereal *e, doublereal *z__, integer *ierr)
 {
     /* System generated locals */
     integer t_dim1, t_offset, z_dim1, z_offset, i__1, i__2;
@@ -17,7 +17,7 @@
 
     /* Local variables */
     doublereal h__;
-    integer i__, j;
+    integer    i__, j;
 
 
 
@@ -60,21 +60,22 @@
 /*                     ONE FACTOR NON-ZERO. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    t_dim1 = *nm;
+    t_dim1   = *nm;
     t_offset = t_dim1 + 1;
-    t -= t_offset;
-    z_dim1 = *nm;
+    t       -= t_offset;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --e;
     --d__;
 
@@ -82,39 +83,47 @@
     *ierr = 0;
 
     i__1 = *n;
-    for (i__ = 1; i__ <= i__1; ++i__) {
-
-	i__2 = *n;
-	for (j = 1; j <= i__2; ++j) {
+    for (i__ = 1; i__ <= i__1; ++i__)
+    {
+        i__2 = *n;
+        for (j = 1; j <= i__2; ++j)
+        {
 /* L50: */
-	    z__[i__ + j * z_dim1] = 0.;
-	}
+            z__[i__ + j * z_dim1] = 0.;
+        }
 
-	if (i__ == 1) {
-	    goto L70;
-	}
-	h__ = t[i__ + t_dim1] * t[i__ - 1 + t_dim1 * 3];
-	if (h__ < 0.) {
-	    goto L900;
-	} else if (h__ == 0) {
-	    goto L60;
-	} else {
-	    goto L80;
-	}
+        if (i__ == 1)
+        {
+            goto L70;
+        }
+        h__ = t[i__ + t_dim1] * t[i__ - 1 + t_dim1 * 3];
+        if (h__ < 0.)
+        {
+            goto L900;
+        }
+        else if (h__ == 0)
+        {
+            goto L60;
+        }
+        else
+        {
+            goto L80;
+        }
 L60:
-	if (t[i__ + t_dim1] != 0. || t[i__ - 1 + t_dim1 * 3] != 0.) {
-	    goto L1000;
-	}
-	e[i__] = 0.;
+        if (t[i__ + t_dim1] != 0. || t[i__ - 1 + t_dim1 * 3] != 0.)
+        {
+            goto L1000;
+        }
+        e[i__] = 0.;
 L70:
-	z__[i__ + i__ * z_dim1] = 1.;
-	goto L90;
+        z__[i__ + i__ * z_dim1] = 1.;
+        goto L90;
 L80:
-	e[i__] = sqrt(h__);
-	z__[i__ + i__ * z_dim1] = z__[i__ - 1 + (i__ - 1) * z_dim1] * e[i__] /
-		 t[i__ - 1 + t_dim1 * 3];
+        e[i__] = sqrt(h__);
+        z__[i__ + i__ * z_dim1] = z__[i__ - 1 + (i__ - 1) * z_dim1] * e[i__] /
+                                  t[i__ - 1 + t_dim1 * 3];
 L90:
-	d__[i__] = t[i__ + (t_dim1 << 1)];
+        d__[i__] = t[i__ + (t_dim1 << 1)];
 /* L100: */
     }
 
@@ -131,4 +140,3 @@ L1000:
 L1001:
     return 0;
 } /* figi2_ */
-

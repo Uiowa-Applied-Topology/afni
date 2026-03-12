@@ -1,7 +1,7 @@
-/* rgg.f -- translated by f2c (version 19961017).
-   You must link the resulting object file with the libraries:
-	-lf2c -lm   (in that order)
-*/
+/* rgg.f -- translated by f2c (version 19961017). You must link the resulting object file with the
+ * libraries:
+ *  -lf2c -lm   (in that order)
+ */
 
 #include <math.h>
 #include "f2c.h"
@@ -11,21 +11,23 @@
 static doublereal c_b5 = 0.;
 
 /* Subroutine */ int rgg_(integer *nm, integer *n, doublereal *a, doublereal *
-	b, doublereal *alfr, doublereal *alfi, doublereal *beta, integer *
-	matz, doublereal *z__, integer *ierr)
+                          b, doublereal *alfr, doublereal *alfi, doublereal *beta, integer *
+                          matz, doublereal *z__, integer *ierr)
 {
     /* System generated locals */
     integer a_dim1, a_offset, b_dim1, b_offset, z_dim1, z_offset;
 
     /* Local variables */
-    extern /* Subroutine */ int qzit_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, logical *, doublereal *, integer *), 
-	    qzvec_(integer *, integer *, doublereal *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *), qzhes_(
-	    integer *, integer *, doublereal *, doublereal *, logical *, 
-	    doublereal *), qzval_(integer *, integer *, doublereal *, 
-	    doublereal *, doublereal *, doublereal *, doublereal *, logical *,
-	     doublereal *);
+    extern /* Subroutine */ int qzit_(integer *, integer *, doublereal *,
+                                      doublereal *, doublereal *, logical *, doublereal *,
+                                      integer *),
+    qzvec_(integer *, integer *, doublereal *, doublereal *,
+           doublereal *, doublereal *, doublereal *, doublereal *), qzhes_(
+        integer *, integer *, doublereal *, doublereal *, logical *,
+        doublereal *), qzval_(integer *, integer *, doublereal *,
+                              doublereal *, doublereal *, doublereal *, doublereal *, logical *,
+                              doublereal *);
+
     logical tf;
 
 
@@ -74,61 +76,64 @@ static doublereal c_b5 = 0.;
 /*           THE NORMAL COMPLETION CODE IS ZERO. */
 
 /*     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, */
-/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
-*/
+
+/*     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+ */
 
 /*     THIS VERSION DATED AUGUST 1983. */
 
-/*     ------------------------------------------------------------------ 
-*/
+/*     ------------------------------------------------------------------
+ */
 
     /* Parameter adjustments */
-    z_dim1 = *nm;
+    z_dim1   = *nm;
     z_offset = z_dim1 + 1;
-    z__ -= z_offset;
+    z__     -= z_offset;
     --beta;
     --alfi;
     --alfr;
-    b_dim1 = *nm;
+    b_dim1   = *nm;
     b_offset = b_dim1 + 1;
-    b -= b_offset;
-    a_dim1 = *nm;
+    b       -= b_offset;
+    a_dim1   = *nm;
     a_offset = a_dim1 + 1;
-    a -= a_offset;
+    a       -= a_offset;
 
     /* Function Body */
-    if (*n <= *nm) {
-	goto L10;
+    if (*n <= *nm)
+    {
+        goto L10;
     }
     *ierr = *n * 10;
     goto L50;
 
 L10:
-    if (*matz != 0) {
-	goto L20;
+    if (*matz != 0)
+    {
+        goto L20;
     }
 /*     .......... FIND EIGENVALUES ONLY .......... */
     tf = FALSE_;
     qzhes_(nm, n, &a[a_offset], &b[b_offset], &tf, &z__[z_offset]);
     qzit_(nm, n, &a[a_offset], &b[b_offset], &c_b5, &tf, &z__[z_offset], ierr)
-	    ;
+    ;
     qzval_(nm, n, &a[a_offset], &b[b_offset], &alfr[1], &alfi[1], &beta[1], &
-	    tf, &z__[z_offset]);
+           tf, &z__[z_offset]);
     goto L50;
 /*     .......... FIND BOTH EIGENVALUES AND EIGENVECTORS .......... */
 L20:
     tf = TRUE_;
     qzhes_(nm, n, &a[a_offset], &b[b_offset], &tf, &z__[z_offset]);
     qzit_(nm, n, &a[a_offset], &b[b_offset], &c_b5, &tf, &z__[z_offset], ierr)
-	    ;
+    ;
     qzval_(nm, n, &a[a_offset], &b[b_offset], &alfr[1], &alfi[1], &beta[1], &
-	    tf, &z__[z_offset]);
-    if (*ierr != 0) {
-	goto L50;
+           tf, &z__[z_offset]);
+    if (*ierr != 0)
+    {
+        goto L50;
     }
     qzvec_(nm, n, &a[a_offset], &b[b_offset], &alfr[1], &alfi[1], &beta[1], &
-	    z__[z_offset]);
+           z__[z_offset]);
 L50:
     return 0;
 } /* rgg_ */
-

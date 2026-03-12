@@ -507,11 +507,11 @@ void mri_matrix_psinv_svd(int i)
  * } ) [b] (                                         )
  *
  *  where LQ{ [x] } is the sum of squares of the elements of vector [x]. The 'penalty' consists of
- * trying to keep the elements of [b] small.
+ *trying to keep the elements of [b] small.
  *
  *  Note that matrices are stored in column-major order in the 2D image arrays!
  *  If m < n, then the SVD solution is tried immediately, since the Choleski method makes no sense
- * in this case.  You can force the SVD method to be used by calling mri_matrix_psinv_svd().
+ *in this case.  You can force the SVD method to be used by calling mri_matrix_psinv_svd().
  *//*--------------------------------------------------------------------------*/
 
 MRI_IMAGE * mri_matrix_psinv(MRI_IMAGE *imc, float *wt, float alpha)
@@ -1040,10 +1040,10 @@ MRI_IMARR * mri_matrix_psinv_ortproj(MRI_IMAGE *imc, int pout)
 
 MRI_IMARR * mri_matrix_psinv_pair(MRI_IMAGE *imc, float alpha)
 {
-    float *rmat;
-    int m, n, ii, jj, kk;
-    double *amat, *umat, *vmat, *sval, *xfac, smax, del, ww, alp;
-    MRI_IMAGE *imp = NULL, *imq = NULL; float *pmat, *qmat; MRI_IMARR *imar;
+    float *         rmat;
+    int             m, n, ii, jj, kk;
+    double *        amat, *umat, *vmat, *sval, *xfac, smax, del, ww, alp;
+    MRI_IMAGE *     imp = NULL, *imq = NULL; float *pmat, *qmat; MRI_IMARR *imar;
     register double sum;
 
     ENTRY("mri_matrix_psinv_pair");
@@ -1280,9 +1280,9 @@ MRI_IMARR * mri_matrix_psinv_pair(MRI_IMAGE *imc, float alpha)
 
 MRI_IMAGE * mri_matrix_singvals(MRI_IMAGE *imc)      /* 24 May 2010 */
 {
-    int i, j, k, M, N;
+    int     i, j, k, M, N;
     double *a, *e, sum;
-    float *rmat; MRI_IMAGE *ime;
+    float * rmat; MRI_IMAGE *ime;
 
     ENTRY("mri_matrix_singvals");
 
@@ -1351,7 +1351,7 @@ MRI_IMAGE * mri_matrix_singvals(MRI_IMAGE *imc)      /* 24 May 2010 */
 
 void mri_matrix_detrend(MRI_IMAGE *imt, MRI_IMAGE *imq, MRI_IMAGE *imp)
 {
-    int nlen, nort, nvec, kk, jj, iv;
+    int    nlen, nort, nvec, kk, jj, iv;
     float *par, *qar, *tar, *xar, *rar, *pt, *qt, xt;
 
     ENTRY("mri_matrix_detrend");
@@ -1409,7 +1409,7 @@ void mri_matrix_detrend(MRI_IMAGE *imt, MRI_IMAGE *imq, MRI_IMAGE *imp)
 
 float mri_matrix_size(MRI_IMAGE *imc)    /* 30 Jul 2007 */
 {
-    int nxy, ii;
+    int   nxy, ii;
     float sum, *car;
 
     if (imc == NULL || imc->kind != MRI_float)
@@ -1430,10 +1430,10 @@ float mri_matrix_size(MRI_IMAGE *imc)    /* 30 Jul 2007 */
 
 MRI_IMAGE * mri_matrix_sqrt(MRI_IMAGE *imc)    /* 30 Jul 2007 */
 {
-    float gam, fa, fb, csiz;
-    int nn, ite, ii;
+    float      gam, fa, fb, csiz;
+    int        nn, ite, ii;
     MRI_IMAGE *imy, *imz, *imyinv, *imzinv, *tim;
-    float *yar, *zar, *car;
+    float *    yar, *zar, *car;
 
     if (imc == NULL || imc->kind != MRI_float)
     {
@@ -1763,7 +1763,7 @@ static MRI_IMARR *matar = NULL;   /* list of named matrices */
 
 static int matrix_name_lookup(char *nam)
 {
-    int ii;
+    int        ii;
     MRI_IMAGE *im;
 
     if (nam == NULL || matar == NULL)
@@ -1855,11 +1855,11 @@ static int command_check(char *str, char *cmd)
                 else ERROR_message("mri_matrix_evalrpn: bad (&C)");          \
             } else if (*(ccc) == '=' && isalpha(*((ccc) + 1))) {             \
                 char *xx = strdup((ccc) + 1), *pp = strchr(xx, ')');         \
-                int qq = matrix_name_lookup(xx); /* swap these lines */      \
-                if (pp != NULL) *pp = '\0';      /* 18 Apr 2006 [rickr] */   \
+                int   qq = matrix_name_lookup(xx); /* swap these lines */    \
+                if (pp != NULL) *pp = '\0';        /* 18 Apr 2006 [rickr] */ \
                 if (qq >= 0) {                                               \
-                    MRI_IMAGE *iq = IMARR_SUBIM(matar, qq);                  \
-                    float *qar    = MRI_FLOAT_PTR(iq);                       \
+                    MRI_IMAGE *iq  = IMARR_SUBIM(matar, qq);                 \
+                    float *    qar = MRI_FLOAT_PTR(iq);                      \
                     val = qar[0];                                            \
                 }                                                            \
                 else ERROR_message("mri_matrix_evalrpn: bad (=%s)", xx);     \
@@ -1873,18 +1873,18 @@ static int command_check(char *str, char *cmd)
  *   - The operations allowed are described in the output of function  mri_matrix_evalrpn_help().
  *   - The return value is the top matrix at the end of the expression.
  *   - The rest of the stack is discarded, but named matrices are preserved in a static array
- * between calls.
+ *between calls.
  *   - If NULL is returned, some error occurred.
  * ------------------------------------------------------------------------------*/
 
 MRI_IMAGE * mri_matrix_evalrpn(char *expr)
 {
     NI_str_array *sar;
-    char *cmd, mess[512];
-    MRI_IMARR *imstk;
-    int nstk, ii, ss;
-    MRI_IMAGE *ima, *imb, *imc;
-    float *car;
+    char *        cmd, mess[512];
+    MRI_IMARR *   imstk;
+    int           nstk, ii, ss;
+    MRI_IMAGE *   ima, *imb, *imc;
+    float *       car;
 
     ENTRY("mri_matrix_evalrpn");
 
