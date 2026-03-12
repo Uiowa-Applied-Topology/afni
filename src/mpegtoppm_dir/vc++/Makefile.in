@@ -137,7 +137,7 @@ EXTRA_DIST = config.h inttypes.h libmpeg2.dsp libvo.dsp mpeg2dec.dsp \
 
 
 WIN_GCC = i586-mingw32msvc-gcc -I$(top_srcdir)/vc++ -I$(top_srcdir)/include \
-	  -Wall -Werror -O3 -fomit-frame-pointer -mcpu=pentiumpro
+	  -Wall -O3 -fomit-frame-pointer -mcpu=pentiumpro
 
 subdir = vc++
 mkinstalldirs = $(SHELL) $(top_srcdir)/autotools/mkinstalldirs

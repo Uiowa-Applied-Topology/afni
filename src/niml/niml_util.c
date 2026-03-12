@@ -1,4 +1,5 @@
 #include "niml_private.h"
+#include <strings.h>
 
 /****************************************************************************/
 /************* Debugging function *******************************************/
@@ -101,11 +102,10 @@ void NI_sleep(int msec)
 int NI_clock_time(void)
 {
     struct timeval        new_tval;
-    struct timezone       tzone;
     static struct timeval old_tval;
     static int            first = 1;
 
-    gettimeofday(&new_tval, &tzone);
+    gettimeofday(&new_tval, NULL);/*@@@BUG: tzone isn't a thing */
 
     if (first)
     {

@@ -968,7 +968,7 @@ ENTRY("r_set_afni_s_from_dset");
             *fptr++ = *sptr++ * factor;
     }
 
-    A->max_u_short  = r_get_max_u_short( (u_short *)A->simage[0], A->nvox );
+    A->max_u_short  = r_get_max_u_short( (unsigned short *)A->simage[0], A->nvox );
 
 /*    A->num_dsets++;   not using more than one */
 
@@ -984,10 +984,10 @@ ENTRY("r_set_afni_s_from_dset");
 **
 **----------------------------------------------------------------------
 */
-u_short
-r_get_max_u_short( u_short * S, int size )
+unsigned short 
+r_get_max_u_short( unsigned short * S, int size )
 {
-    u_short * usptr, max = *S;
+    unsigned short * usptr, max = *S;
     int       c = 0;
 
     for ( c = 0, usptr = S; c < size; c++, usptr++ )

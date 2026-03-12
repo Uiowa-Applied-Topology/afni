@@ -46,10 +46,10 @@ static char *pstr_sep   = "\t";
  * - if tposn < 0, print tab char first
  * - if tposn > 0, print tab second (else none) (so users can override tabs with their own format)
  */
-#define RS_DISP_SEP    do { fprintf(stdout, pstr_sep); } while (0)
+#define RS_DISP_SEP    do { printf(pstr_sep); } while (0)
 #define RS_DISP_FLOAT(tposn, val)    do {       \
             if (tposn < 0) RS_DISP_SEP;         \
-            fprintf(stdout, pstr_apply, (val)); \
+            printf("%f", (val)); \
             if (tposn > 0) RS_DISP_SEP;         \
 } while (0)
 

@@ -431,10 +431,9 @@ int alloc_extras(motparm *mp, int nex)
  */
 int show_time(char *mesg)
 {
-    struct timeval  tval;
-    struct timezone tzone;
+    struct timeval tval;
 
-    gettimeofday(&tval, &tzone);
+    gettimeofday(&tval, NULL);
 
     if (mesg)
     {
@@ -1270,7 +1269,7 @@ int open_serial(optiondata *opt, port_list *plist)
     *  set up the port
     *******************/
 
-    fcntl(sport, F_SETFL, FNDELAY);      /* nonblocking reads */
+    fcntl(sport, F_SETFL, O_NDELAY);/*@@@BUG:      / * nonblocking reads * / */
 
     /* Get the current options for the port...*/
     tcgetattr(sport, &options);

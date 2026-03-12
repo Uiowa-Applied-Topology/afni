@@ -74,3 +74,4 @@ AFNI_version.h
 *uncrustify*
 .emcache/
 .build/
+.cache/

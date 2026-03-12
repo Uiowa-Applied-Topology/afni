@@ -218,9 +218,9 @@ re_issue_request:
 	name.sin_port = htons(port);
 
 #ifdef linux
-	memcpy(&name.sin_addr, server->h_addr, server->h_length);
+	memcpy(&name.sin_addr, server->h_addr_list[0], server->h_length);
 #else
-	memcpy(&name.sin_addr.s_addr, server->h_addr, server->h_length);
+	memcpy(&name.sin_addr.s_addr, server->h_addr_list[0], server->h_length);
 #endif
 
 	/*****

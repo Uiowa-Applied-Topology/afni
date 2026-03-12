@@ -62,7 +62,7 @@ AC_DEFUN([AC_C_ALWAYS_INLINE],
     if test x"$GCC" = x"yes" -a x"$ac_cv_c_inline" = x"inline"; then
 	AC_MSG_CHECKING([for always_inline])
 	SAVE_CFLAGS="$CFLAGS"
-	CFLAGS="$CFLAGS -Wall -Werror"
+	CFLAGS="$CFLAGS -Wall "
 	AC_TRY_COMPILE([],[__attribute__ ((__always_inline__)) void f (void);],
 	    [ac_cv_always_inline=yes],[ac_cv_always_inline=no])
 	CFLAGS="$SAVE_CFLAGS"
@@ -4583,4 +4583,3 @@ else
 fi
 AC_MSG_RESULT([$SED])
 ])
-

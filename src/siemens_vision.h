@@ -5,26 +5,26 @@ typedef unsigned int u_int ;
 #define SIEMENS_HEADERSIZE 6144
 
 struct Siemens_vision_header {
-       u_int      SiemensStudyDateYYYY;
-       u_int      SiemensStudyDateMM ;
-       u_int      SiemensStudyDateDD ;
-       u_int      AcquisitionDateYYYY ;
-       u_int      AcquisitionDateMM ;
-       u_int      AcquisitionDateDD ;
-       u_int      ImageDateYYYY ;
-       u_int      ImageDateMM ;
-       u_int      ImageDateDD ;
-       u_int      SiemensStudyTimeHH ;
-       u_int      SiemensStudyTimeMM ;
-       u_int      SiemensStudyTimeSS;
-  u_int i1;
-       u_int      AcquisitionTimeHH ;
-       u_int      AcquisitionTimeMM ;
-       u_int      AcquisitionTimeSS ;
-  u_int i2;
-       u_int      ImageTimeHH ;
-       u_int      ImageTimeMM ;
-       u_int      ImageTimeSS ;
+       unsigned int     SiemensStudyDateYYYY;
+       unsigned int     SiemensStudyDateMM ;
+       unsigned int     SiemensStudyDateDD ;
+       unsigned int     AcquisitionDateYYYY ;
+       unsigned int     AcquisitionDateMM ;
+       unsigned int     AcquisitionDateDD ;
+       unsigned int     ImageDateYYYY ;
+       unsigned int     ImageDateMM ;
+       unsigned int     ImageDateDD ;
+       unsigned int     SiemensStudyTimeHH ;
+       unsigned int     SiemensStudyTimeMM ;
+       unsigned int     SiemensStudyTimeSS;
+  unsigned int i1;
+       unsigned int      AcquisitionTimeHH ;
+       unsigned int      AcquisitionTimeMM ;
+       unsigned int      AcquisitionTimeSS ;
+  unsigned int i2;
+       unsigned int      ImageTimeHH ;
+       unsigned int      ImageTimeMM ;
+       unsigned int      ImageTimeSS ;
   char d1[16];
        char    Manufacturer[7];
   char d2[2];
@@ -44,7 +44,7 @@ struct Siemens_vision_header {
 
 #if 1                             /* RWCox */
   char d7a[1081];
-      u_int DisplayMatrixSize ;   /* offset 2864 */
+      unsigned int DisplayMatrixSize ;   /* offset 2864 */
   char d7b[76] ;
 #else
   char d7[1161];

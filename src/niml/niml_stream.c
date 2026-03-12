@@ -462,7 +462,9 @@ static int tcp_connect(char *host, int port)
 #endif
         CLOSEDOWN(sd); return -1;
     }
-    sin.sin_addr.s_addr = ((struct in_addr *)(hostp->h_addr))->s_addr;
+    sin.sin_addr.s_addr = ((struct in_addr *)(hostp->h_addr_list[0]
+                                              ))->s_addr;
+    /*@@@BUG: sin.sin_addr.s_addr = ((struct in_addr *)(hostp->h_addr_list[0]))->s_addr; */
 
     errno = 0;
     if (connect(sd, (struct sockaddr *)&sin, sizeof(sin)) != 0)
@@ -704,7 +706,9 @@ char * NI_hostname_to_inet(char *host)
         return NULL;
     }
 
-    str = inet_ntoa(*((struct in_addr *)(hostp->h_addr)));
+
+    str = inet_ntoa(*((struct in_addr *)(hostp->h_addr_list[0])));
+    /*@@@BUG: str = inet_ntoa(*((struct in_addr *)(hostp->h_addr_list[0]))); */
     if (str == NULL || str[0] == '\0')
     {
         return NULL;

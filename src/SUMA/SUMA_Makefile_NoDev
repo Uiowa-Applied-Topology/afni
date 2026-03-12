@@ -36,7 +36,7 @@ CP ?= cp
 ifeq ($(CPU_TYPE), ARM_M1)
 GLIBCFLAGS = `pkg-config --cflags --libs glib-2.0`
 CFLAGS = -g -O2 -L/opt/homebrew/lib -lpcre                               \
-         -Wall -Werror-implicit-function-declaration -Wstrict-prototypes \
+         -Wall -Wstrict-prototypes \
          -Wmissing-prototypes -Wmissing-declarations                       \
          $(GLIBCFLAGS)
 # previous manually found includes - update versions

@@ -1,6 +1,9 @@
 #include "SUMA_suma.h"
 #include "SUMA_plot.h"
 #include "SUMA_clippingPlanes.h"
+#include <strings.h>
+#include <unistd.h>
+extern int usleep(useconds_t usec);
 
 #define SUMA_ALTHELL ( (Kev.state & Mod1Mask) || \
                        (Kev.state & Mod2Mask) ||  \

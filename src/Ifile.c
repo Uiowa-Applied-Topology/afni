@@ -877,7 +877,7 @@ glob(pattern, flags, errfunc, pglob)
        pglob->gl_offs = 0;
     }
     pglob->gl_flags = flags & ~GLOB_MAGCHAR;
-    pglob->gl_errfunc = errfunc;
+    pglob->gl_errfunc = NULL;//@@@BUG: errfunc;
     oldpathc = pglob->gl_pathc;
     pglob->gl_matchc = 0;
 
@@ -1119,7 +1119,7 @@ glob3(pathbuf, pathend, pattern, restpattern, pglob, no_match)
    /* todo: don't call for ENOENT or ENOTDIR? */
    for (ptr = cpathbuf; (*ptr++ = (char) *pathbuf++) != EOS;)
        continue;
-   if ((pglob->gl_errfunc && (*pglob->gl_errfunc) (cpathbuf, errno)) ||
+   if ((pglob->gl_errfunc && (*pglob->gl_errfunc)())||//@@@BUG: this is never used (cpathbuf, errno)) ||
        (pglob->gl_flags & GLOB_ERR))
        return (GLOB_ABEND);
    else

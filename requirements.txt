@@ -18,3 +18,4 @@ mkdoxy
 mkdocs-monorepo-plugin
 mkdocs-auto-refresh-build-pages
 reloadserver
+pip

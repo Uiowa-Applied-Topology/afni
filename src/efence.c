@@ -1020,7 +1020,7 @@ vprint(const char * pattern, va_list args)
 				}
 				break;
 			case 'x':
-				printNumber(va_arg(args, u_int), 0x10);
+				printNumber(va_arg(args, unsigned int), 0x10);
 				break;
 			case 'c':
 				{

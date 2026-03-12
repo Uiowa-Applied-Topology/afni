@@ -536,7 +536,7 @@ int frameNumber;
 BitBucket *bb;
 {
     int    clientSocket;
-    u_long data;
+    unsigned long data;
     int    negativeFour = -4;
     time_t tempTimeStart, tempTimeEnd;
 
@@ -587,7 +587,7 @@ int frameStart;
 int frameEnd;
 {
     int    clientSocket;
-    u_long data;
+    unsigned long data;
     int    negativeTwo = -2;
     time_t tempTimeStart, tempTimeEnd;
 
@@ -634,7 +634,7 @@ int frameNumber;
     unsigned char smallBuffer[1000];
     register int  y;
     int           numBytes;
-    u_long        data;
+    unsigned long        data;
     char          fileName[256];
 
     Fsize_Note(frameNumber, yuvWidth, yuvHeight);
@@ -1589,7 +1589,7 @@ int portNum;
 int newPortNum;
 {
     int    clientSocket;
-    u_long data;
+    unsigned long data;
 
     clientSocket = ConnectToSocket(hostName, portNum, &hostEntry);
 
@@ -1713,7 +1713,7 @@ int id;
 
 {
     int    clientSocket;
-    u_long data;
+    unsigned long data;
     time_t tempTimeStart, tempTimeEnd;
 
     time(&tempTimeStart);
@@ -1747,7 +1747,7 @@ int id;
 
 {
     int    clientSocket;
-    u_long data;
+    unsigned long data;
     int    negativeTwo = -2;
     int    ready;
 
@@ -1842,7 +1842,7 @@ int *portNumber;
 
 {
     int                resultSocket;
-    u_short            tempShort;
+    unsigned short            tempShort;
     int                result;
     struct sockaddr_in nameEntry;
 
@@ -1901,7 +1901,7 @@ struct hostent **hostEnt;
 {
     int                resultSocket;
     int                result;
-    u_short            tempShort;
+    unsigned short            tempShort;
     struct sockaddr_in nameEntry;
 
     if ((*hostEnt) == NULL)

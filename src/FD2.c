@@ -4,6 +4,7 @@
  * program fd_multi.c . Added rectangular box and time average 11-12-2002 AJ. Andre Jesmanowicz,
  * 4-03-2008, Medical College of Wisconsin. */
 
+#include <stddef.h>
 #define CONTRAST_CHANGE_STEP    15000/* larger step => slower change AJ 11.1.96 */
 
 #define ASC_NUL                 '\0'
@@ -7524,7 +7525,7 @@ char *str;
 {
     Window r;
     int x0, y0;
-    u_int width, height, bw, dp;
+    unsigned int width, height, bw, dp;/*@@@BUG: */
 
     if (!XGetGeometry(theDisp, w, &r, &x0, &y0, &width, &height, &bw, &dp))
     {
@@ -7729,7 +7730,7 @@ int mx, my;
 /* -------------------- */
 {
     Window rW, cW;
-    u_int key;
+    unsigned int key;
     int x, y, rx, ry;
 
     while (XQueryPointer(theDisp, theWindow, &rW, &cW,
@@ -7814,7 +7815,7 @@ Track_Vpointer()
 {
     int Im_Old, im, c_im;
     Window rW, cW;
-    u_int key;
+    unsigned int key;
     int x, y, rx, ry;
     int aaa = avr_grp, ddd = diff_im, redr;
 
@@ -8263,7 +8264,7 @@ int check;                              /* to check if name exists already? */
 
         case KeyPress: {
             XKeyEvent *key_event = (XKeyEvent *)&ev;
-            u_char buf[128];
+            unsigned char buf[128];
             KeySym ks;
             XComposeStatus status;
 
@@ -9742,7 +9743,7 @@ int *mx, *my;
 /* -------------------- */
 {
     Window rW, cW;
-    u_int key;
+    unsigned int key;
     int x, y, rx, ry;
 
     if (XQueryPointer(theDisp, theWindow, &rW, &cW,

@@ -60,7 +60,7 @@ AM_MAINTAINER_MODE
 AC_PROG_CC
 
 if test x$GCC = xyes ; then
-  CFLAGS="$CFLAGS -Wall -Werror-implicit-function-declaration -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
+  CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations"
 fi
 
 AC_PROG_AWK

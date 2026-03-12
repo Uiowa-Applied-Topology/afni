@@ -13,7 +13,6 @@ bootstrap:
       uv pip install "git+https://github.com/Joecstarr/mkdocs-author-plugin"; \
       uv pip install "git+https://github.com/Joecstarr/markdown-gfm-admonition"; \
     fi
-#prek install -f -c .pre-commit-config.yaml ; \
 
 refresh-sub: 
       git submodule deinit -f . 

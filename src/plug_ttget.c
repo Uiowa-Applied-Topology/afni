@@ -253,7 +253,7 @@ static char * xxx_name_to_inet(char *host)
         return NULL;
     }
 
-    str = inet_ntoa(*((struct in_addr *)(hostp->h_addr)));
+    str = inet_ntoa(*((struct in_addr *)(hostp->h_addr_list[0])));
     if (str == NULL || str[0] == '\0')
     {
         return NULL;

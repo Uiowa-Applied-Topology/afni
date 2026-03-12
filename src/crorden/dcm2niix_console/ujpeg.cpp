@@ -94,7 +94,7 @@
 // A few pages below, you can find an example program that uses NanoJPEG to
 // convert JPEG files into PGM or PPM. To compile it, use something like
 //     gcc -O3 -D_NJ_EXAMPLE_PROGRAM -o nanojpeg nanojpeg.c
-// You may also add -std=c99 -Wall -Wextra -pedantic -Werror, if you want :)
+// You may also add -std=c99 -Wall -Wextra -pedantic if you want :)
 // The only thing you might need is -Wno-shift-negative-value, because this
 // code relies on the target machine using two's complement arithmetic, but
 // the C standard does not, even though *any* practically useful machine

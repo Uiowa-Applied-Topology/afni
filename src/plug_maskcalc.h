@@ -63,7 +63,7 @@ typedef struct
     /* other */
     float             * fimage  [ R_MAX_AFNI_DSETS ]; /* shorts with factor   */
 
-    u_short             max_u_short;                  /* no factor considered */
+    unsigned short             max_u_short;                  /* no factor considered */
     int                 num_dsets;                    /* number read in       */
 } r_afni_s;
 
@@ -111,7 +111,7 @@ static  void    print_empty_stats       ( FILE * );
 static  char *  process                 ( r_afni_s *, mask_opt_s * );
 static  char *  process_args            ( r_afni_s *, mask_opt_s *,
 					  PLUGIN_interface * );
-static  u_short r_get_max_u_short	( u_short *, int );
+static  unsigned short r_get_max_u_short	( unsigned short *, int );
 static  int     read_dataset            ( char *, int );
 static  void    usage                   ( char *, char *, int, mask_opt_s * );
 

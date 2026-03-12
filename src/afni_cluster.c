@@ -2541,16 +2541,14 @@ void AFNI_clus_action_CB(Widget w, XtPointer cd, XtPointer cbs)
         SHOW_AFNI_PAUSE;
         MCW_invert_widget(cwid->linkrbrain_pb); inv = 1;
         wout = (char *)malloc(sizeof(char) * WSIZ);
-        if (cwid->coord_mode == 1)                              /* cmass columns */
+        if (cwid->coord_mode == 1)                          /* cmass columns */
+                                                            /*     /*-----------------*/
         {
-            *                                                   /*-----------------*/
-            {
-                coord_colx = 1; coord_coly = 2; coord_colz = 3; /* RWC: these were */
-            }                                                   /* reversed! Fixed */
-            else /* peak columns */                          /* on 09 Sep 2015. */
-            {
-                coord_colx = 4; coord_coly = 5; coord_colz = 6; /*-----------------*/
-            }
+            coord_colx = 1; coord_coly = 2; coord_colz = 3; /* RWC: these were */
+        }                                                   /* reversed! Fixed */
+        else /* peak columns */                          /* on 09 Sep 2015. */
+        {
+            coord_colx = 4; coord_coly = 5; coord_colz = 6; /*-----------------*/
         }
 
         jtop = clar->num_clu;

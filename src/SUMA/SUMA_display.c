@@ -1,6 +1,8 @@
 #include "SUMA_suma.h"
 #include "coxplot.h"
 #include "SUMA_plot.h"
+#include <strings.h>
+#define index(a,b) strchr((a),(b))
 
 extern int selenium_close(void) ;
 
@@ -18149,7 +18151,7 @@ void SUMA_cb_search_text(Widget widget,
    */
    SUMA_LH("Looking down");
    pos = XmTextGetCursorPosition (TextShell->text_w);
-   for (p = &string[pos+1]; (p = index (p, *search_pat)); p++)
+   for (p = &string[pos+1]; (p = index(p, *search_pat)); p++)
      if (!strncmp (p, search_pat, len)) {
          found = True;
          break;

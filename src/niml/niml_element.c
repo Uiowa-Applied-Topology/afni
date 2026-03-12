@@ -1,5 +1,7 @@
 #include "niml_private.h"
 
+#include <strings.h>
+
 /*-----------------------------------------------------------------------*/
 /* Vector labels [12 Sep 2018] */
 

@@ -1,5 +1,6 @@
 #include "niml_private.h"
 #include <math.h>
+#include <strings.h>
 
 /****************************************************************************/
 /********* Statistics stuff for NIML ****************************************/

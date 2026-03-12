@@ -67,10 +67,12 @@ include(afni_project_dependencies)
 
 # Other details of dependencies and configuration
 set(CMAKE_C_FLAGS_DEBUG
-    "${CMAKE_C_FLAGS_DEBUG} -DAFNI_DEBUG -DIMSEQ_DEBUG -DDISPLAY_DEBUG -DTHD_DEBUG"
+    "${CMAKE_C_FLAGS_DEBUG} -std=gnu11 --no-warnings -D_XOPEN_SOURCE=700  -Wfatal-errors -DUSE_TRACING -DHAVE_ZLIB -DAFNI_DEBUG -DIMSEQ_DEBUG -DDISPLAY_DEBUG -DTHD_DEBUG"
 )
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_TRACING -DHAVE_ZLIB") # XXX not in
-                                                                # default cflags
+set(CMAKE_C_FLAGS
+    "${CMAKE_C_FLAGS} -std=gnu11 --no-warnings -D_XOPEN_SOURCE=700  -Wfatal-errors -DUSE_TRACING -DHAVE_ZLIB"
+) # XXX not in
+# default cflags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DREAD_WRITE_64 -DLINUX2")
 elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")

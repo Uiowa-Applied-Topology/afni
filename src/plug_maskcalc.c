@@ -1109,7 +1109,7 @@ file_exists(
 static char *
 fill_afni_struct(r_afni_s *A)
 {
-    u_short mus;
+    unsigned short mus;
     int     sub, brick;
 
     for (brick = 0; brick < A->num_dsets; brick++)
@@ -1204,7 +1204,7 @@ fill_afni_struct(r_afni_s *A)
     {
         for (sub = 0; sub < A->subs[brick]; sub++)
         {
-            mus = r_get_max_u_short((u_short *)A->simage[brick][sub], A->nvox);
+            mus = r_get_max_u_short((unsigned short *)A->simage[brick][sub], A->nvox);
             if (mus > A->max_u_short)
             {
                 A->max_u_short = mus;
@@ -1251,10 +1251,10 @@ assign_afni_floats(r_afni_s *A)
 **
 ************************************************************************
 */
-static u_short
-r_get_max_u_short(u_short *S, int size)
+static unsigned short
+r_get_max_u_short(unsigned short *S, int size)
 {
-    u_short *usptr, max = *S;
+    unsigned short *usptr, max = *S;
     int      c = 0;
 
     for (c = 0, usptr = S; c < size; c++, usptr++)

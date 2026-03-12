@@ -13,8 +13,8 @@ static void byteswap8 (double *x) {
   (*x)=d;
 }
 
-static void byteswap4( u_int * x ) {
-  char *p1,*p2 ; u_int d ; int i ;
+static void byteswap4( unsigned int * x ) {
+  char *p1,*p2 ; unsigned int d ; int i ;
   p1=(char *)x; p2=(char *)&d;
   for(i=0;i<4;i++) p2[3-i]=p1[i];
   (*x)=d;
